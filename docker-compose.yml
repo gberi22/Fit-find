@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: fitfind_db
+    environment:
+      POSTGRES_DB: fitfind
+      POSTGRES_USER: fitfind
+      POSTGRES_PASSWORD: fitfind
+    ports:
+      - '5432:5432'
