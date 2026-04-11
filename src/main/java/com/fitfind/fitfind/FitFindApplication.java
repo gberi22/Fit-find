@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FitFindApplication {
 
     public static void main(String[] args) {
+        // for pr
         SpringApplication.run(FitFindApplication.class, args);
     }
 
