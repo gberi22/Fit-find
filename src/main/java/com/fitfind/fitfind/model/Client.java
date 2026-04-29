@@ -30,8 +30,6 @@ public class Client {
 
     private String lastName;
 
-    private String citizenship;
-
     @Enumerated(EnumType.STRING)
     private RegistrationStatus status;
 
