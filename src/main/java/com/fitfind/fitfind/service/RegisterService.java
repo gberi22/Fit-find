@@ -17,7 +17,7 @@ public class RegisterService {
 
     public void register(RegisterRequest request) {
         Client client = Client.builder()
-                .withEmail(request.email())
+                .withEmail(request.email().toLowerCase())
                 .withPassword(passwordEncoder.encode(request.password()))
                 .withFirstName(request.firstName())
                 .withLastName(request.lastName())
