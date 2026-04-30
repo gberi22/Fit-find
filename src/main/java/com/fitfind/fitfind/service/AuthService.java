@@ -5,29 +5,26 @@ import com.fitfind.fitfind.model.RegistrationStatus;
 import com.fitfind.fitfind.model.requests.LoginRequest;
 import com.fitfind.fitfind.model.requests.RegisterRequest;
 import com.fitfind.fitfind.repository.ClientRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final ClientRepository clientRep;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(ClientRepository clientRep, PasswordEncoder encoder){
-        this.clientRep = clientRep;
-        this.passwordEncoder = encoder;
-    }
-
     public void register(RegisterRequest req) {
-        if (clientRep.findClientByEmail(req.getEmail()).isPresent()) {
-            throw new RuntimeException("Email taken: " + req.getEmail());
+        if (clientRep.findClientByEmail(req.email()).isPresent()) {
+            throw new RuntimeException("Email taken: " + req.email());
         }
 
         Client client = Client.builder()
-                .withEmail(req.getEmail())
-                .withPassword(passwordEncoder.encode(req.getPassword()))
-                .withFirstName(req.getFirstName())
-                .withLastName(req.getLastName())
+                .withEmail(req.email())
+                .withPassword(passwordEncoder.encode(req.password()))
+                .withFirstName(req.firstName())
+                .withLastName(req.lastName())
                 .withStatus(RegistrationStatus.FULL_ACCOUNT)
                 .build();
 
@@ -35,10 +32,10 @@ public class AuthService {
     }
 
     public void login(LoginRequest req) {
-        Client client = clientRep.findClientByEmail(req.getEmail())
-                .orElseThrow(() -> new RuntimeException("No account found for: " + req.getEmail()));
+        Client client = clientRep.findClientByEmail(req.email())
+                .orElseThrow(() -> new RuntimeException("No account found for: " + req.email()));
 
-        if (!passwordEncoder.matches(req.getPassword(), client.getPassword())) {
+        if (!passwordEncoder.matches(req.password(), client.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
     }

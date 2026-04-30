@@ -1,16 +1,10 @@
 package com.fitfind.fitfind.model.requests;
 
-import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Getter
-@Setter
-@DynamicInsert
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder(setterPrefix = "with")
-public class LoginRequest {
-    private String email;
 
-    private String password;
-}
+public record LoginRequest (
+    @NotNull @NotBlank String email,
+    @NotNull @NotBlank String password
+) {}
