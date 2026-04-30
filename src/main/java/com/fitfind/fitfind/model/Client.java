@@ -31,7 +31,7 @@ public class Client {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
-    private RegistrationStatus status;
+    private AuthorityStatus status;
 
     @CurrentTimestamp
     private LocalDateTime updatedAt;
