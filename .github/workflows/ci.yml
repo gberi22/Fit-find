@@ -24,6 +24,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Build and Test
+        working-directory: core
         env:
           SPRING_DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
           SPRING_DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
@@ -34,7 +35,7 @@ jobs:
         with:
           name: build-reports
           path: |
-            **/target/surefire-reports/*
-            **/target/site/*
+            core/**/target/surefire-reports/*
+            core/**/target/site/*
           if-no-files-found: ignore
           retention-days: 1
