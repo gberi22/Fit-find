@@ -1,6 +1,6 @@
-package com.fitfind.fitfind.repository;
+package com.fitfind.fitfind.client.repository;
 
-import com.fitfind.fitfind.model.Client;
+import com.fitfind.fitfind.client.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

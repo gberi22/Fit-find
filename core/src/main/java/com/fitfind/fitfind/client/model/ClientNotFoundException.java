@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.model.exception;
+package com.fitfind.fitfind.client.model;
 
 public class ClientNotFoundException extends RuntimeException {
     public ClientNotFoundException(String message) {

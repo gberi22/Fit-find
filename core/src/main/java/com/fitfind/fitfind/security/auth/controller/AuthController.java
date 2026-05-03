@@ -1,7 +1,7 @@
-package com.fitfind.fitfind.api.routes;
+package com.fitfind.fitfind.security.auth.controller;
 
-import com.fitfind.fitfind.model.requests.AuthRequest;
-import com.fitfind.fitfind.service.AuthService;
+import com.fitfind.fitfind.security.auth.model.AuthRequest;
+import com.fitfind.fitfind.security.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

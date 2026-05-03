@@ -1,7 +1,7 @@
-package com.fitfind.fitfind.api.routes;
+package com.fitfind.fitfind.registration.controller;
 
-import com.fitfind.fitfind.model.requests.RegisterRequest;
-import com.fitfind.fitfind.service.RegisterService;
+import com.fitfind.fitfind.registration.model.RegisterRequest;
+import com.fitfind.fitfind.registration.service.RegisterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

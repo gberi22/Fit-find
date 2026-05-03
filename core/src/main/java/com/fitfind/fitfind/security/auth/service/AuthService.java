@@ -1,8 +1,8 @@
-package com.fitfind.fitfind.service;
+package com.fitfind.fitfind.security.auth.service;
 
-import com.fitfind.fitfind.model.Client;
-import com.fitfind.fitfind.model.requests.AuthRequest;
-import com.fitfind.fitfind.repository.ClientRepository;
+import com.fitfind.fitfind.client.model.Client;
+import com.fitfind.fitfind.security.auth.model.AuthRequest;
+import com.fitfind.fitfind.client.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,5 +21,4 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
     }
-
 }

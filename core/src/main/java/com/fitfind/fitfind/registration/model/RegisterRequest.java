@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.model.requests;
+package com.fitfind.fitfind.registration.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
