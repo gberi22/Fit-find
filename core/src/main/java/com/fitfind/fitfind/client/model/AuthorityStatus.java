@@ -1,5 +1,13 @@
 package com.fitfind.fitfind.client.model;
 
-public enum AuthorityStatus {
-    ADMIN, USER
+import org.springframework.security.core.GrantedAuthority;
+
+public enum AuthorityStatus implements GrantedAuthority {
+    USER,
+    ADMIN;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }
