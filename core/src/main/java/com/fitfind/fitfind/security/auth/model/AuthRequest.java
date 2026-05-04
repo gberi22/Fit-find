@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.model.requests;
+package com.fitfind.fitfind.security.auth.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

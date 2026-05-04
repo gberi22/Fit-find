@@ -1,6 +1,6 @@
 package com.fitfind.fitfind.security.exception.handler;
 
-import com.fitfind.fitfind.model.exception.ClientNotFoundException;
+import com.fitfind.fitfind.client.model.ClientNotFoundException;
 import com.fitfind.fitfind.security.exception.model.ApiErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

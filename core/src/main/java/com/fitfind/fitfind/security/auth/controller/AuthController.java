@@ -1,7 +1,8 @@
-package com.fitfind.fitfind.api.routes;
+package com.fitfind.fitfind.security.auth.controller;
 
-import com.fitfind.fitfind.model.requests.AuthRequest;
-import com.fitfind.fitfind.service.AuthService;
+import com.fitfind.fitfind.security.auth.model.AuthRequest;
+import com.fitfind.fitfind.security.auth.model.AuthResponse;
+import com.fitfind.fitfind.security.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<Void> login(@Valid @RequestBody AuthRequest request){
-        authService.login(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+        return ResponseEntity.ok(new AuthResponse(authService.login(request)));
     }
 }
