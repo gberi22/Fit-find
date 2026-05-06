@@ -1,44 +1,33 @@
 package com.fitfind.fitfind.ai.service;
 
-import com.azure.ai.inference.ChatCompletionsClient;
-import com.azure.ai.inference.ChatCompletionsClientBuilder;
-import com.azure.ai.inference.models.ChatCompletionsOptions;
-import com.azure.ai.inference.models.ChatRequestMessage;
-import com.azure.ai.inference.models.ChatRequestUserMessage;
-import com.fitfind.fitfind.ai.config.AIConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
-import com.azure.core.credential.AzureKeyCredential;
-
-import java.util.*;
-
+import reactor.core.publisher.Flux;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AIService {
 
-    private final ChatCompletionsClient openaiClient;
-    private final String githubModel;
-
-    public AIService(AIConfig config) {
-        this.openaiClient = new ChatCompletionsClientBuilder()
-                .credential(new AzureKeyCredential(config.getKey()))
-                .endpoint(config.getEndpoint())
-                .buildClient();
-        this.githubModel = config.getModel();
-        log.info("AI Service initialized with endpoint: {}", config.getEndpoint());
-    }
+    private final AnthropicChatModel chatModel;
 
     public String testConnection() {
-        List<ChatRequestMessage> messages = List.of(
-                new ChatRequestUserMessage("Say hello in one sentence.")
-        );
-
-        ChatCompletionsOptions options = new ChatCompletionsOptions(messages);
-
-        var response = openaiClient.complete(options);
-
-        return response.getChoices().getFirst().getMessage().getContent();
+        String response = chatModel.call("Say hello in one sentence.");
+        log.info("Test connection response received");
+        return response;
     }
 
+    public String chat(String message) {
+        return chatModel.call(message);
+    }
+
+    public Flux<ChatResponse> chatStream(String message) {
+        Prompt prompt = new Prompt(new UserMessage(message));
+        return chatModel.stream(prompt);
+    }
 }
