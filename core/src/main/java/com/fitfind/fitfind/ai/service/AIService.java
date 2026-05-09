@@ -1,33 +1,58 @@
 package com.fitfind.fitfind.ai.service;
 
-import lombok.RequiredArgsConstructor;
+import com.azure.ai.inference.ChatCompletionsClient;
+import com.azure.ai.inference.ChatCompletionsClientBuilder;
+import com.azure.ai.inference.models.*;
+import com.azure.core.util.Configuration;
+import com.fitfind.fitfind.ai.config.AIConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.anthropic.AnthropicChatModel;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
+import com.azure.core.credential.AzureKeyCredential;
+
+import java.util.*;
+
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class AIService {
 
-    private final AnthropicChatModel chatModel;
+    private final ChatCompletionsClient openaiClient;
+    private final String githubModel;
 
-    public String testConnection() {
-        String response = chatModel.call("Say hello in one sentence.");
-        log.info("Test connection response received");
-        return response;
+    public AIService() {
+        String key = Configuration.getGlobalConfiguration().get("GITHUB_MODELS_TOKEN");
+        String endpoint = "https://models.github.ai/inference";
+        this.githubModel = "openai/gpt-5-mini";
+
+        this.openaiClient = new ChatCompletionsClientBuilder()
+                .credential(new AzureKeyCredential(key))
+                .endpoint(endpoint)
+                .buildClient();
+        log.info("AI Service initialized with endpoint: {}", endpoint);
     }
 
-    public String chat(String message) {
-        return chatModel.call(message);
+    public void testConnection() {
+//        List<ChatRequestMessage> chatMessages = Arrays.asList(
+//                new ChatRequestSystemMessage("You are a helpful assistant."),
+//                new ChatRequestUserMessage("Tell me 3 jokes about trains")
+//        );
+//
+//        ChatCompletionsOptions chatCompletionsOptions = new ChatCompletionsOptions(chatMessages);
+//        chatCompletionsOptions.setModel(this.githubModel);
+//
+//        ChatCompletions completions = this.openaiClient.complete(chatCompletionsOptions);
+//
+//        System.out.printf("%s.%n", completions.getChoices().getFirst().getMessage().getContent());
+        ChatCompletionsOptions options = new ChatCompletionsOptions(
+                List.of(new ChatRequestUserMessage("Say hello!"))
+        ).setModel(this.githubModel);
+
+        ChatCompletions completions = this.openaiClient.complete(options);
+
+        String reply = completions.getChoices().getFirst().getMessage().getContent();
+        System.out.println("AI Response: " + reply);
     }
 
-    public Flux<ChatResponse> chatStream(String message) {
-        Prompt prompt = new Prompt(new UserMessage(message));
-        return chatModel.stream(prompt);
-    }
+
+
 }
