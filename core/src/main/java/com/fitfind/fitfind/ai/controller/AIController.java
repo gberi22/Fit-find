@@ -2,7 +2,7 @@ package com.fitfind.fitfind.ai.controller;
 
 import com.fitfind.fitfind.ai.service.AIService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,8 +23,8 @@ public class AIController {
         return Map.of("generation", aiService.chat(message));
     }
 
-    @GetMapping("/generateStream")
-    public Flux<ChatResponse> generateStream(@RequestParam String message) {
+    @GetMapping(value = "/generateStream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> generateStream(@RequestParam String message) {
         return aiService.chatStream(message);
     }
 }
