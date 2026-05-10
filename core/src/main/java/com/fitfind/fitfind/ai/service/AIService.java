@@ -1,13 +1,15 @@
 package com.fitfind.fitfind.ai.service;
 
-import com.azure.ai.inference.ChatCompletionsClient;
-import com.azure.ai.inference.ChatCompletionsClientBuilder;
-import com.azure.ai.inference.models.*;
-import com.azure.core.util.Configuration;
+import com.azure.ai.openai.OpenAIClient;
+import com.azure.ai.openai.OpenAIClientBuilder;
+import com.azure.ai.openai.models.ChatCompletions;
+import com.azure.ai.openai.models.ChatCompletionsOptions;
+import com.azure.ai.openai.models.ChatMessage;
+import com.azure.ai.openai.models.ChatRole;
+import com.azure.core.credential.AzureKeyCredential;
 import com.fitfind.fitfind.ai.config.AIConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import com.azure.core.credential.AzureKeyCredential;
 
 import java.util.*;
 
@@ -16,42 +18,33 @@ import java.util.*;
 @Slf4j
 public class AIService {
 
-    private final ChatCompletionsClient openaiClient;
+    private final OpenAIClient openaiClient;
     private final String githubModel;
 
-    public AIService() {
-        String key = Configuration.getGlobalConfiguration().get("GITHUB_MODELS_TOKEN");
-        String endpoint = "https://models.github.ai/inference";
-        this.githubModel = "openai/gpt-5-mini";
+    public AIService(AIConfig aiConfig) {
+        this.githubModel = aiConfig.getModel();
 
-        this.openaiClient = new ChatCompletionsClientBuilder()
-                .credential(new AzureKeyCredential(key))
-                .endpoint(endpoint)
+        this.openaiClient = new OpenAIClientBuilder()
+                .credential(new AzureKeyCredential(aiConfig.getKey()))
+                .endpoint(aiConfig.getEndpoint())
                 .buildClient();
-        log.info("AI Service initialized with endpoint: {}", endpoint);
     }
 
-    public void testConnection() {
-//        List<ChatRequestMessage> chatMessages = Arrays.asList(
-//                new ChatRequestSystemMessage("You are a helpful assistant."),
-//                new ChatRequestUserMessage("Tell me 3 jokes about trains")
+//    public void testConnection() {
+//        ChatCompletionsOptions chat = new ChatCompletionsOptions(
+//                Arrays.asList(
+//                        new ChatMessage(ChatRole.SYSTEM).setContent("You are a helpful assistant."),
+//                        new ChatMessage(ChatRole.USER).setContent("Tell me 3 jokes about trains")
+//                )
+//
 //        );
 //
-//        ChatCompletionsOptions chatCompletionsOptions = new ChatCompletionsOptions(chatMessages);
-//        chatCompletionsOptions.setModel(this.githubModel);
+//        chat.setModel(githubModel);
 //
-//        ChatCompletions completions = this.openaiClient.complete(chatCompletionsOptions);
-//
-//        System.out.printf("%s.%n", completions.getChoices().getFirst().getMessage().getContent());
-        ChatCompletionsOptions options = new ChatCompletionsOptions(
-                List.of(new ChatRequestUserMessage("Say hello!"))
-        ).setModel(this.githubModel);
-
-        ChatCompletions completions = this.openaiClient.complete(options);
-
-        String reply = completions.getChoices().getFirst().getMessage().getContent();
-        System.out.println("AI Response: " + reply);
-    }
+//        ChatCompletions completions = openaiClient.getChatCompletions(githubModel, chat);
+//        String reply = completions.getChoices().getFirst().getMessage().getContent();
+//        System.out.println("AI Response: " + reply);
+//    }
 
 
 
