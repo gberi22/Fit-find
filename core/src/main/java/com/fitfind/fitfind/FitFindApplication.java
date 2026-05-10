@@ -11,11 +11,4 @@ public class FitFindApplication {
     public static void main(String[] args) {
         SpringApplication.run(FitFindApplication.class, args);
     }
-
-//    @Bean
-//    public CommandLineRunner testAI(AIService aiService) {
-//        return args -> {
-//            aiService.testConnection();
-//        };
-//    }
 }
