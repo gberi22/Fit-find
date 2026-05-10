@@ -17,5 +17,4 @@ public class Prompt {
     private BigDecimal minPrice = BigDecimal.ZERO;
     private BigDecimal maxPrice = new BigDecimal("100.00");
     private String additionalComments = "";
-
 }
