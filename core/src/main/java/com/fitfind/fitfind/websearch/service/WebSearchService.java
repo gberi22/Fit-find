@@ -18,8 +18,6 @@ public class WebSearchService {
     private static final String GOOGLE_SHOPPING_ENGINE = "google_shopping";
     private static final String PARAM_ENGINE = "engine";
     private static final String PARAM_QUERY = "q";
-    private static final String PARAM_COUNTRY = "gl";
-    private static final String PARAM_LANGUAGE = "hl";
     private static final String PARAM_API_KEY = "api_key";
 
     private final WebSearchProperties properties;
@@ -31,8 +29,6 @@ public class WebSearchService {
                         .path(SEARCH_PATH)
                         .queryParam(PARAM_ENGINE, GOOGLE_SHOPPING_ENGINE)
                         .queryParam(PARAM_QUERY, query)
-                        .queryParam(PARAM_COUNTRY, properties.getCountry())
-                        .queryParam(PARAM_LANGUAGE, properties.getLanguage())
                         .queryParam(PARAM_API_KEY, properties.getKey())
                         .build())
                 .retrieve()

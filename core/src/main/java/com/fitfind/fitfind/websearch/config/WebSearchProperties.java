@@ -11,6 +11,4 @@ public class WebSearchProperties {
 
     private String key;
     private String baseUrl = "https://serpapi.com";
-    private String country = "ge";
-    private String language = "ka";
 }
