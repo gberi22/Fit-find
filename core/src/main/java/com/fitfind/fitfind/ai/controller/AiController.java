@@ -3,8 +3,6 @@ package com.fitfind.fitfind.ai.controller;
 import com.fitfind.fitfind.ai.model.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.model.OutfitSuggestionResponse;
 import com.fitfind.fitfind.ai.service.AiService;
-import com.fitfind.fitfind.security.ratelimit.model.RateLimitType;
-import com.fitfind.fitfind.security.ratelimit.service.RateLimitService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
