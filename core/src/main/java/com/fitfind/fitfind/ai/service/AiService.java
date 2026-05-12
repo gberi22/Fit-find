@@ -7,7 +7,7 @@ import com.azure.ai.openai.models.ChatCompletionsOptions;
 import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.ChatMessageDelta;
 import com.azure.ai.openai.models.ChatRole;
-import com.fitfind.fitfind.ai.config.AiConfig;
+import com.fitfind.fitfind.ai.config.AiProperties;
 import com.fitfind.fitfind.ai.model.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.model.OutfitSuggestionResponse;
 import com.fitfind.fitfind.security.ratelimit.model.RateLimitType;
@@ -26,7 +26,7 @@ import java.util.List;
 public class AiService {
 
     private final OpenAIClient openaiClient;
-    private final AiConfig aiConfig;
+    private final AiProperties aiProperties;
     private final RateLimitService rateLimitService;
 
     public OutfitSuggestionResponse chat(OutfitSuggestionRequest prompt, String email) {
@@ -36,7 +36,7 @@ public class AiService {
                 List.of(new ChatMessage(ChatRole.USER).setContent(buildMessage(prompt)))
         );
 
-        ChatCompletions completions = openaiClient.getChatCompletions(aiConfig.getModel(), options);
+        ChatCompletions completions = openaiClient.getChatCompletions(aiProperties.getModel(), options);
         List<ChatChoice> choices = completions.getChoices();
         String content = "";
         if (choices != null && !choices.isEmpty()) {
@@ -51,7 +51,7 @@ public class AiService {
                 List.of(new ChatMessage(ChatRole.USER).setContent(buildMessage(prompt)))
         );
 
-        return Flux.fromStream(openaiClient.getChatCompletionsStream(aiConfig.getModel(), options).stream())
+        return Flux.fromStream(openaiClient.getChatCompletionsStream(aiProperties.getModel(), options).stream())
                 .flatMap(chunk -> {
                     List<ChatChoice> choices = chunk.getChoices();
                     if (choices == null || choices.isEmpty()) {
