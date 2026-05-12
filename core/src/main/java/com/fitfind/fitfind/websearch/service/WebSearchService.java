@@ -15,18 +15,18 @@ import java.util.List;
 public class WebSearchService {
 
     private final WebSearchConfig config;
-    private final RestClient restClient = RestClient.create();
+    private final RestClient webSearchRestClient;
 
     public List<SearchedClothing> searchGoogleShopping(String query) {
-        SerpApiResponse response = restClient.get()
+        SerpApiResponse response = webSearchRestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
                         .host("serpapi.com")
                         .path("/search.json")
                         .queryParam("engine", "google_shopping")
                         .queryParam("q", query)
-                        .queryParam("gl", "ge")
-                        .queryParam("hl", "ka")
+                        .queryParam("gl", config.getCountry())
+                        .queryParam("hl", config.getLanguage())
                         .queryParam("api_key", config.getKey())
                         .build())
                 .retrieve()
