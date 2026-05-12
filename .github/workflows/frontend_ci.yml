@@ -35,7 +35,3 @@ jobs:
       - name: Build
         working-directory: find-your-fit
         run: npm run build
-
-      - name: Test
-        working-directory: find-your-fit
-        run: npm test

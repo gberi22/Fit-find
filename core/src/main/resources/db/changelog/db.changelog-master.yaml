@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: fitfind
+      changes:
+        - sqlFile:
+            path: changes/01_init.sql
+            relativeToChangelogFile: true

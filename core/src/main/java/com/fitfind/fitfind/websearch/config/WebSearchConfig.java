@@ -1,14 +1,16 @@
 package com.fitfind.fitfind.websearch.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 
 @Configuration
-@ConfigurationProperties(prefix = "web-search-api")
-@Getter
-@Setter
 public class WebSearchConfig {
-    private String key;
+
+    @Bean
+    public RestClient webSearchRestClient(WebSearchProperties properties) {
+        return RestClient.builder()
+                .baseUrl(properties.getBaseUrl())
+                .build();
+    }
 }

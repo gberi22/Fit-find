@@ -1,15 +1,13 @@
 package com.fitfind.fitfind.websearch.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public record SearchedClothing(
-        String title,
-        String price,
-        String link,
-        String source,
-        String picture,
-        Double rating,
-        @JsonProperty("reviews") Integer reviews
+        @JsonProperty("title") String title,
+        @JsonProperty("price") String price,
+        @JsonProperty("link") String link,
+        @JsonProperty("source") String source,
+        @JsonProperty("thumbnail") String picture,
+        @JsonProperty("rating") Double rating,
+        @JsonProperty("reviews") Long reviews
 ) {}

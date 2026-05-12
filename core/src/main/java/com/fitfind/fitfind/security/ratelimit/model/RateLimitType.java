@@ -1,5 +1,6 @@
 package com.fitfind.fitfind.security.ratelimit.model;
 
 public enum RateLimitType {
-    CLIENT_LOGIN
+    CLIENT_LOGIN,
+    AI_GENERATION
 }
