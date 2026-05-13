@@ -1,0 +1,10 @@
+<main class="home fade-in">
+  <h1 class="home__title">FIT<span class="home__title-accent">FIND</span></h1>
+  <p class="home__subtitle">Placeholder home — full landing page is not part of this slice.</p>
+
+  @if (isAuthenticated()) {
+    <button type="button" class="home__action" (click)="signOut()">Sign out</button>
+  } @else {
+    <a class="home__action" routerLink="/login">Sign in</a>
+  }
+</main>
