@@ -19,10 +19,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.fitfind.fitfind.utils.JsonHelper.parseJsonObject;
 import static com.fitfind.fitfind.utils.JsonHelper.textOrNull;
+import static com.fitfind.fitfind.utils.PromptHelper.buildSearchQueryPrompt;
+import static com.fitfind.fitfind.utils.PromptHelper.pickBestPrompt;
 
 
 @Service
@@ -51,68 +52,6 @@ public class AiService {
         return completions.getChoices().getFirst().getMessage().getContent();
     }
 
-    private String buildSearchQueryPrompt(ClothingItem category, OutfitSuggestionRequest prompt) {
-        String stylesText = prompt.styles().stream()
-                .map(Style::name)
-                .collect(Collectors.joining(", "));
-        if (stylesText.isEmpty()) {
-            stylesText = "(no specific style)";
-        }
-
-        String userMessage = """
-                Build a single Google Shopping search query for the following clothing request.
-                Category: %s
-                Styles: %s
-                Price range: %s - %s
-                Additional comments: %s
-
-                Reply with ONLY the query string, no quotes, no extra text, no markdown.
-                Keep it concise (under 12 words) and optimized for Google Shopping.
-                """.formatted(
-                category.name(),
-                stylesText,
-                prompt.minPrice(),
-                prompt.maxPrice(),
-                prompt.additionalComments() == null ? "" : prompt.additionalComments()
-        );
-
-        String response = chat(userMessage, prompt.email());
-        return response == null ? "" : response.trim().replaceAll("^[\"']|[\"']$", "");
-    }
-
-    private String pickBestPrompt(String resultsJson, ClothingItem category, OutfitSuggestionRequest prompt) {
-        String stylesText = prompt.styles().stream()
-                .map(Style::name)
-                .collect(Collectors.joining(", "));
-
-        return """
-                You are picking the single best clothing item for a user from Google Shopping results.
-
-                User preferences:
-                - Category: %s
-                - Styles: %s
-                - Price range: %s - %s
-                - Additional comments: %s
-
-                Search results (JSON):
-                %s
-
-                Pick the SINGLE best item that fits the user's preferences and price range.
-                Reply with ONLY a valid JSON object, no markdown, no commentary, exactly this shape:
-                {"name": "<title>", "link": "<product url>", "picture": "<image url>"}
-
-                Use the values directly from the chosen result item (title -> name, link -> link, picture -> picture).
-                If absolutely no item is suitable, reply with: {"name": null, "link": null, "picture": null}
-                """.formatted(
-                category.name(),
-                stylesText,
-                prompt.minPrice(),
-                prompt.maxPrice(),
-                prompt.additionalComments() == null ? "" : prompt.additionalComments(),
-                resultsJson
-        );
-    }
-
     public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt) {
         List<Suggestion> suggestions = new ArrayList<>();
         for (ClothingItem category : prompt.clothes()) {
@@ -122,26 +61,28 @@ public class AiService {
         return new OutfitSuggestionResponse(suggestions);
     }
 
-    private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
+    public Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
         log.info("[recommend] category={} - starting", category);
 
-        String query;
+        String response;
         try {
-            query = buildSearchQueryPrompt(category, prompt);
-            log.info("[recommend] category={} - AI built query: '{}'", category, query);
+            String query = buildSearchQueryPrompt(category, prompt);
+            String aiResponse = chat(query, prompt.email());
+            response = aiResponse == null ? "" : aiResponse.trim().replaceAll("^[\"']|[\"']$", "");
+            log.info("[recommend] category={} - AI built query: '{}'", category, response);
         } catch (RuntimeException e) {
             log.warn("[recommend] category={} - FAIL building query: {}", category, e.getMessage(), e);
             return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
         }
 
-        if (query.isBlank()) {
+        if (response.isBlank()) {
             log.warn("[recommend] category={} - FAIL: AI returned empty query", category);
             return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
         }
 
         List<SearchedClothing> results;
         try {
-            results = webSearchService.searchGoogleShopping(query);
+            results = webSearchService.searchGoogleShopping(response);
         } catch (RuntimeException e) {
             log.warn("[recommend] category={} - FAIL calling SerpAPI: {}", category, e.getMessage(), e);
             return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
@@ -149,7 +90,7 @@ public class AiService {
         log.info("[recommend] category={} - SerpAPI returned {} results", category, results.size());
 
         if (results.isEmpty()) {
-            log.warn("[recommend] category={} - FAIL: SerpAPI returned 0 results for query '{}'", category, query);
+            log.warn("[recommend] category={} - FAIL: SerpAPI returned 0 results for query '{}'", category, response);
             return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
         }
 
