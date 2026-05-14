@@ -72,6 +72,18 @@ input.mat-mdc-input-element:-webkit-autofill:active {
   font-weight: 300;
 }
 
+.auth-subtitle a {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.auth-subtitle a:hover {
+  text-decoration: underline;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
