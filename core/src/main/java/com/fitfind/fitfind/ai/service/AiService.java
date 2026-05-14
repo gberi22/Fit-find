@@ -63,6 +63,7 @@ public class AiService {
 
     public Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
         log.info("[recommend] category={} - starting", category);
+        Suggestion failedSuggestion = new Suggestion(category, null, null, null, NOT_FOUND_MESSAGE);
 
         String response;
         try {
@@ -72,12 +73,12 @@ public class AiService {
             log.info("[recommend] category={} - AI built query: '{}'", category, response);
         } catch (RuntimeException e) {
             log.warn("[recommend] category={} - FAIL building query: {}", category, e.getMessage(), e);
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
 
         if (response.isBlank()) {
             log.warn("[recommend] category={} - FAIL: AI returned empty query", category);
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
 
         List<SearchedClothing> results;
@@ -85,13 +86,13 @@ public class AiService {
             results = webSearchService.searchGoogleShopping(response);
         } catch (RuntimeException e) {
             log.warn("[recommend] category={} - FAIL calling SerpAPI: {}", category, e.getMessage(), e);
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
         log.info("[recommend] category={} - SerpAPI returned {} results", category, results.size());
 
         if (results.isEmpty()) {
             log.warn("[recommend] category={} - FAIL: SerpAPI returned 0 results for query '{}'", category, response);
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
 
         List<SearchedClothing> trimmed = results.size() > MAX_RESULTS_FOR_AI
@@ -108,11 +109,13 @@ public class AiService {
             return rec;
         } catch (RuntimeException e) {
             log.warn("[recommend] category={} - FAIL picking best: {}", category, e.getMessage(), e);
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
     }
 
     private Suggestion pickBest(ClothingItem category, OutfitSuggestionRequest prompt, List<SearchedClothing> results) {
+        Suggestion failedSuggestion = new Suggestion(category, null, null, null, NOT_FOUND_MESSAGE);
+
         String resultsJson;
         try {
             resultsJson = objectMapper.writeValueAsString(results);
@@ -127,7 +130,7 @@ public class AiService {
         JsonNode node = parseJsonObject(response, objectMapper);
         if (node == null) {
             log.warn("[recommend] category={} - FAIL: could not parse AI JSON: {}", category, response);
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
 
         String name = textOrNull(node.get("name"));
@@ -135,8 +138,9 @@ public class AiService {
         String picture = textOrNull(node.get("picture"));
 
         if (name == null || link == null) {
-            return Suggestion.notFound(category, NOT_FOUND_MESSAGE);
+            return failedSuggestion;
         }
-        return Suggestion.found(category, name, link, picture);
+
+        return new Suggestion(category, name, link, picture, null);
     }
 }
