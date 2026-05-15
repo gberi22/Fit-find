@@ -1,10 +1,102 @@
-<main class="home fade-in">
-  <h1 class="home__title">FIT<span class="home__title-accent">FIND</span></h1>
-  <p class="home__subtitle">Placeholder home — full landing page is not part of this slice.</p>
+<nav class="navbar">
+  <a class="nav-logo" routerLink="/">FIT<span>FIND</span></a>
+  <ul class="nav-links">
+    <li><a class="nav-link" routerLink="/">Home</a></li>
+    <li><button type="button" class="nav-link">Feed</button></li>
+    <li><button type="button" class="nav-link">Support</button></li>
+    @if (isAuthenticated()) {
+      <li>
+        <button type="button" class="nav-btn" (click)="signOut()">Sign Out</button>
+      </li>
+    } @else {
+      <li><a class="nav-link" routerLink="/login">Sign In</a></li>
+      <li><a class="nav-btn" routerLink="/register">Get Started</a></li>
+    }
+  </ul>
+</nav>
 
-  @if (isAuthenticated()) {
-    <button type="button" class="home__action" (click)="signOut()">Sign out</button>
-  } @else {
-    <a class="home__action" routerLink="/login">Sign in</a>
-  }
-</main>
+<div class="home-page fade-in">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-line v1"></div>
+    <div class="hero-grid-line v2"></div>
+    <div class="hero-grid-line v3"></div>
+    <div class="hero-grid-line h1"></div>
+    <div class="hero-grid-line h2"></div>
+
+    <div class="hero-content">
+      <p class="hero-label">AI-Powered Styling Assistant</p>
+      <h1 class="hero-title">
+        Discover Your<br />
+        Perfect <em>Look</em>
+      </h1>
+      <p class="hero-subtitle">
+        Describe your style, set your budget, and let artificial intelligence curate personalized
+        outfits — then find exactly where to buy each piece.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" routerLink="/register">Start Styling</a>
+        <button type="button" class="btn-secondary">Explore Looks</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-section">
+    <p class="section-label">How It Works</p>
+    <h2 class="section-title">Three steps to your perfect outfit</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <span class="step-number">01</span>
+        <span class="step-icon">◇</span>
+        <h3 class="step-title">Describe</h3>
+        <p class="step-desc">
+          Choose your style — casual, formal, vintage, or alternative. Set your budget and occasion.
+          Add color preferences or a reference image.
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">02</span>
+        <span class="step-icon">✦</span>
+        <h3 class="step-title">Generate</h3>
+        <p class="step-desc">
+          Our AI stylist analyzes your preferences and curates a complete outfit, generating a
+          visual preview of your personalized look.
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-number">03</span>
+        <span class="step-icon">→</span>
+        <h3 class="step-title">Shop</h3>
+        <p class="step-desc">
+          Browse matching products from real stores. Click through to buy each piece directly. Save
+          your favorite looks and share them.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="looks-section">
+    <p class="section-label">Community</p>
+    <h2 class="section-title">Trending looks this week</h2>
+    <div class="looks-grid">
+      @for (look of placeholderLooks; track look.title) {
+        <div class="look-card">
+          <div class="look-card-img">{{ look.icon }}</div>
+          <div class="look-card-overlay">
+            <span class="look-card-style">{{ look.style }}</span>
+            <span class="look-card-title">{{ look.title }}</span>
+            <div class="look-card-meta">
+              <span>★ {{ look.rating }}</span>
+              <span>{{ look.budget }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-left">FIT<span>FIND</span></div>
+    <div class="footer-right">© 2026 FitFind — Bachelor Project</div>
+  </footer>
+</div>
