@@ -1,6 +1,7 @@
 package com.fitfind.fitfind.security.exception.handler;
 
 import com.fitfind.fitfind.client.model.ClientNotFoundException;
+import com.fitfind.fitfind.registration.exception.EmailAlreadyExistsException;
 import com.fitfind.fitfind.security.exception.model.ApiErrors;
 import com.fitfind.fitfind.security.ratelimit.exception.TooManyRequestException;
 import org.springframework.http.HttpStatus;
@@ -27,5 +28,14 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(apiErrors, HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ApiErrors> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        ApiErrors apiErrors = ApiErrors.builder()
+                .withMessage(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(apiErrors, HttpStatus.CONFLICT);
     }
 }

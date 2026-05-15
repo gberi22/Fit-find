@@ -1,0 +1,122 @@
+<div class="auth-page fade-in">
+  <section class="auth-form-pane">
+    <button type="button" class="auth-back" routerLink="/">← Back to home</button>
+
+    <div class="auth-form-inner">
+      <h1 class="auth-title">Create account</h1>
+      <p class="auth-subtitle">
+        Already have an account?
+        <a routerLink="/login">Sign in</a>
+      </p>
+
+      <form
+        class="auth-form"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate
+        autocomplete="off"
+      >
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="auth-field">
+            <mat-label>First Name</mat-label>
+            <input
+              matInput
+              type="text"
+              autocomplete="given-name"
+              spellcheck="false"
+              formControlName="firstName"
+            />
+            @if (form.controls.firstName.hasError('minlength')) {
+              <mat-error>At least 2 characters.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="auth-field">
+            <mat-label>Last Name</mat-label>
+            <input
+              matInput
+              type="text"
+              autocomplete="family-name"
+              spellcheck="false"
+              formControlName="lastName"
+            />
+            @if (form.controls.lastName.hasError('minlength')) {
+              <mat-error>At least 2 characters.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Email Address</mat-label>
+          <input
+            matInput
+            type="email"
+            inputmode="email"
+            autocomplete="off"
+            spellcheck="false"
+            formControlName="email"
+          />
+          @if (form.controls.email.hasError('email')) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
+            formControlName="password"
+          />
+          <button
+            matSuffix
+            mat-button
+            type="button"
+            class="password-toggle-btn"
+            (click)="toggleShowPassword()"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword() ? 'Hide' : 'Show' }}
+          </button>
+          @if (form.controls.password.hasError('minlength')) {
+            <mat-error>At least 8 characters.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Confirm Password</mat-label>
+          <input
+            matInput
+            [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
+            formControlName="confirmPassword"
+          />
+          @if (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
+            <mat-error>Passwords do not match.</mat-error>
+          }
+        </mat-form-field>
+
+        @if (serverError(); as message) {
+          <p class="form-error form-error--server" role="alert">{{ message }}</p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="auth-submit"
+          [disabled]="submitting()"
+        >
+          {{ submitting() ? 'Creating account…' : 'Create Account' }}
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <app-auth-side-panel
+    icon="✦"
+    quote="Fashion is the armor to survive the reality of everyday life."
+    attribution="Bill Cunningham"
+  />
+</div>
