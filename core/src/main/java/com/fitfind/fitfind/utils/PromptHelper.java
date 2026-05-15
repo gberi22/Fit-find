@@ -17,6 +17,8 @@ public class PromptHelper {
 
         return """
                 Build a single Google Shopping search query for the following clothing request.
+                Gender: %s
+                Size: %s
                 Category: %s
                 Styles: %s
                 Price range: %s - %s
@@ -25,6 +27,8 @@ public class PromptHelper {
                 Reply with ONLY the query string, no quotes, no extra text, no markdown.
                 Keep it concise (under 12 words) and optimized for Google Shopping.
                 """.formatted(
+                prompt.gender(),
+                prompt.size(),
                 category.name(),
                 stylesText,
                 prompt.minPrice(),
@@ -42,6 +46,8 @@ public class PromptHelper {
                 You are picking the single best clothing item for a user from Google Shopping results.
 
                 User preferences:
+                - Gender: %s
+                - Size: %s
                 - Category: %s
                 - Styles: %s
                 - Price range: %s - %s
@@ -57,6 +63,8 @@ public class PromptHelper {
                 Use the values directly from the chosen result item (title -> name, link -> link, picture -> picture).
                 If absolutely no item is suitable, reply with: {"name": null, "link": null, "picture": null}
                 """.formatted(
+                prompt.gender(),
+                prompt.size(),
                 category.name(),
                 stylesText,
                 prompt.minPrice(),

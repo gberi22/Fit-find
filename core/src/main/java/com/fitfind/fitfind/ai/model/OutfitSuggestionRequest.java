@@ -9,6 +9,8 @@ import java.util.List;
 
 public record OutfitSuggestionRequest(
         @NotNull @Email String email,
+        @NotNull Gender gender,
+        @NotNull Size size,
         @NotNull List<ClothingItem> clothes,
         @NotNull List<Style> styles,
         @NotNull @DecimalMin("0.00") BigDecimal minPrice,

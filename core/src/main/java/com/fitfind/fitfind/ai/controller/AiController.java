@@ -16,7 +16,7 @@ public class AiController {
 
     private final AiService aiService;
 
-    @PostMapping("/api/ai/recommend")
+    @PostMapping
     public OutfitSuggestionResponse recommend(@RequestBody OutfitSuggestionRequest request) {
         return aiService.recommend(request);
     }
