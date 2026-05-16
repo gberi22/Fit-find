@@ -1,7 +1,7 @@
 package com.fitfind.fitfind.ai.controller;
 
-import com.fitfind.fitfind.ai.model.OutfitSuggestionRequest;
-import com.fitfind.fitfind.ai.model.OutfitSuggestionResponse;
+import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.ai.service.AiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

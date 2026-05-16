@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.utils;
+package com.fitfind.fitfind.ai.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

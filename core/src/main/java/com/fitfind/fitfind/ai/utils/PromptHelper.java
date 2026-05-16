@@ -1,8 +1,8 @@
-package com.fitfind.fitfind.utils;
+package com.fitfind.fitfind.ai.utils;
 
-import com.fitfind.fitfind.ai.model.ClothingItem;
-import com.fitfind.fitfind.ai.model.OutfitSuggestionRequest;
-import com.fitfind.fitfind.ai.model.Style;
+import com.fitfind.fitfind.ai.model.enums.ClothingItem;
+import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.enums.Style;
 
 import java.util.stream.Collectors;
 
