@@ -25,10 +25,6 @@ jobs:
           cache: 'maven'
       - name: Build and Test
         working-directory: core
-        env:
-          SPRING_DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
         run: mvn clean verify --batch-mode
       - name: Upload build reports
         uses: actions/upload-artifact@v4
