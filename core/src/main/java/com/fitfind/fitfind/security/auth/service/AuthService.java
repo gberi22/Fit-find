@@ -27,7 +27,7 @@ public class AuthService {
         String email = request.email().toLowerCase();
         rateLimitService.enforceRateLimit(email, RateLimitType.CLIENT_LOGIN);
         Client client = clientRepository.findClientByEmail(email)
-                .orElseThrow(() -> new ClientNotFoundException("No account found for: " + request.email()));
+                .orElseThrow(() -> new ClientNotFoundException("No account found for: " + email));
 
         if (!passwordEncoder.matches(request.password(), client.getPassword())) {
             throw new BadCredentialsException("Invalid password");

@@ -1,0 +1,76 @@
+<div class="auth-page fade-in">
+  <section class="auth-form-pane">
+    <button type="button" class="auth-back" routerLink="/">← Back to home</button>
+
+    <div class="auth-form-inner">
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">
+        Don't have an account?
+        <a routerLink="/register">Create one</a>
+      </p>
+
+      <form
+        class="auth-form"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate
+        autocomplete="off"
+      >
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Email Address</mat-label>
+          <input
+            matInput
+            type="email"
+            inputmode="email"
+            autocomplete="off"
+            spellcheck="false"
+            formControlName="email"
+          />
+          @if (form.controls.email.hasError('email')) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
+            formControlName="password"
+          />
+          <button
+            matSuffix
+            mat-button
+            type="button"
+            class="password-toggle-btn"
+            (click)="toggleShowPassword()"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword() ? 'Hide' : 'Show' }}
+          </button>
+        </mat-form-field>
+
+        @if (serverError(); as message) {
+          <p class="form-error form-error--server" role="alert">{{ message }}</p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="auth-submit"
+          [disabled]="submitting()"
+        >
+          {{ submitting() ? 'Signing in…' : 'Sign In' }}
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <app-auth-side-panel
+    icon="◈"
+    quote="Style is a way to say who you are without having to speak."
+    attribution="Rachel Zoe"
+  />
+</div>

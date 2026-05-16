@@ -1,0 +1,28 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$yellow-palette,
+        theme-type: dark,
+      ),
+      typography: (
+        brand-family: 'Playfair Display, Georgia, serif',
+        plain-family: 'DM Sans, sans-serif',
+      ),
+      density: 0,
+    )
+  );
+
+  --mat-sys-primary: var(--accent);
+  --mat-sys-on-primary: var(--bg-primary);
+  --mat-sys-surface: var(--bg-primary);
+  --mat-sys-surface-container: var(--bg-input);
+  --mat-sys-surface-container-high: var(--bg-card);
+  --mat-sys-on-surface: var(--text-primary);
+  --mat-sys-on-surface-variant: var(--text-secondary);
+  --mat-sys-outline: var(--border);
+  --mat-sys-outline-variant: var(--border);
+  --mat-sys-error: var(--error);
+}
