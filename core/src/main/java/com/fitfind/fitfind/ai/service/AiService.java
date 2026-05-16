@@ -47,12 +47,12 @@ public class AiService {
     public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt, String email) {
         rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
         List<Suggestion> suggestions = prompt.clothes().stream()
-                .map(category -> recommendForCategory(category, prompt, email))
+                .map(category -> recommendForCategory(category, prompt))
                 .toList();
         return new OutfitSuggestionResponse(suggestions);
     }
 
-    private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt, String email) {
+    private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
         log.info("[recommend] category={} - starting", category);
         try {
             String query = buildQuery(category, prompt);
