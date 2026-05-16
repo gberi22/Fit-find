@@ -5,7 +5,6 @@ import com.fitfind.fitfind.ai.model.enums.Gender;
 import com.fitfind.fitfind.ai.model.enums.Size;
 import com.fitfind.fitfind.ai.model.enums.Style;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;

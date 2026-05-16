@@ -55,7 +55,7 @@ public class AiService {
     private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt, String email) {
         log.info("[recommend] category={} - starting", category);
         try {
-            String query = buildQuery(category, prompt, email);
+            String query = buildQuery(category, prompt);
             List<SearchedClothing> results = searchProducts(category, query);
             return pickBest(category, prompt, results);
         } catch (CategoryFailedException e) {
@@ -67,7 +67,7 @@ public class AiService {
         }
     }
 
-    private String buildQuery(ClothingItem category, OutfitSuggestionRequest prompt, String email) {
+    private String buildQuery(ClothingItem category, OutfitSuggestionRequest prompt) {
         String searchQuery = buildSearchQueryPrompt(category, prompt);
         String raw = chat(searchQuery);
         String query = raw == null ? "" : raw.trim().replaceAll("^[\"']|[\"']$", "");
