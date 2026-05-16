@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record OutfitSuggestionRequest(
-        @NotNull @Email String email,
         @NotNull Gender gender,
         @NotNull Size size,
         @NotNull List<ClothingItem> clothes,
