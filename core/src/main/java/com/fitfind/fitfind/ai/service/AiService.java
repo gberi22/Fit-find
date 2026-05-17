@@ -8,7 +8,11 @@ import com.azure.ai.openai.models.ChatRole;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.config.AiProperties;
+import com.fitfind.fitfind.ai.exception.CategoryFailedException;
 import com.fitfind.fitfind.ai.model.*;
+import com.fitfind.fitfind.ai.model.enums.ClothingItem;
+import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.security.ratelimit.model.RateLimitType;
 import com.fitfind.fitfind.security.ratelimit.service.RateLimitService;
 import com.fitfind.fitfind.websearch.model.SearchedClothing;
@@ -17,13 +21,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.fitfind.fitfind.utils.JsonHelper.parseJsonObject;
-import static com.fitfind.fitfind.utils.JsonHelper.textOrNull;
-import static com.fitfind.fitfind.utils.PromptHelper.buildSearchQueryPrompt;
-import static com.fitfind.fitfind.utils.PromptHelper.pickBestPrompt;
+import static com.fitfind.fitfind.ai.utils.JsonHelper.parseJsonObject;
+import static com.fitfind.fitfind.ai.utils.JsonHelper.textOrNull;
+import static com.fitfind.fitfind.ai.utils.PromptHelper.buildSearchQueryPrompt;
+import static com.fitfind.fitfind.ai.utils.PromptHelper.pickBestPrompt;
 
 
 @Service
@@ -41,106 +44,90 @@ public class AiService {
     private final WebSearchService webSearchService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String chat(String message, String email) {
-        rateLimitService.enforceRateLimit(email, RateLimitType.CLIENT_LOGIN);
+    public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt, String email) {
+        rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
+        List<Suggestion> suggestions = prompt.clothes().stream()
+                .map(category -> recommendForCategory(category, prompt))
+                .toList();
+        return new OutfitSuggestionResponse(suggestions);
+    }
 
+    private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
+        log.info("[recommend] category={} - starting", category);
+        try {
+            String query = buildQuery(category, prompt);
+            List<SearchedClothing> results = searchProducts(category, query);
+            return pickBest(category, prompt, results);
+        } catch (CategoryFailedException e) {
+            log.warn("[recommend] category={} - FAIL: {}", category, e.getMessage());
+            return notFound(category);
+        } catch (RuntimeException e) {
+            log.warn("[recommend] category={} - FAIL (unexpected): {}", category, e.getMessage(), e);
+            return notFound(category);
+        }
+    }
+
+    private String buildQuery(ClothingItem category, OutfitSuggestionRequest prompt) {
+        String searchQuery = buildSearchQueryPrompt(category, prompt);
+        String raw = chat(searchQuery);
+        String query = raw == null ? "" : raw.trim().replaceAll("^[\"']|[\"']$", "");
+        if (query.isBlank()) {
+            throw new CategoryFailedException("AI returned empty query");
+        }
+        log.info("[recommend] category={} - query: '{}'", category, query);
+        return query;
+    }
+
+    private List<SearchedClothing> searchProducts(ClothingItem category, String query) {
+        List<SearchedClothing> results = webSearchService.searchGoogleShopping(query);
+        log.info("[recommend] category={} - SerpAPI returned {} results", category, results.size());
+        if (results.isEmpty()) {
+            throw new CategoryFailedException("SerpAPI returned 0 results for '" + query + "'");
+        }
+        return results.size() > MAX_RESULTS_FOR_AI ? results.subList(0, MAX_RESULTS_FOR_AI) : results;
+    }
+
+    private Suggestion pickBest(
+        ClothingItem category,
+        OutfitSuggestionRequest prompt,
+        List<SearchedClothing> results
+    ) {
+        String resultsJson;
+        try {
+            resultsJson = objectMapper.writeValueAsString(results);
+        } catch (Exception e) {
+            throw new CategoryFailedException("Failed to serialize search results", e);
+        }
+
+        String response = chat(pickBestPrompt(resultsJson, category, prompt));
+        log.info("[recommend] category={} - AI selection: {}", category, response);
+
+        JsonNode node = parseJsonObject(response, objectMapper);
+        if (node == null) {
+            throw new CategoryFailedException("Could not parse AI JSON: " + response);
+        }
+
+        String name = textOrNull(node.get("name"));
+        String link = textOrNull(node.get("link"));
+        String picture = textOrNull(node.get("picture"));
+        if (name == null || link == null) {
+            throw new CategoryFailedException("AI selection missing name or link");
+        }
+
+        log.info("[recommend] category={} - SUCCESS: picked '{}'", category, name);
+        return new Suggestion(category, name, link, picture, null);
+    }
+
+    private Suggestion notFound(ClothingItem category) {
+        return new Suggestion(category, null, null, null, NOT_FOUND_MESSAGE);
+    }
+
+    private String chat(String message) {
         ChatCompletionsOptions options = new ChatCompletionsOptions(
                 List.of(new ChatMessage(ChatRole.USER).setContent(message))
         ).setModel(aiProperties.getModel());
 
         ChatCompletions completions = openaiClient.getChatCompletions(aiProperties.getModel(), options);
         return completions.getChoices().getFirst().getMessage().getContent();
-    }
-
-    public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt) {
-        List<Suggestion> suggestions = new ArrayList<>();
-        for (ClothingItem category : prompt.clothes()) {
-            suggestions.add(recommendForCategory(category, prompt));
-        }
-
-        return new OutfitSuggestionResponse(suggestions);
-    }
-
-    public Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
-        log.info("[recommend] category={} - starting", category);
-        Suggestion failedSuggestion = new Suggestion(category, null, null, null, NOT_FOUND_MESSAGE);
-
-        String response;
-        try {
-            String query = buildSearchQueryPrompt(category, prompt);
-            String aiResponse = chat(query, prompt.email());
-            response = aiResponse == null ? "" : aiResponse.trim().replaceAll("^[\"']|[\"']$", "");
-            log.info("[recommend] category={} - AI built query: '{}'", category, response);
-        } catch (RuntimeException e) {
-            log.warn("[recommend] category={} - FAIL building query: {}", category, e.getMessage(), e);
-            return failedSuggestion;
-        }
-
-        if (response.isBlank()) {
-            log.warn("[recommend] category={} - FAIL: AI returned empty query", category);
-            return failedSuggestion;
-        }
-
-        List<SearchedClothing> results;
-        try {
-            results = webSearchService.searchGoogleShopping(response);
-        } catch (RuntimeException e) {
-            log.warn("[recommend] category={} - FAIL calling SerpAPI: {}", category, e.getMessage(), e);
-            return failedSuggestion;
-        }
-        log.info("[recommend] category={} - SerpAPI returned {} results", category, results.size());
-
-        if (results.isEmpty()) {
-            log.warn("[recommend] category={} - FAIL: SerpAPI returned 0 results for query '{}'", category, response);
-            return failedSuggestion;
-        }
-
-        List<SearchedClothing> trimmed = results.size() > MAX_RESULTS_FOR_AI
-                ? results.subList(0, MAX_RESULTS_FOR_AI)
-                : results;
-
-        try {
-            Suggestion rec = pickBest(category, prompt, trimmed);
-            if (rec.name() == null) {
-                log.warn("[recommend] category={} - FAIL: AI selection step produced null name", category);
-            } else {
-                log.info("[recommend] category={} - SUCCESS: picked '{}'", category, rec.name());
-            }
-            return rec;
-        } catch (RuntimeException e) {
-            log.warn("[recommend] category={} - FAIL picking best: {}", category, e.getMessage(), e);
-            return failedSuggestion;
-        }
-    }
-
-    private Suggestion pickBest(ClothingItem category, OutfitSuggestionRequest prompt, List<SearchedClothing> results) {
-        Suggestion failedSuggestion = new Suggestion(category, null, null, null, NOT_FOUND_MESSAGE);
-
-        String resultsJson;
-        try {
-            resultsJson = objectMapper.writeValueAsString(results);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize search results", e);
-        }
-
-        String userMessage = pickBestPrompt(resultsJson, category, prompt);
-
-        String response = chat(userMessage, prompt.email());
-        log.info("[recommend] category={} - AI selection raw response: {}", category, response);
-        JsonNode node = parseJsonObject(response, objectMapper);
-        if (node == null) {
-            log.warn("[recommend] category={} - FAIL: could not parse AI JSON: {}", category, response);
-            return failedSuggestion;
-        }
-
-        String name = textOrNull(node.get("name"));
-        String link = textOrNull(node.get("link"));
-        String picture = textOrNull(node.get("picture"));
-
-        if (name == null || link == null) {
-            return failedSuggestion;
-        }
-
-        return new Suggestion(category, name, link, picture, null);
     }
 }

@@ -1,5 +1,6 @@
 package com.fitfind.fitfind.security.exception.handler;
 
+import com.fitfind.fitfind.ai.exception.CategoryFailedException;
 import com.fitfind.fitfind.client.model.ClientNotFoundException;
 import com.fitfind.fitfind.registration.exception.EmailAlreadyExistsException;
 import com.fitfind.fitfind.security.exception.model.ApiErrors;
@@ -37,5 +38,14 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(apiErrors, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CategoryFailedException.class)
+    public ResponseEntity<ApiErrors> handleCategoryFailedException(CategoryFailedException ex) {
+        ApiErrors apiErrors = ApiErrors.builder()
+                .withMessage(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(apiErrors, HttpStatus.BAD_GATEWAY);
     }
 }

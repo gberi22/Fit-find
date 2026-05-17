@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.ai.model;
+package com.fitfind.fitfind.ai.model.enums;
 
 public enum ClothingItem {
     FULL_OUTFIT, SHIRT, T_SHIRT, DRESS,
