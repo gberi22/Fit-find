@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.config.AiProperties;
 import com.fitfind.fitfind.ai.exception.CategoryFailedException;
+import com.fitfind.fitfind.ai.history.service.AiHistoryService;
 import com.fitfind.fitfind.ai.model.*;
 import com.fitfind.fitfind.ai.model.enums.ClothingItem;
 import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
@@ -42,6 +43,7 @@ public class AiService {
     private final AiProperties aiProperties;
     private final RateLimitService rateLimitService;
     private final WebSearchService webSearchService;
+    private final AiHistoryService aiHistoryService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt, String email) {
@@ -49,7 +51,9 @@ public class AiService {
         List<Suggestion> suggestions = prompt.clothes().stream()
                 .map(category -> recommendForCategory(category, prompt))
                 .toList();
-        return new OutfitSuggestionResponse(suggestions);
+        OutfitSuggestionResponse response = new OutfitSuggestionResponse(suggestions);
+        aiHistoryService.record(email, prompt, response);
+        return response;
     }
 
     private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
