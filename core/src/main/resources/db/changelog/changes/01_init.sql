@@ -1,4 +1,5 @@
 CREATE SEQUENCE IF NOT EXISTS client_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS ai_history_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE IF NOT EXISTS client (
     id          BIGSERIAL PRIMARY KEY,
@@ -22,3 +23,11 @@ CREATE TABLE IF NOT EXISTS system_configuration
 INSERT INTO system_configuration (id, token_validity_minutes)
 SELECT 1, 60
 WHERE NOT EXISTS (SELECT 1 FROM system_configuration);
+
+CREATE TABLE IF NOT EXISTS ai_history (
+    id          BIGSERIAL PRIMARY KEY,
+    client_id   BIGINT NOT NULL REFERENCES client(id),
+    request     JSONB NOT NULL,
+    response    JSONB NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
