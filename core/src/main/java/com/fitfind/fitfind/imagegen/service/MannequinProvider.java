@@ -1,6 +1,7 @@
 package com.fitfind.fitfind.imagegen.service;
 
 import com.fitfind.fitfind.ai.model.enums.Gender;
+import com.fitfind.fitfind.imagegen.model.InlineImage;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -21,7 +22,7 @@ public class MannequinProvider {
     private static final String BASE_PATH = "imagegen/mannequins/";
     private static final List<String> EXTENSIONS = List.of("png", "jpg", "jpeg");
 
-    private final Map<Gender, ImageDownloader.DownloadedImage> cache = new EnumMap<>(Gender.class);
+    private final Map<Gender, InlineImage> cache = new EnumMap<>(Gender.class);
 
     @PostConstruct
     void load() {
@@ -29,7 +30,7 @@ public class MannequinProvider {
         loadFromClasspath(Gender.WOMEN, "women");
     }
 
-    public Optional<ImageDownloader.DownloadedImage> forGender(Gender gender) {
+    public Optional<InlineImage> forGender(Gender gender) {
         return Optional.ofNullable(cache.get(gender));
     }
 
@@ -44,7 +45,7 @@ public class MannequinProvider {
                 byte[] bytes = in.readAllBytes();
                 String base64 = Base64.getEncoder().encodeToString(bytes);
                 String mime = "jpg".equals(ext) ? "image/jpeg" : "image/" + ext;
-                cache.put(gender, new ImageDownloader.DownloadedImage(mime, base64));
+                cache.put(gender, new InlineImage(mime, base64));
                 log.info("[imagegen] loaded mannequin reference for {} from {} ({} bytes)",
                         gender, path, bytes.length);
                 return;

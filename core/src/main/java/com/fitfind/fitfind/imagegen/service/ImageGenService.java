@@ -4,6 +4,7 @@ import com.fitfind.fitfind.ai.model.Suggestion;
 import com.fitfind.fitfind.ai.model.enums.Gender;
 import com.fitfind.fitfind.imagegen.config.ImageGenProperties;
 import com.fitfind.fitfind.imagegen.exception.ImageGenerationException;
+import com.fitfind.fitfind.imagegen.model.InlineImage;
 import com.fitfind.fitfind.imagegen.model.gemini.GeminiRequest;
 import com.fitfind.fitfind.imagegen.model.gemini.GeminiResponse;
 import com.fitfind.fitfind.imagegen.model.request.OutfitImageRequest;
@@ -14,10 +15,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static com.fitfind.fitfind.ai.utils.PromptHelper.buildOutfitImagePrompt;
@@ -29,17 +32,18 @@ public class ImageGenService {
 
     private static final String GENERATE_PATH = "/v1beta/models/{model}:generateContent";
     private static final String PARAM_KEY = "key";
+    private static final String FALLBACK_IMAGE_MIME = "image/jpeg";
 
     private final RestClient geminiRestClient;
+    private final RestClient imageDownloadRestClient;
     private final ImageGenProperties properties;
-    private final ImageDownloader imageDownloader;
     private final MannequinProvider mannequinProvider;
     private final RateLimitService rateLimitService;
 
     public OutfitImageResponse generate(OutfitImageRequest request, String email) {
         rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
 
-        ImageDownloader.DownloadedImage mannequin = mannequinProvider.forGender(request.gender())
+        InlineImage mannequin = mannequinProvider.forGender(request.gender())
                 .orElseThrow(() -> new ImageGenerationException(
                         "No mannequin reference is configured for gender " + request.gender()
                                 + ". Cannot generate outfit image."));
@@ -54,26 +58,52 @@ public class ImageGenService {
         }
 
         log.info("[imagegen] downloading {} product images", withPictures.size());
-        List<ImageDownloader.DownloadedImage> downloaded = withPictures.stream()
-                .map(s -> imageDownloader.download(s.picture()))
+        List<InlineImage> garments = withPictures.stream()
+                .map(s -> downloadProductImage(s.picture()))
                 .toList();
 
-        GeminiRequest geminiRequest = buildGeminiRequest(request.gender(), withPictures, downloaded, mannequin);
+        GeminiRequest geminiRequest = buildGeminiRequest(request.gender(), withPictures, garments, mannequin);
         GeminiResponse geminiResponse = callGemini(geminiRequest);
 
         return extractImage(geminiResponse);
     }
 
+    private InlineImage downloadProductImage(String url) {
+        try {
+            ResponseEntity<byte[]> response = imageDownloadRestClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .toEntity(byte[].class);
+
+            byte[] bytes = response.getBody();
+            if (bytes == null || bytes.length == 0) {
+                throw new ImageGenerationException("Empty body when downloading " + url);
+            }
+
+            MediaType contentType = response.getHeaders().getContentType();
+            String mime = contentType == null ? FALLBACK_IMAGE_MIME : contentType.toString();
+            if (!mime.startsWith("image/")) {
+                mime = FALLBACK_IMAGE_MIME;
+            }
+
+            return new InlineImage(mime, Base64.getEncoder().encodeToString(bytes));
+        } catch (ImageGenerationException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new ImageGenerationException("Failed to download product image: " + url, e);
+        }
+    }
+
     private GeminiRequest buildGeminiRequest(
             Gender gender,
             List<Suggestion> suggestions,
-            List<ImageDownloader.DownloadedImage> images,
-            ImageDownloader.DownloadedImage mannequin
+            List<InlineImage> garments,
+            InlineImage mannequin
     ) {
         List<GeminiRequest.Part> parts = new ArrayList<>();
         parts.add(GeminiRequest.Part.text(buildOutfitImagePrompt(gender, suggestions)));
         parts.add(GeminiRequest.Part.inline(mannequin.mimeType(), mannequin.base64()));
-        for (ImageDownloader.DownloadedImage img : images) {
+        for (InlineImage img : garments) {
             parts.add(GeminiRequest.Part.inline(img.mimeType(), img.base64()));
         }
 
