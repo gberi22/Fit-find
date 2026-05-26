@@ -3,7 +3,7 @@ package com.fitfind.fitfind.ai.history.service;
 import com.fitfind.fitfind.ai.history.model.AiHistory;
 import com.fitfind.fitfind.ai.history.model.response.AiHistoryResponse;
 import com.fitfind.fitfind.ai.history.repository.AiHistoryRepository;
-import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.client.model.Client;
 import com.fitfind.fitfind.client.model.ClientNotFoundException;

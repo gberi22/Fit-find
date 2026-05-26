@@ -12,7 +12,7 @@ import com.fitfind.fitfind.ai.exception.CategoryFailedException;
 import com.fitfind.fitfind.ai.history.service.AiHistoryService;
 import com.fitfind.fitfind.ai.model.*;
 import com.fitfind.fitfind.ai.model.enums.ClothingItem;
-import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.security.ratelimit.model.RateLimitType;
 import com.fitfind.fitfind.security.ratelimit.service.RateLimitService;
