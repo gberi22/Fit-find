@@ -2,6 +2,7 @@ package com.fitfind.fitfind.security.exception.handler;
 
 import com.fitfind.fitfind.ai.exception.CategoryFailedException;
 import com.fitfind.fitfind.client.model.ClientNotFoundException;
+import com.fitfind.fitfind.imagegen.exception.ImageGenerationException;
 import com.fitfind.fitfind.registration.exception.EmailAlreadyExistsException;
 import com.fitfind.fitfind.security.exception.model.ApiErrors;
 import com.fitfind.fitfind.security.ratelimit.exception.TooManyRequestException;
@@ -42,6 +43,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CategoryFailedException.class)
     public ResponseEntity<ApiErrors> handleCategoryFailedException(CategoryFailedException ex) {
+        ApiErrors apiErrors = ApiErrors.builder()
+                .withMessage(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(apiErrors, HttpStatus.BAD_GATEWAY);
+    }
+
+    @ExceptionHandler(ImageGenerationException.class)
+    public ResponseEntity<ApiErrors> handleImageGenerationException(ImageGenerationException ex) {
         ApiErrors apiErrors = ApiErrors.builder()
                 .withMessage(ex.getMessage())
                 .build();

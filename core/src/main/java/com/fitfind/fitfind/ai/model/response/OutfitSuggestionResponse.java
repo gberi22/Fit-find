@@ -1,9 +1,9 @@
 package com.fitfind.fitfind.ai.model.response;
 
-import com.fitfind.fitfind.ai.model.Suggestion;
+import com.fitfind.fitfind.ai.model.CategorySuggestions;
 
 import java.util.List;
 
 public record OutfitSuggestionResponse(
-        List<Suggestion> suggestions
+        List<CategorySuggestions> categories
 ) { }

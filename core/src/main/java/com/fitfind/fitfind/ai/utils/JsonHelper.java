@@ -27,6 +27,25 @@ public class JsonHelper {
         }
     }
 
+    public static JsonNode parseJsonArray(String response, ObjectMapper objectMapper) {
+        if (response == null) {
+            return null;
+        }
+        String cleaned = response.trim();
+        int start = cleaned.indexOf('[');
+        int end = cleaned.lastIndexOf(']');
+        if (start < 0 || end <= start) {
+            return null;
+        }
+        try {
+            JsonNode node = objectMapper.readTree(cleaned.substring(start, end + 1));
+            return node.isArray() ? node : null;
+        } catch (Exception e) {
+            log.warn("Failed to parse AI JSON array response: {}", e.getMessage());
+            return null;
+        }
+    }
+
     public static String textOrNull(JsonNode node) {
         if (node == null || node.isNull()) {
             return null;
