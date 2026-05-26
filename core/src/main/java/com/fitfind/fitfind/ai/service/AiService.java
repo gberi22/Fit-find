@@ -22,9 +22,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.fitfind.fitfind.ai.utils.JsonHelper.parseJsonObject;
+import static com.fitfind.fitfind.ai.utils.JsonHelper.parseJsonArray;
 import static com.fitfind.fitfind.ai.utils.JsonHelper.textOrNull;
 import static com.fitfind.fitfind.ai.utils.PromptHelper.buildSearchQueryPrompt;
 import static com.fitfind.fitfind.ai.utils.PromptHelper.pickBestPrompt;
@@ -36,6 +37,7 @@ import static com.fitfind.fitfind.ai.utils.PromptHelper.pickBestPrompt;
 public class AiService {
 
     private static final int MAX_RESULTS_FOR_AI = 10;
+    private static final int MAX_OPTIONS_PER_CATEGORY = 3;
     private static final String NOT_FOUND_MESSAGE =
             "We couldn't find a matching item for this category. Please try again.";
 
@@ -48,20 +50,21 @@ public class AiService {
 
     public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt, String email) {
         rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
-        List<Suggestion> suggestions = prompt.clothes().stream()
+        List<CategorySuggestions> categories = prompt.clothes().stream()
                 .map(category -> recommendForCategory(category, prompt))
                 .toList();
-        OutfitSuggestionResponse response = new OutfitSuggestionResponse(suggestions);
+        OutfitSuggestionResponse response = new OutfitSuggestionResponse(categories);
         aiHistoryService.record(email, prompt, response);
         return response;
     }
 
-    private Suggestion recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
+    private CategorySuggestions recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
         log.info("[recommend] category={} - starting", category);
         try {
             String query = buildQuery(category, prompt);
             List<SearchedClothing> results = searchProducts(category, query);
-            return pickBest(category, prompt, results);
+            List<Suggestion> options = pickBest(category, prompt, results);
+            return new CategorySuggestions(category, options, null);
         } catch (CategoryFailedException e) {
             log.warn("[recommend] category={} - FAIL: {}", category, e.getMessage());
             return notFound(category);
@@ -91,7 +94,7 @@ public class AiService {
         return results.size() > MAX_RESULTS_FOR_AI ? results.subList(0, MAX_RESULTS_FOR_AI) : results;
     }
 
-    private Suggestion pickBest(
+    private List<Suggestion> pickBest(
         ClothingItem category,
         OutfitSuggestionRequest prompt,
         List<SearchedClothing> results
@@ -106,24 +109,35 @@ public class AiService {
         String response = chat(pickBestPrompt(resultsJson, category, prompt));
         log.info("[recommend] category={} - AI selection: {}", category, response);
 
-        JsonNode node = parseJsonObject(response, objectMapper);
-        if (node == null) {
-            throw new CategoryFailedException("Could not parse AI JSON: " + response);
+        JsonNode array = parseJsonArray(response, objectMapper);
+        if (array == null) {
+            throw new CategoryFailedException("Could not parse AI JSON array: " + response);
         }
 
-        String name = textOrNull(node.get("name"));
-        String link = textOrNull(node.get("link"));
-        String picture = textOrNull(node.get("picture"));
-        if (name == null || link == null) {
-            throw new CategoryFailedException("AI selection missing name or link");
+        List<Suggestion> options = new ArrayList<>();
+        for (JsonNode node : array) {
+            if (options.size() >= MAX_OPTIONS_PER_CATEGORY) {
+                break;
+            }
+            String name = textOrNull(node.get("name"));
+            String link = textOrNull(node.get("link"));
+            String picture = textOrNull(node.get("picture"));
+            if (name == null || link == null) {
+                continue;
+            }
+            options.add(new Suggestion(category, name, link, picture, null));
         }
 
-        log.info("[recommend] category={} - SUCCESS: picked '{}'", category, name);
-        return new Suggestion(category, name, link, picture, null);
+        if (options.isEmpty()) {
+            throw new CategoryFailedException("AI returned no usable options");
+        }
+
+        log.info("[recommend] category={} - SUCCESS: picked {} option(s)", category, options.size());
+        return options;
     }
 
-    private Suggestion notFound(ClothingItem category) {
-        return new Suggestion(category, null, null, null, NOT_FOUND_MESSAGE);
+    private CategorySuggestions notFound(ClothingItem category) {
+        return new CategorySuggestions(category, List.of(), NOT_FOUND_MESSAGE);
     }
 
     private String chat(String message) {

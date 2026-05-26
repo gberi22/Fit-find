@@ -47,7 +47,7 @@ public class PromptHelper {
                 .collect(Collectors.joining(", "));
 
         return """
-                You are picking the single best clothing item for a user from Google Shopping results.
+                You are picking the top 3 best clothing items for a user from Google Shopping results.
 
                 User preferences:
                 - Gender: %s
@@ -60,12 +60,18 @@ public class PromptHelper {
                 Search results (JSON):
                 %s
 
-                Pick the SINGLE best item that fits the user's preferences and price range.
-                Reply with ONLY a valid JSON object, no markdown, no commentary, exactly this shape:
-                {"name": "<title>", "link": "<product url>", "picture": "<image url>"}
+                Pick the THREE best items that fit the user's preferences and price range,
+                ordered from best to worst. The three items must be distinct.
+                Reply with ONLY a valid JSON array, no markdown, no commentary, exactly this shape:
+                [
+                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"},
+                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"},
+                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"}
+                ]
 
-                Use the values directly from the chosen result item (title -> name, link -> link, picture -> picture).
-                If absolutely no item is suitable, reply with: {"name": null, "link": null, "picture": null}
+                Use the values directly from each chosen result item (title -> name, link -> link, picture -> picture).
+                If fewer than 3 suitable items exist, return as many as are suitable (1 or 2 entries).
+                If absolutely no item is suitable, reply with an empty array: []
                 """.formatted(
                 prompt.gender(),
                 prompt.size(),
