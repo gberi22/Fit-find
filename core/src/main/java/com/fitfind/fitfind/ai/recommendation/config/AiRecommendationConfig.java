@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.ai.config;
+package com.fitfind.fitfind.ai.recommendation.config;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AiConfig {
+public class AiRecommendationConfig {
 
     @Bean
-    public OpenAIClient openAIClient(AiProperties properties) {
+    public OpenAIClient openAIClient(AiRecommendationProperties properties) {
         return new OpenAIClientBuilder()
                 .credential(new AzureKeyCredential(properties.getKey()))
                 .endpoint(properties.getEndpoint())

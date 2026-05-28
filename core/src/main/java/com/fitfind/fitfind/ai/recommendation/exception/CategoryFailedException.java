@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.ai.exception;
+package com.fitfind.fitfind.ai.recommendation.exception;
 
 public class CategoryFailedException extends RuntimeException {
 

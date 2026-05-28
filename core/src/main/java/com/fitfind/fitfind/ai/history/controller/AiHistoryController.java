@@ -1,10 +1,7 @@
-package com.fitfind.fitfind.ai.controller;
+package com.fitfind.fitfind.ai.history.controller;
 
 import com.fitfind.fitfind.ai.history.model.response.AiHistoryResponse;
 import com.fitfind.fitfind.ai.history.service.AiHistoryService;
-import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
-import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
-import com.fitfind.fitfind.ai.service.AiService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
-public class AiController {
+public class AiHistoryController {
 
-    private final AiService aiService;
     private final AiHistoryService aiHistoryService;
-
-    @PostMapping("/outfit-suggestions")
-    public ResponseEntity<OutfitSuggestionResponse> recommend(
-        Authentication authentication,
-        @RequestBody OutfitSuggestionRequest request
-    ) {
-        return ResponseEntity.ok(aiService.recommend(request, authentication.getName()));
-    }
 
     @GetMapping("/history")
     public ResponseEntity<AiHistoryResponse> history(

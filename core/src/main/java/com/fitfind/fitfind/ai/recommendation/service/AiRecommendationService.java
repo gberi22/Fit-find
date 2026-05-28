@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.ai.service;
+package com.fitfind.fitfind.ai.recommendation.service;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.ChatCompletions;
@@ -7,8 +7,8 @@ import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.ChatRole;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitfind.fitfind.ai.config.AiProperties;
-import com.fitfind.fitfind.ai.exception.CategoryFailedException;
+import com.fitfind.fitfind.ai.recommendation.config.AiRecommendationProperties;
+import com.fitfind.fitfind.ai.recommendation.exception.CategoryFailedException;
 import com.fitfind.fitfind.ai.history.service.AiHistoryService;
 import com.fitfind.fitfind.ai.model.*;
 import com.fitfind.fitfind.ai.model.enums.ClothingItem;
@@ -35,7 +35,7 @@ import static com.fitfind.fitfind.ai.utils.PromptHelper.pickBestPrompt;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AiService {
+public class AiRecommendationService {
 
     private static final int MAX_RESULTS_FOR_AI = 10;
     private static final int MAX_OPTIONS_PER_CATEGORY = 3;
@@ -43,7 +43,7 @@ public class AiService {
             "We couldn't find a matching item for this category. Please try again.";
 
     private final OpenAIClient openaiClient;
-    private final AiProperties aiProperties;
+    private final AiRecommendationProperties aiRecommendationProperties;
     private final RateLimitService rateLimitService;
     private final WebSearchService webSearchService;
     private final AiHistoryService aiHistoryService;
@@ -144,9 +144,9 @@ public class AiService {
     private String chat(String message) {
         ChatCompletionsOptions options = new ChatCompletionsOptions(
                 List.of(new ChatMessage(ChatRole.USER).setContent(message))
-        ).setModel(aiProperties.getModel());
+        ).setModel(aiRecommendationProperties.getModel());
 
-        ChatCompletions completions = openaiClient.getChatCompletions(aiProperties.getModel(), options);
+        ChatCompletions completions = openaiClient.getChatCompletions(aiRecommendationProperties.getModel(), options);
         return completions.getChoices().getFirst().getMessage().getContent();
     }
 }
