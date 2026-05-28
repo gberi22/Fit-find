@@ -7,13 +7,14 @@ import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.ChatRole;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fitfind.fitfind.ai.common.model.CategorySuggestions;
+import com.fitfind.fitfind.ai.common.model.Suggestion;
 import com.fitfind.fitfind.ai.recommendation.config.AiRecommendationProperties;
 import com.fitfind.fitfind.ai.recommendation.exception.CategoryFailedException;
 import com.fitfind.fitfind.ai.history.service.AiHistoryService;
-import com.fitfind.fitfind.ai.model.*;
-import com.fitfind.fitfind.ai.model.enums.ClothingItem;
-import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
-import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
+import com.fitfind.fitfind.ai.common.model.enums.ClothingItem;
+import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.common.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.security.ratelimit.model.RateLimitType;
 import com.fitfind.fitfind.security.ratelimit.service.RateLimitService;
 import com.fitfind.fitfind.websearch.model.SearchedClothing;
@@ -26,10 +27,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
-import static com.fitfind.fitfind.ai.utils.JsonHelper.parseJsonArray;
-import static com.fitfind.fitfind.ai.utils.JsonHelper.textOrNull;
-import static com.fitfind.fitfind.ai.utils.PromptHelper.buildSearchQueryPrompt;
-import static com.fitfind.fitfind.ai.utils.PromptHelper.pickBestPrompt;
+import static com.fitfind.fitfind.ai.common.utils.JsonHelper.parseJsonArray;
+import static com.fitfind.fitfind.ai.common.utils.JsonHelper.textOrNull;
+import static com.fitfind.fitfind.ai.common.utils.PromptHelper.buildSearchQueryPrompt;
+import static com.fitfind.fitfind.ai.common.utils.PromptHelper.pickBestPrompt;
 
 
 @Service

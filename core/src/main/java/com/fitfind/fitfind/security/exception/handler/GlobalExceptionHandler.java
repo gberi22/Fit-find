@@ -2,7 +2,7 @@ package com.fitfind.fitfind.security.exception.handler;
 
 import com.fitfind.fitfind.ai.recommendation.exception.CategoryFailedException;
 import com.fitfind.fitfind.client.model.ClientNotFoundException;
-import com.fitfind.fitfind.imagegen.exception.ImageGenerationException;
+import com.fitfind.fitfind.ai.imagegen.exception.ImageGenerationException;
 import com.fitfind.fitfind.registration.exception.EmailAlreadyExistsException;
 import com.fitfind.fitfind.security.exception.model.ApiErrors;
 import com.fitfind.fitfind.security.ratelimit.exception.TooManyRequestException;

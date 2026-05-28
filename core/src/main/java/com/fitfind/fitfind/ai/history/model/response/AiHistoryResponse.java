@@ -1,7 +1,7 @@
 package com.fitfind.fitfind.ai.history.model.response;
 
-import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
-import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
+import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.common.model.response.OutfitSuggestionResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
