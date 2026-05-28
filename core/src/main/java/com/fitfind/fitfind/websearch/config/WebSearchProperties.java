@@ -10,5 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class WebSearchProperties {
 
     private String key;
-    private String baseUrl = "https://serpapi.com";
+    private String baseUrl;
 }

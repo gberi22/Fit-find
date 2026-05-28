@@ -12,7 +12,7 @@ import com.fitfind.fitfind.ai.exception.CategoryFailedException;
 import com.fitfind.fitfind.ai.history.service.AiHistoryService;
 import com.fitfind.fitfind.ai.model.*;
 import com.fitfind.fitfind.ai.model.enums.ClothingItem;
-import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.security.ratelimit.model.RateLimitType;
 import com.fitfind.fitfind.security.ratelimit.service.RateLimitService;
@@ -22,8 +22,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
 
 import static com.fitfind.fitfind.ai.utils.JsonHelper.parseJsonArray;
 import static com.fitfind.fitfind.ai.utils.JsonHelper.textOrNull;
@@ -114,19 +115,19 @@ public class AiService {
             throw new CategoryFailedException("Could not parse AI JSON array: " + response);
         }
 
-        List<Suggestion> options = new ArrayList<>();
-        for (JsonNode node : array) {
-            if (options.size() >= MAX_OPTIONS_PER_CATEGORY) {
-                break;
-            }
-            String name = textOrNull(node.get("name"));
-            String link = textOrNull(node.get("link"));
-            String picture = textOrNull(node.get("picture"));
-            if (name == null || link == null) {
-                continue;
-            }
-            options.add(new Suggestion(category, name, link, picture, null));
-        }
+        List<Suggestion> options = StreamSupport.stream(array.spliterator(), false)
+            .map(node -> {
+                String name = textOrNull(node.get("name"));
+                String link = textOrNull(node.get("link"));
+                String picture = textOrNull(node.get("picture"));
+                if (name == null || link == null) {
+                    return null;
+                }
+                return new Suggestion(category, name, link, picture, null);
+            })
+            .filter(Objects::nonNull)
+            .limit(MAX_OPTIONS_PER_CATEGORY)
+            .toList();
 
         if (options.isEmpty()) {
             throw new CategoryFailedException("AI returned no usable options");

@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.ai.model.reqeust;
+package com.fitfind.fitfind.ai.model.request;
 
 import com.fitfind.fitfind.ai.model.enums.ClothingItem;
 import com.fitfind.fitfind.ai.model.enums.Gender;

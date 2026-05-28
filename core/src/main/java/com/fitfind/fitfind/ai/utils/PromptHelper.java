@@ -3,7 +3,7 @@ package com.fitfind.fitfind.ai.utils;
 import com.fitfind.fitfind.ai.model.Suggestion;
 import com.fitfind.fitfind.ai.model.enums.ClothingItem;
 import com.fitfind.fitfind.ai.model.enums.Gender;
-import com.fitfind.fitfind.ai.model.reqeust.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.model.enums.Style;
 
 import java.util.List;

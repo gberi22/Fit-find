@@ -10,6 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ImageGenProperties {
 
     private String key;
-    private String baseUrl = "https://generativelanguage.googleapis.com";
-    private String model = "gemini-2.5-flash-image";
+    private String baseUrl;
+    private String model;
 }

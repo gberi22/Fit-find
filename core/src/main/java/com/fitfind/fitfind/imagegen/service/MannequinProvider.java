@@ -35,26 +35,32 @@ public class MannequinProvider {
     }
 
     private void loadFromClasspath(Gender gender, String baseName) {
-        for (String ext : EXTENSIONS) {
-            String path = BASE_PATH + baseName + "." + ext;
-            ClassPathResource resource = new ClassPathResource(path);
-            if (!resource.exists()) {
-                continue;
-            }
-            try (InputStream in = resource.getInputStream()) {
-                byte[] bytes = in.readAllBytes();
-                String base64 = Base64.getEncoder().encodeToString(bytes);
-                String mime = "jpg".equals(ext) ? "image/jpeg" : "image/" + ext;
-                cache.put(gender, new InlineImage(mime, base64));
-                log.info("[imagegen] loaded mannequin reference for {} from {} ({} bytes)",
-                        gender, path, bytes.length);
-                return;
-            } catch (IOException e) {
-                log.warn("[imagegen] failed to read {}: {}", path, e.getMessage());
-            }
-        }
-        log.warn("[imagegen] no mannequin reference found for {} (looked for {}{}.[png|jpg|jpeg]) "
+        boolean loaded = EXTENSIONS.stream()
+            .anyMatch(ext -> tryLoadMannequin(gender, baseName, ext));
+        if (!loaded) {
+            log.warn("[imagegen] no mannequin reference found for {} (looked for {}{}.[png|jpg|jpeg]) "
                 + "- image generation will be REJECTED until one is provided",
                 gender, BASE_PATH, baseName);
+        }
+    }
+
+    private boolean tryLoadMannequin(Gender gender, String baseName, String ext) {
+        String path = BASE_PATH + baseName + "." + ext;
+        ClassPathResource resource = new ClassPathResource(path);
+        if (!resource.exists()) {
+            return false;
+        }
+        try (InputStream in = resource.getInputStream()) {
+            byte[] bytes = in.readAllBytes();
+            String base64 = Base64.getEncoder().encodeToString(bytes);
+            String mime = "jpg".equals(ext) ? "image/jpeg" : "image/" + ext;
+            cache.put(gender, new InlineImage(mime, base64));
+            log.info("[imagegen] loaded mannequin reference for {} from {} ({} bytes)",
+                    gender, path, bytes.length);
+            return true;
+        } catch (IOException e) {
+            log.warn("[imagegen] failed to read {}: {}", path, e.getMessage());
+            return false;
+        }
     }
 }
