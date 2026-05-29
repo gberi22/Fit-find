@@ -1,7 +1,7 @@
 package com.fitfind.fitfind.ai.history.model;
 
-import com.fitfind.fitfind.ai.model.request.OutfitSuggestionRequest;
-import com.fitfind.fitfind.ai.model.response.OutfitSuggestionResponse;
+import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
+import com.fitfind.fitfind.ai.common.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.client.model.Client;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
