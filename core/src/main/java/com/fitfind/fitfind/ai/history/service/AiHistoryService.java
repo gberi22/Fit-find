@@ -27,12 +27,12 @@ public class AiHistoryService {
     public void record(String email, OutfitSuggestionRequest request, OutfitSuggestionResponse response) {
         Client client = clientRepository.findClientByEmail(email)
             .orElseThrow(() -> new ClientNotFoundException("Client not found: " + email));
-        aiHistoryRepository.save(AiHistory.builder()
+        AiHistory history = AiHistory.builder()
             .withClient(client)
             .withRequest(request)
             .withResponse(response)
-            .build()
-        );
+            .build();
+        aiHistoryRepository.save(history);
     }
 
     public AiHistoryResponse list(String email, int page, int size) {

@@ -8,9 +8,12 @@ import com.azure.ai.openai.models.ChatRole;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.common.model.CategorySuggestions;
+import com.fitfind.fitfind.ai.common.model.RawImage;
 import com.fitfind.fitfind.ai.common.model.Suggestion;
 import com.fitfind.fitfind.ai.recommendation.config.AiRecommendationProperties;
+import com.fitfind.fitfind.ai.recommendation.config.AiVisionProperties;
 import com.fitfind.fitfind.ai.recommendation.exception.CategoryFailedException;
+import com.fitfind.fitfind.ai.recommendation.exception.InvalidReferenceImageException;
 import com.fitfind.fitfind.ai.history.service.AiHistoryService;
 import com.fitfind.fitfind.ai.common.model.enums.ClothingItem;
 import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
@@ -22,7 +25,9 @@ import com.fitfind.fitfind.websearch.service.WebSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
@@ -30,8 +35,8 @@ import java.util.stream.StreamSupport;
 import static com.fitfind.fitfind.ai.common.utils.JsonHelper.parseJsonArray;
 import static com.fitfind.fitfind.ai.common.utils.JsonHelper.textOrNull;
 import static com.fitfind.fitfind.ai.common.utils.PromptHelper.buildSearchQueryPrompt;
+import static com.fitfind.fitfind.ai.common.utils.PromptHelper.formatGarmentDescriptions;
 import static com.fitfind.fitfind.ai.common.utils.PromptHelper.pickBestPrompt;
-
 
 @Service
 @Slf4j
@@ -41,23 +46,83 @@ public class AiRecommendationService {
     private static final int MAX_RESULTS_FOR_AI = 10;
     private static final int MAX_OPTIONS_PER_CATEGORY = 3;
     private static final String NOT_FOUND_MESSAGE =
-            "We couldn't find a matching item for this category. Please try again.";
+        "We couldn't find a matching item for this category. Please try again.";
 
     private final OpenAIClient openaiClient;
     private final AiRecommendationProperties aiRecommendationProperties;
     private final RateLimitService rateLimitService;
     private final WebSearchService webSearchService;
     private final AiHistoryService aiHistoryService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final StyleAnalysisService styleAnalysisService;
+    private final AiVisionProperties aiVisionProperties;
+    private final ObjectMapper objectMapper;
 
     public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt, String email) {
         rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
-        List<CategorySuggestions> categories = prompt.clothes().stream()
-                .map(category -> recommendForCategory(category, prompt))
-                .toList();
+        OutfitSuggestionRequest effective = withReferenceContext(prompt);
+        List<CategorySuggestions> categories = effective.clothes().stream()
+            .map(category -> recommendForCategory(category, effective))
+            .toList();
         OutfitSuggestionResponse response = new OutfitSuggestionResponse(categories);
-        aiHistoryService.record(email, prompt, response);
+        aiHistoryService.record(email, effective, response);
         return response;
+    }
+
+    private OutfitSuggestionRequest withReferenceContext(OutfitSuggestionRequest prompt) {
+        List<RawImage> images = readImages(prompt.additionalImages());
+        if (images.isEmpty()) {
+            return prompt;
+        }
+        List<String> garments = styleAnalysisService.analyze(images, prompt.additionalComments());
+        String finalDescription = formatGarmentDescriptions(garments, prompt.additionalComments());
+        return new OutfitSuggestionRequest(
+            prompt.gender(),
+            prompt.size(),
+            prompt.clothes(),
+            prompt.styles(),
+            prompt.minPrice(),
+            prompt.maxPrice(),
+            finalDescription,
+            null
+        );
+    }
+
+    private List<RawImage> readImages(List<MultipartFile> files) {
+        if (files == null) {
+            return List.of();
+        }
+        List<MultipartFile> present = files.stream()
+            .filter(file -> file != null && !file.isEmpty())
+            .toList();
+        if (present.isEmpty()) {
+            return List.of();
+        }
+        int maxImages = aiVisionProperties.getMaxImages();
+        if (present.size() > maxImages) {
+            throw new InvalidReferenceImageException("Please upload no more than " + maxImages + " images.");
+        }
+        long maxTotalBytes = aiVisionProperties.getMaxImageSize().toBytes();
+        long total = present.stream().mapToLong(MultipartFile::getSize).sum();
+        if (total > maxTotalBytes) {
+            throw new InvalidReferenceImageException(
+                "Uploaded images exceed the " + aiVisionProperties.getMaxImageSize().toMegabytes() + " MB limit."
+            );
+        }
+        return present.stream()
+            .map(this::toRawImage)
+            .toList();
+    }
+
+    private RawImage toRawImage(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are accepted.");
+        }
+        try {
+            return new RawImage(file.getBytes(), contentType);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not read an uploaded image.");
+        }
     }
 
     private CategorySuggestions recommendForCategory(ClothingItem category, OutfitSuggestionRequest prompt) {
@@ -144,7 +209,7 @@ public class AiRecommendationService {
 
     private String chat(String message) {
         ChatCompletionsOptions options = new ChatCompletionsOptions(
-                List.of(new ChatMessage(ChatRole.USER).setContent(message))
+            List.of(new ChatMessage(ChatRole.USER).setContent(message))
         ).setModel(aiRecommendationProperties.getModel());
 
         ChatCompletions completions = openaiClient.getChatCompletions(aiRecommendationProperties.getModel(), options);

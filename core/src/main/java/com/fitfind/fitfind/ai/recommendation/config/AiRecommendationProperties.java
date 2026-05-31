@@ -12,4 +12,5 @@ public class AiRecommendationProperties {
     private String key;
     private String model;
     private String endpoint;
+    private String visionModel;
 }

@@ -1,5 +1,6 @@
 package com.fitfind.fitfind.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.security.filter.JwtOncePerRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,5 +37,10 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
