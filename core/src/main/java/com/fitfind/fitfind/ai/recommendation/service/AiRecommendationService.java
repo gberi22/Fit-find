@@ -55,7 +55,7 @@ public class AiRecommendationService {
     private final AiHistoryService aiHistoryService;
     private final StyleAnalysisService styleAnalysisService;
     private final AiVisionProperties aiVisionProperties;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     public OutfitSuggestionResponse recommend(OutfitSuggestionRequest prompt, String email) {
         rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
