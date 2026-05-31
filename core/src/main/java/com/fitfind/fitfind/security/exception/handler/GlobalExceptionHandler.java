@@ -1,6 +1,7 @@
 package com.fitfind.fitfind.security.exception.handler;
 
 import com.fitfind.fitfind.ai.recommendation.exception.CategoryFailedException;
+import com.fitfind.fitfind.ai.recommendation.exception.InvalidReferenceImageException;
 import com.fitfind.fitfind.client.model.ClientNotFoundException;
 import com.fitfind.fitfind.ai.imagegen.exception.ImageGenerationException;
 import com.fitfind.fitfind.registration.exception.EmailAlreadyExistsException;
@@ -57,5 +58,23 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(apiErrors, HttpStatus.BAD_GATEWAY);
+    }
+
+    @ExceptionHandler(InvalidReferenceImageException.class)
+    public ResponseEntity<ApiErrors> handleInvalidReferenceImageException(InvalidReferenceImageException ex) {
+        ApiErrors apiErrors = ApiErrors.builder()
+                .withMessage(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(apiErrors, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrors> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiErrors apiErrors = ApiErrors.builder()
+                .withMessage(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(apiErrors, HttpStatus.BAD_REQUEST);
     }
 }
