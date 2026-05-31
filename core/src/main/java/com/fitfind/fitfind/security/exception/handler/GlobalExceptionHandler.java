@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
                 .withMessage(ex.getMessage())
                 .build();
 
-        return new ResponseEntity<>(apiErrors, HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(apiErrors, HttpStatus.UNPROCESSABLE_CONTENT);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
