@@ -11,10 +11,57 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PromptHelper {
+
+    public static String styleAnalysisPrompt(String comments) {
+        String userText = comments == null || comments.isBlank()
+            ? "(none provided)"
+            : comments;
+
+        return """
+                You are a fashion analyst. You are given one or more reference images of an
+                outfit/fit, and optionally a short text description. Analyze the clothing.
+
+                User's optional text description: %s
+
+                First decide whether the image(s) are about clothing/fashion/fit at all. If they
+                clearly do NOT depict clothing or a fashion look (e.g. a landscape, a meal, a
+                document, a meme), set "fashionRelated" to false and leave "garments" empty.
+
+                If it IS about fashion, list each distinct garment you see as a short
+                natural-language description (e.g. "oversized beige wool trench coat",
+                "white low-top sneakers"). Capture color, material, cut, and notable details
+                so similar items can be found. Combine signals from BOTH the image(s) and the text.
+
+                Reply with ONLY a single valid JSON object, no markdown, no commentary, exactly this shape:
+                {
+                  "fashionRelated": true,
+                  "garments": ["light blue oxford shirt", "slim black tailored trousers"]
+                }
+                """.formatted(userText);
+    }
+
+    public static String formatGarmentDescriptions(List<String> garments, String comments) {
+        String garmentText = garments == null ? "" : garments.stream()
+            .filter(garment -> garment != null && !garment.isBlank())
+            .collect(Collectors.joining("; "));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!garmentText.isBlank()) {
+            stringBuilder.append("Reference fit details: ").append(garmentText).append('.');
+        }
+        if (comments != null && !comments.isBlank()) {
+            if (!stringBuilder.isEmpty()) {
+                stringBuilder.append(' ');
+            }
+            stringBuilder.append("User notes: ").append(comments.trim());
+        }
+        return stringBuilder.toString();
+    }
+
     public static String buildSearchQueryPrompt(ClothingItem category, OutfitSuggestionRequest prompt) {
         String stylesText = prompt.styles().stream()
-                .map(Style::name)
-                .collect(Collectors.joining(", "));
+            .map(Style::name)
+            .collect(Collectors.joining(", "));
         if (stylesText.isEmpty()) {
             stylesText = "(no specific style)";
         }
@@ -43,8 +90,8 @@ public class PromptHelper {
 
     public static String pickBestPrompt(String resultsJson, ClothingItem category, OutfitSuggestionRequest prompt) {
         String stylesText = prompt.styles().stream()
-                .map(Style::name)
-                .collect(Collectors.joining(", "));
+            .map(Style::name)
+            .collect(Collectors.joining(", "));
 
         return """
                 You are picking the top 3 best clothing items for a user from Google Shopping results.
@@ -88,13 +135,13 @@ public class PromptHelper {
         String mannequin = gender == Gender.MEN ? "male" : "female";
 
         String itemList = IntStream.range(0, suggestions.size())
-                .mapToObj(i -> {
-                    Suggestion s = suggestions.get(i);
-                    String name = s.name() == null ? "item" : s.name();
-                    return "  " + (i + 1) + ". Image " + (i + 2) + " - "
-                            + s.category().name() + ": " + name;
-                })
-                .collect(Collectors.joining("\n"));
+            .mapToObj(i -> {
+                Suggestion s = suggestions.get(i);
+                String name = s.name() == null ? "item" : s.name();
+                return "  " + (i + 1) + ". Image " + (i + 2) + " - "
+                    + s.category().name() + ": " + name;
+            })
+            .collect(Collectors.joining("\n"));
 
         return """
                 You are compositing a virtual try-on image.

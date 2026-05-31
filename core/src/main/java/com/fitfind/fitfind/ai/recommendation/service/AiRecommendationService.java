@@ -74,7 +74,7 @@ public class AiRecommendationService {
             return prompt;
         }
         List<String> garments = styleAnalysisService.analyze(images, prompt.additionalComments());
-        String merged = formatGarmentDescriptions(garments, prompt.additionalComments());
+        String finalDescription = formatGarmentDescriptions(garments, prompt.additionalComments());
         return new OutfitSuggestionRequest(
             prompt.gender(),
             prompt.size(),
@@ -82,7 +82,7 @@ public class AiRecommendationService {
             prompt.styles(),
             prompt.minPrice(),
             prompt.maxPrice(),
-            merged,
+            finalDescription,
             null
         );
     }
