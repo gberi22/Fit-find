@@ -1,0 +1,24 @@
+<nav class="navbar">
+  <a class="nav-logo" routerLink="/">FIT<span>FIND</span></a>
+  <ul class="nav-links">
+    <li><a class="nav-link" routerLink="/">Home</a></li>
+    <li><button type="button" class="nav-link">Feed</button></li>
+    <li><button type="button" class="nav-link">Support</button></li>
+    @if (isAuthenticated()) {
+      <li><a class="nav-link" routerLink="/generate">Generate</a></li>
+      <li>
+        <a class="nav-btn" routerLink="/profile">
+          <span class="nav-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.69-8 6v1h16v-1c0-3.31-3.58-6-8-6Z" />
+            </svg>
+          </span>
+          Profile
+        </a>
+      </li>
+    } @else {
+      <li><a class="nav-link" routerLink="/login">Sign In</a></li>
+      <li><a class="nav-btn" routerLink="/register">Get Started</a></li>
+    }
+  </ul>
+</nav>
