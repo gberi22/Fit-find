@@ -1,0 +1,228 @@
+<app-navbar />
+
+<div class="generate-page fade-in">
+  <div class="generate-inner">
+    <header class="generate-head">
+      <p class="generate-label">AI Stylist</p>
+      <h1 class="generate-title">Generate Your <em>Fit</em></h1>
+      <p class="generate-subtitle">
+        Tell us who you're dressing, what you're after, and your budget — our AI curates a look and
+        finds where to buy each piece.
+      </p>
+    </header>
+
+    <form class="generate-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <section class="field-block">
+        <h2 class="field-title">Gender</h2>
+        <div class="chip-row">
+          @for (option of genderOptions; track option.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip--active]="form.controls.gender.value === option.value"
+              (click)="form.controls.gender.setValue(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+        @if (form.controls.gender.touched && form.controls.gender.invalid) {
+          <p class="field-error">Please choose a gender.</p>
+        }
+      </section>
+
+      <section class="field-block">
+        <h2 class="field-title">Size</h2>
+        <div class="chip-row">
+          @for (option of sizeOptions; track option.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip--active]="form.controls.size.value === option.value"
+              (click)="form.controls.size.setValue(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+        @if (form.controls.size.touched && form.controls.size.invalid) {
+          <p class="field-error">Please choose a size.</p>
+        }
+      </section>
+
+      <section class="field-block">
+        <h2 class="field-title">Clothing Items</h2>
+        <p class="field-hint">Pick one or more pieces you want suggestions for.</p>
+        <div class="chip-row">
+          @for (option of clothingOptions; track option.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip--active]="isClothingSelected(option.value)"
+              [disabled]="isClothingDisabled(option.value)"
+              (click)="toggleClothing(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+        @if (form.controls.clothes.touched && form.controls.clothes.invalid) {
+          <p class="field-error">Select at least one clothing item.</p>
+        }
+      </section>
+
+      <section class="field-block">
+        <h2 class="field-title">Styles</h2>
+        <p class="field-hint">Choose the vibe you're going for.</p>
+        <div class="chip-row">
+          @for (option of styleOptions; track option.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip--active]="isStyleSelected(option.value)"
+              (click)="toggleStyle(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+        @if (form.controls.styles.touched && form.controls.styles.invalid) {
+          <p class="field-error">Select at least one style.</p>
+        }
+      </section>
+
+      <section class="field-block">
+        <div class="budget-head">
+          <h2 class="field-title">Budget</h2>
+          <div class="budget-inputs">
+            <span class="budget-prefix">$</span>
+            <input
+              class="budget-num"
+              type="number"
+              inputmode="numeric"
+              [min]="budgetMin"
+              [max]="budgetMax"
+              [value]="form.controls.minPrice.value"
+              (keydown)="blockNonNumeric($event)"
+              (input)="onMinInput($any($event.target).valueAsNumber)"
+              aria-label="Minimum budget"
+            />
+            <span class="budget-dash">—</span>
+            <span class="budget-prefix">$</span>
+            <input
+              class="budget-num"
+              type="number"
+              inputmode="numeric"
+              [min]="budgetMin"
+              [max]="budgetMax"
+              [value]="form.controls.maxPrice.value"
+              (keydown)="blockNonNumeric($event)"
+              (input)="onMaxInput($any($event.target).valueAsNumber)"
+              aria-label="Maximum budget"
+            />
+          </div>
+        </div>
+
+        <div class="rng">
+          <div class="rng-track"></div>
+          <div
+            class="rng-fill"
+            [style.left.%]="priceCalculatorForSlider(form.controls.minPrice.value)"
+            [style.width.%]="
+              priceCalculatorForSlider(form.controls.maxPrice.value) -
+              priceCalculatorForSlider(form.controls.minPrice.value)
+            "
+          ></div>
+          <input
+            class="rng-min"
+            type="range"
+            [min]="budgetMin"
+            [max]="budgetMax"
+            [step]="minMaxBudgetGap"
+            [value]="form.controls.minPrice.value"
+            (input)="onMinSlide($event)"
+            aria-label="Minimum budget slider"
+          />
+          <input
+            class="rng-max"
+            type="range"
+            [min]="budgetMin"
+            [max]="budgetMax"
+            [step]="minMaxBudgetGap"
+            [value]="form.controls.maxPrice.value"
+            (input)="onMaxSlide($event)"
+            aria-label="Maximum budget slider"
+          />
+        </div>
+        <div class="rng-scale">
+          <span>${{ budgetMin }}</span>
+          <span>${{ budgetMax }}</span>
+        </div>
+
+        @if (form.hasError('budgetRange')) {
+          <p class="field-error">Minimum price must be lower than the maximum.</p>
+        }
+      </section>
+
+      <section class="field-block">
+        <h2 class="field-title">Reference Images <span class="field-optional">(optional)</span></h2>
+        <p class="field-hint">Add up to {{ maxImages }} images to inspire the look.</p>
+
+        @if (images().length) {
+          <div class="image-previews">
+            @for (image of images(); track image.url; let i = $index) {
+              <div class="image-preview">
+                <img [src]="image.url" [alt]="image.file.name" />
+                <button
+                  type="button"
+                  class="image-remove"
+                  aria-label="Remove image"
+                  (click)="removeImage(i)"
+                >
+                  ✕
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        @if (images().length < maxImages) {
+          <label class="upload-btn">
+            + Add image
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              (change)="onFilesSelected($event)"
+            />
+          </label>
+        }
+      </section>
+
+      <section class="field-block">
+        <h2 class="field-title">
+          Additional Comments <span class="field-optional">(optional)</span>
+        </h2>
+        <mat-form-field appearance="outline" class="comments-field">
+          <mat-label>e.g. weekend brunch in spring, prefer earthy tones</mat-label>
+          <textarea matInput rows="3" formControlName="additionalComments"></textarea>
+        </mat-form-field>
+      </section>
+
+      @if (serverError(); as message) {
+        <p class="form-error form-error--server" role="alert">{{ message }}</p>
+      }
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        class="generate-submit"
+        [disabled]="submitting()"
+      >
+        {{ submitting() ? 'Styling your look…' : 'Find My Fit' }}
+      </button>
+    </form>
+  </div>
+</div>
