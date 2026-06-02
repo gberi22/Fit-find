@@ -124,3 +124,14 @@ export interface CategorySuggestions {
 export interface OutfitSuggestionResponse {
   categories: CategorySuggestions[];
 }
+
+export interface OutfitImageRequest {
+  gender: Gender;
+  suggestions: Suggestion[];
+}
+
+export interface OutfitImageResponse {
+  imageBase64: string;
+  mimeType: string;
+  message: string | null;
+}
