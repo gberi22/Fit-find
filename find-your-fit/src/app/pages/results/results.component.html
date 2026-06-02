@@ -1,0 +1,79 @@
+<app-navbar />
+
+<div class="results-page fade-in">
+  <div class="results-inner">
+    <header class="results-head">
+      <p class="results-label">Your Curated Looks</p>
+      <h1 class="results-title">Build Your <em>Outfit</em></h1>
+      <p class="results-subtitle">
+        Pick your favourite piece in each category, then assemble them into a single look.
+      </p>
+    </header>
+
+    @if (loading()) {
+      <div class="results-status">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="status-text">Finding your match</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="results-status">
+        <p class="status-error" role="alert">{{ errorMessage() }}</p>
+        <a class="ghost-btn" routerLink="/generate">Back to generate</a>
+      </div>
+    } @else if (response()) {
+      <div class="results-body">
+        @for (cat of response()!.categories; track cat.category) {
+          <section class="category-block">
+            <h2 class="category-title">{{ clothingItemLabel(cat.category) }}</h2>
+
+            @if (cat.options.length) {
+              <div class="option-row">
+                @for (opt of cat.options; track opt.link) {
+                  <button
+                    type="button"
+                    class="option-card"
+                    [class.option-card--active]="isSelected(cat.category, opt)"
+                    (click)="select(cat.category, opt)"
+                  >
+                    <div class="option-image">
+                      @if (opt.picture) {
+                        <img [src]="opt.picture" [alt]="opt.name ?? 'Suggested item'" />
+                      } @else {
+                        <span class="option-image-fallback">No image</span>
+                      }
+                    </div>
+                    <p class="option-name">{{ opt.name }}</p>
+                    @if (opt.link) {
+                      <a
+                        class="option-link"
+                        [href]="opt.link"
+                        target="_blank"
+                        rel="noopener"
+                        (click)="$event.stopPropagation()"
+                      >
+                        View item
+                      </a>
+                    }
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="category-empty">{{ cat.message }}</p>
+            }
+          </section>
+        }
+
+        <div class="assemble-bar">
+          <button
+            type="button"
+            class="assemble-btn"
+            [disabled]="!canAssemble() || assembling()"
+            (click)="assemble()"
+          >
+            {{ assembling() ? 'Assembling…' : 'Assemble the outfit' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
