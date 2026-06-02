@@ -128,8 +128,10 @@
           <div
             class="rng-fill"
             [style.left.%]="priceCalculatorForSlider(form.controls.minPrice.value)"
-            [style.width.%]="priceCalculatorForSlider(form.controls.maxPrice.value)
-                                      - priceCalculatorForSlider(form.controls.minPrice.value)"
+            [style.width.%]="
+              priceCalculatorForSlider(form.controls.maxPrice.value) -
+              priceCalculatorForSlider(form.controls.minPrice.value)
+            "
           ></div>
           <input
             class="rng-min"
