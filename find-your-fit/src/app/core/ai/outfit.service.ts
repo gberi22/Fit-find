@@ -1,11 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
-import { OutfitSuggestionRequest, OutfitSuggestionResponse } from '@shared/models/outfit.model';
+import {
+  OutfitImageRequest,
+  OutfitImageResponse,
+  OutfitSuggestionRequest,
+  OutfitSuggestionResponse,
+} from '@shared/models/outfit.model';
 import { Observable } from 'rxjs';
 
 const ENDPOINTS = {
   OUTFIT_SUGGESTIONS: '/api/ai/outfit-suggestions',
+  OUTFIT_IMAGE: '/api/ai/outfit-image',
 } as const;
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +35,13 @@ export class OutfitService {
     return this.http.post<OutfitSuggestionResponse>(
       `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS}`,
       form,
+    );
+  }
+
+  generateImage(value: OutfitImageRequest): Observable<OutfitImageResponse> {
+    return this.http.post<OutfitImageResponse>(
+      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_IMAGE}`,
+      value,
     );
   }
 }
