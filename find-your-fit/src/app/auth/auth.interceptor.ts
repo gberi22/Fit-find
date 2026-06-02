@@ -1,6 +1,9 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { environment } from '@env/environment';
+import { catchError, throwError } from 'rxjs';
+import { AuthService } from './auth.service';
 import { TokenStorageService } from './token-storage.service';
 
 const PUBLIC_PATH_PREFIX = '/api/public/';
@@ -16,9 +19,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
   const authorized = req.clone({
     setHeaders: { Authorization: `Bearer ${token}` },
   });
 
-  return next(authorized);
+  return next(authorized).pipe(
+    catchError((error: unknown) => {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        auth.logout();
+        router.navigateByUrl('/login');
+      }
+      return throwError(() => error);
+    }),
+  );
 };
