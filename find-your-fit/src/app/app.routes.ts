@@ -23,6 +23,11 @@ export const routes: Routes = [
       import('@pages/generate/generate.component').then((m) => m.GenerateComponent),
   },
   {
+    path: 'results',
+    canActivate: [authGuard],
+    loadComponent: () => import('@pages/results/results.component').then((m) => m.ResultsComponent),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('@pages/profile/profile.component').then((m) => m.ProfileComponent),

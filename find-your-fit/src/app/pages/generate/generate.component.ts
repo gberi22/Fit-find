@@ -10,7 +10,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { OutfitService } from '@core/ai/outfit.service';
+import { Router } from '@angular/router';
+import { OutfitStateService } from '@core/ai/outfit-state.service';
 import {
   CLOTHING_ITEM_OPTIONS,
   ClothingItem,
@@ -23,7 +24,6 @@ import {
   Style,
 } from '@shared/models/outfit.model';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
-import { finalize } from 'rxjs';
 
 const MAX_IMAGES = 5;
 
@@ -76,7 +76,8 @@ function nonEmptyArray(control: AbstractControl): ValidationErrors | null {
 })
 export class GenerateComponent implements OnDestroy {
   private readonly formBuilder = inject(NonNullableFormBuilder);
-  private readonly outfitService = inject(OutfitService);
+  private readonly outfitState = inject(OutfitStateService);
+  private readonly router = inject(Router);
 
   readonly genderOptions = GENDER_OPTIONS;
   readonly sizeOptions = SIZE_OPTIONS;
@@ -106,8 +107,6 @@ export class GenerateComponent implements OnDestroy {
     { validators: budgetRange },
   );
 
-  readonly submitting = signal(false);
-  readonly serverError = signal<string | null>(null);
   readonly images = signal<ImagePreview[]>([]);
 
   isClothingSelected(value: ClothingItem): boolean {
@@ -230,8 +229,6 @@ export class GenerateComponent implements OnDestroy {
   }
 
   onSubmit(): void {
-    this.serverError.set(null);
-
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -249,22 +246,8 @@ export class GenerateComponent implements OnDestroy {
       additionalImages: this.images().map((i) => i.file),
     };
 
-    this.submitting.set(true);
-    this.outfitService
-      .generate(request)
-      .pipe(finalize(() => this.submitting.set(false)))
-      .subscribe({
-        // todo: response needs to be handled when response page will be done
-        error: (err: unknown) => this.serverError.set(this.toErrorMessage(err)),
-      });
-  }
-
-  private toErrorMessage(err: unknown): string {
-    const status = (err as { status?: number })?.status;
-    if (status === 429) {
-      return "You've hit the generation limit. Please wait a while and try again.";
-    }
-    return 'Something went wrong while styling your look. Please try again.';
+    this.outfitState.setRequest(request);
+    this.router.navigateByUrl('/results');
   }
 
   ngOnDestroy(): void {
