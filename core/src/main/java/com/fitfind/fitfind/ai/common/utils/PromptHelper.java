@@ -111,12 +111,13 @@ public class PromptHelper {
                 ordered from best to worst. The three items must be distinct.
                 Reply with ONLY a valid JSON array, no markdown, no commentary, exactly this shape:
                 [
-                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"},
-                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"},
-                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"}
+                  {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"},
+                  {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"},
+                  {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"}
                 ]
 
-                Use the values directly from each chosen result item (title -> name, link -> link, picture -> picture).
+                Use the values directly from each chosen result item
+                (title -> name, link -> link, price -> price, picture -> picture).
                 If fewer than 3 suitable items exist, return as many as are suitable (1 or 2 entries).
                 If absolutely no item is suitable, reply with an empty array: []
                 """.formatted(
