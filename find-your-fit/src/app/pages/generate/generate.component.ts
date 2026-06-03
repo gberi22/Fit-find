@@ -28,9 +28,6 @@ import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 const MAX_IMAGES = 5;
 
-// "Full Outfit" is exclusive — it can't be combined with individual pieces.
-const FULL_OUTFIT: ClothingItem = 'FULL_OUTFIT';
-
 const BUDGET_MIN = 0;
 const BUDGET_MAX = 500;
 const MIN_MAX_BUDGET_GAP = 5;
@@ -121,18 +118,7 @@ export class GenerateComponent implements OnDestroy {
 
   toggleClothing(value: ClothingItem): void {
     const control = this.form.controls.clothes;
-    if (value === FULL_OUTFIT) {
-      // Selecting Full Outfit clears everything else; toggling it off empties the list.
-      control.setValue(control.value.includes(FULL_OUTFIT) ? [] : [FULL_OUTFIT]);
-      control.markAsTouched();
-      return;
-    }
     this.toggle(control, value);
-  }
-
-  // While Full Outfit is selected, the individual pieces are locked out.
-  isClothingDisabled(value: ClothingItem): boolean {
-    return value !== FULL_OUTFIT && this.form.controls.clothes.value.includes(FULL_OUTFIT);
   }
 
   toggleStyle(value: Style): void {

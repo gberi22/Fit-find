@@ -16,7 +16,6 @@ export type Style =
   | 'HIPPIE';
 
 export type ClothingItem =
-  | 'FULL_OUTFIT'
   | 'SHIRT'
   | 'T_SHIRT'
   | 'DRESS'
@@ -71,7 +70,6 @@ export const STYLE_OPTIONS: readonly Option<Style>[] = [
 ];
 
 export const CLOTHING_ITEM_OPTIONS: readonly Option<ClothingItem>[] = [
-  { value: 'FULL_OUTFIT', label: 'Full Outfit' },
   { value: 'SHIRT', label: 'Shirt' },
   { value: 'T_SHIRT', label: 'T-Shirt' },
   { value: 'DRESS', label: 'Dress' },
