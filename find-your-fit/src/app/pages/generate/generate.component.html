@@ -214,15 +214,13 @@
         <p class="form-error form-error--server" role="alert">{{ message }}</p>
       }
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="submit"
-        class="generate-submit"
-        [disabled]="submitting()"
-      >
-        {{ submitting() ? 'Styling your look…' : 'Find My Fit' }}
-      </button>
+      @if (submitting()) {
+        <app-loading-spinner class="generate-loading" message="AI is styling your look…" />
+      } @else {
+        <button mat-flat-button color="primary" type="submit" class="generate-submit">
+          Find My Fit
+        </button>
+      }
     </form>
   </div>
 </div>

@@ -369,3 +369,8 @@ input.mat-mdc-input-element:-webkit-autofill:active {
   font-weight: 600;
   font-size: 14px;
 }
+
+.generate-loading {
+  display: block;
+  margin-top: 12px;
+}
