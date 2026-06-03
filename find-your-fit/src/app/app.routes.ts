@@ -28,6 +28,11 @@ export const routes: Routes = [
     loadComponent: () => import('@pages/results/results.component').then((m) => m.ResultsComponent),
   },
   {
+    path: 'outfit',
+    canActivate: [authGuard],
+    loadComponent: () => import('@pages/outfit/outfit.component').then((m) => m.OutfitComponent),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('@pages/profile/profile.component').then((m) => m.ProfileComponent),
