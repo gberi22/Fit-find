@@ -26,7 +26,12 @@
           <section class="category-block">
             <h2 class="category-title">{{ clothingItemLabel(cat.category) }}</h2>
 
-            @if (cat.options.length) {
+            @if (isRetrying(cat.category)) {
+              <div class="category-retrying">
+                <div class="spinner" aria-hidden="true"></div>
+                <p class="status-text">Finding your match</p>
+              </div>
+            } @else if (cat.options.length) {
               <div class="option-row">
                 @for (opt of cat.options; track opt.link) {
                   <button
@@ -59,7 +64,12 @@
                 }
               </div>
             } @else {
-              <p class="category-empty">{{ cat.message }}</p>
+              <div class="category-empty-block">
+                <p class="category-empty">{{ cat.message }}</p>
+                <button type="button" class="ghost-btn" (click)="retry(cat.category)">
+                  Try again
+                </button>
+              </div>
             }
           </section>
         }

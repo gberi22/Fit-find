@@ -128,10 +128,33 @@
   margin-bottom: 18px;
 }
 
+.category-empty-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .category-empty {
   font-size: 15px;
   font-weight: 300;
   color: var(--text-muted);
+}
+
+.category-empty-block .ghost-btn {
+  cursor: pointer;
+}
+
+.category-retrying {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+}
+
+.category-retrying .spinner {
+  width: 32px;
+  height: 32px;
 }
 
 .option-row {
