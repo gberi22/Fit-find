@@ -34,7 +34,6 @@ export class OutfitComponent {
   constructor() {
     const request = this.outfitState.request();
     if (!request || this.items.length === 0) {
-      // No selection in memory (refresh / direct visit) — start over.
       this.router.navigateByUrl('/generate');
       return;
     }
