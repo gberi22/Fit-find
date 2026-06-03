@@ -23,7 +23,6 @@ import {
   Size,
   Style,
 } from '@shared/models/outfit.model';
-import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 const MAX_IMAGES = 5;
@@ -64,7 +63,6 @@ function nonEmptyArray(control: AbstractControl): ValidationErrors | null {
   imports: [
     ReactiveFormsModule,
     NavbarComponent,
-    LoadingSpinnerComponent,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
