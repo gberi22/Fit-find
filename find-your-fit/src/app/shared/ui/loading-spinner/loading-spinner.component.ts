@@ -10,5 +10,5 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class LoadingSpinnerComponent {
   readonly message = input<string>('');
-  readonly diameter = input<number>(40);
+  readonly diameter = input<number>(56);
 }

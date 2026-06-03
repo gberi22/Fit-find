@@ -9,12 +9,13 @@ import {
   Suggestion,
   clothingItemLabel,
 } from '@shared/models/outfit.model';
+import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-results',
-  imports: [NavbarComponent, RouterLink],
+  imports: [LoadingSpinnerComponent, NavbarComponent, RouterLink],
   templateUrl: './results.component.html',
   styleUrl: './results.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

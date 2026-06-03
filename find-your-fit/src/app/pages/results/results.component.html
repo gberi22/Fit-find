@@ -12,8 +12,7 @@
 
     @if (loading()) {
       <div class="results-status">
-        <div class="spinner" aria-hidden="true"></div>
-        <p class="status-text">Finding your match</p>
+        <app-loading-spinner message="Finding your match" />
       </div>
     } @else if (errorMessage()) {
       <div class="results-status">
