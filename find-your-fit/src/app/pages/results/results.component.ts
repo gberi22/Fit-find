@@ -4,7 +4,6 @@ import { OutfitStateService } from '@core/ai/outfit-state.service';
 import { OutfitService } from '@core/ai/outfit.service';
 import {
   ClothingItem,
-  OutfitImageRequest,
   OutfitSuggestionResponse,
   Suggestion,
   clothingItemLabel,
@@ -27,7 +26,6 @@ export class ResultsComponent {
   private readonly request = this.outfitState.request();
 
   readonly loading = signal(false);
-  readonly assembling = signal(false);
   readonly response = signal<OutfitSuggestionResponse | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly selections = signal<Map<ClothingItem, Suggestion>>(new Map());
@@ -78,23 +76,8 @@ export class ResultsComponent {
       return;
     }
 
-    const payload: OutfitImageRequest = {
-      gender: this.request.gender,
-      suggestions: [...this.selections().values()],
-    };
-
-    this.errorMessage.set(null);
-    this.assembling.set(true);
-    this.outfitService
-      .generateImage(payload)
-      .pipe(finalize(() => this.assembling.set(false)))
-      .subscribe({
-        next: (image) => {
-          this.outfitState.setImage(image);
-          // TODO: navigate to the generated-outfit image page once it exists.
-        },
-        error: (err: unknown) => this.errorMessage.set(this.toErrorMessage(err)),
-      });
+    this.outfitState.setSelected([...this.selections().values()]);
+    this.router.navigateByUrl('/outfit');
   }
 
   private toErrorMessage(err: unknown): string {
