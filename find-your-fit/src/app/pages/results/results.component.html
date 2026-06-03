@@ -43,6 +43,7 @@
                       }
                     </div>
                     <p class="option-name">{{ opt.name }}</p>
+                    <p class="option-price">{{ opt.price }}</p>
                     @if (opt.link) {
                       <a
                         class="option-link"
@@ -67,10 +68,10 @@
           <button
             type="button"
             class="assemble-btn"
-            [disabled]="!canAssemble() || assembling()"
+            [disabled]="!canAssemble()"
             (click)="assemble()"
           >
-            {{ assembling() ? 'Assembling…' : 'Assemble the outfit' }}
+            Assemble the outfit
           </button>
         </div>
       </div>
