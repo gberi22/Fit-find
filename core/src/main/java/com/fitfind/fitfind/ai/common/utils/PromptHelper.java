@@ -72,7 +72,6 @@ public class PromptHelper {
                 Size: %s
                 Category: %s
                 Styles: %s
-                Price range: %s - %s
                 Additional comments: %s
                 
                 If the category is "FULL_OUTFIT", consider it to be the same as
@@ -87,8 +86,6 @@ public class PromptHelper {
                 prompt.size(),
                 category.name(),
                 stylesText,
-                prompt.minPrice(),
-                prompt.maxPrice(),
                 prompt.additionalComments() == null ? "" : prompt.additionalComments()
         );
     }
