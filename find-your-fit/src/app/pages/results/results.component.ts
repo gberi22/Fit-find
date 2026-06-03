@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { OutfitStateService } from '@core/ai/outfit-state.service';
 import { OutfitService } from '@core/ai/outfit.service';
 import {
+  CategorySuggestions,
   ClothingItem,
   OutfitSuggestionResponse,
   Suggestion,
@@ -29,6 +30,7 @@ export class ResultsComponent {
   readonly response = signal<OutfitSuggestionResponse | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly selections = signal<Map<ClothingItem, Suggestion>>(new Map());
+  readonly retrying = signal<Set<ClothingItem>>(new Set());
 
   readonly clothingItemLabel = clothingItemLabel;
 
@@ -63,6 +65,46 @@ export class ResultsComponent {
 
   isSelected(category: ClothingItem, suggestion: Suggestion): boolean {
     return this.selections().get(category) === suggestion;
+  }
+
+  isRetrying(category: ClothingItem): boolean {
+    return this.retrying().has(category);
+  }
+
+  retry(category: ClothingItem): void {
+    if (!this.request || this.isRetrying(category)) {
+      return;
+    }
+
+    this.retrying.update((set) => new Set(set).add(category));
+
+    this.outfitService
+      .retryCategory(this.request, category)
+      .pipe(
+        finalize(() =>
+          this.retrying.update((set) => {
+            const next = new Set(set);
+            next.delete(category);
+            return next;
+          }),
+        ),
+      )
+      .subscribe({
+        next: (updated) => this.replaceCategory(updated),
+        error: (err: unknown) => this.errorMessage.set(this.toErrorMessage(err)),
+      });
+  }
+
+  private replaceCategory(updated: CategorySuggestions): void {
+    const current = this.response();
+    if (!current) {
+      return;
+    }
+    this.response.set({
+      categories: current.categories.map((cat) =>
+        cat.category === updated.category ? updated : cat,
+      ),
+    });
   }
 
   select(category: ClothingItem, suggestion: Suggestion): void {
