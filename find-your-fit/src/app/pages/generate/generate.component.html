@@ -210,9 +210,17 @@
         </mat-form-field>
       </section>
 
-      <button mat-flat-button color="primary" type="submit" class="generate-submit">
-        Find My Fit
-      </button>
+      @if (serverError(); as message) {
+        <p class="form-error form-error--server" role="alert">{{ message }}</p>
+      }
+
+      @if (submitting()) {
+        <app-loading-spinner class="generate-loading" message="AI is styling your look…" />
+      } @else {
+        <button mat-flat-button color="primary" type="submit" class="generate-submit">
+          Find My Fit
+        </button>
+      }
     </form>
   </div>
 </div>

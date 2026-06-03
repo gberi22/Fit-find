@@ -1,0 +1,16 @@
+.spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner-message {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  text-align: center;
+}

@@ -1,0 +1,46 @@
+<app-navbar />
+
+<div class="support-page fade-in">
+  <div class="support-inner">
+    <header class="support-head">
+      <p class="support-label">Support</p>
+      <h1 class="support-title">How can we <em>help?</em></h1>
+      <p class="support-subtitle">
+        Find quick answers to common questions, or reach out and we'll get back to you.
+      </p>
+    </header>
+
+    <section class="faq-section">
+      <p class="section-label">Frequently Asked QUESTIONS</p>
+      <div class="faq-list">
+        @for (item of faqs; track item.question; let i = $index) {
+          <div class="faq-item" [class.faq-item--open]="openFaq() === i">
+            <button
+              type="button"
+              class="faq-question"
+              (click)="toggleFaq(i)"
+              [attr.aria-expanded]="openFaq() === i"
+            >
+              <span>{{ item.question }}</span>
+              <span class="faq-icon" aria-hidden="true">{{ openFaq() === i ? '−' : '+' }}</span>
+            </button>
+            @if (openFaq() === i) {
+              <p class="faq-answer">{{ item.answer }}</p>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <h2 class="contact-title">Still need help?</h2>
+      <p class="contact-text">
+        Can't find what you're looking for? Drop us a line and we'll get back to you as soon as we
+        can.
+      </p>
+      <a class="contact-email" [href]="'mailto:' + supportEmail">{{ supportEmail }}</a>
+    </section>
+  </div>
+
+  <app-footer />
+</div>
