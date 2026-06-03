@@ -74,6 +74,11 @@ public class PromptHelper {
                 Styles: %s
                 Price range: %s - %s
                 Additional comments: %s
+                
+                If the category is "FULL_OUTFIT", consider it to be the same as
+                if the user chose multiple categories. Replace the "FULL_OUTFIT" category
+                with the clothing item categories you seem fit according to the user's preferences
+                and additional comments.
 
                 Reply with ONLY the query string, no quotes, no extra text, no markdown.
                 Keep it concise (under 12 words) and optimized for Google Shopping.
