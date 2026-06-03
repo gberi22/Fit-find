@@ -1,0 +1,54 @@
+<app-navbar />
+
+<div class="outfit-page fade-in">
+  <div class="outfit-inner">
+    <header class="outfit-head">
+      <p class="outfit-label">Your Look</p>
+      <h1 class="outfit-title">The Assembled <em>Fit</em></h1>
+    </header>
+
+    @if (loading()) {
+      <div class="outfit-status">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="status-text">Assembling your outfit</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="outfit-status">
+        <p class="status-error" role="alert">{{ errorMessage() }}</p>
+        <a class="ghost-btn" routerLink="/results">Back to results</a>
+      </div>
+    } @else if (imageSrc()) {
+      <div class="outfit-layout">
+        <div class="outfit-image">
+          <img [src]="imageSrc()" alt="AI-generated outfit" />
+        </div>
+
+        <div class="outfit-items">
+          @for (item of items; track item.link) {
+            <div class="item-card">
+              <div class="item-image">
+                @if (item.picture) {
+                  <img [src]="item.picture" [alt]="item.name ?? 'Chosen item'" />
+                } @else {
+                  <span class="item-image-fallback">No image</span>
+                }
+              </div>
+              <div class="item-body">
+                <p class="item-category">{{ clothingItemLabel(item.category) }}</p>
+                <p class="item-name">{{ item.name }}</p>
+                @if (item.price) {
+                  <p class="item-price">{{ item.price }}</p>
+                }
+                @if (item.link) {
+                  <a class="item-link" [href]="item.link" target="_blank" rel="noopener">
+                    View item
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
