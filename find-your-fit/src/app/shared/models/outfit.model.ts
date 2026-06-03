@@ -111,6 +111,7 @@ export interface Suggestion {
   category: ClothingItem;
   name: string | null;
   link: string | null;
+  price: string | null;
   picture: string | null;
   message: string | null;
 }

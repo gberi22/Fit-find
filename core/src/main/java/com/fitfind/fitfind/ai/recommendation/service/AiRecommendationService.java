@@ -185,11 +185,12 @@ public class AiRecommendationService {
             .map(node -> {
                 String name = textOrNull(node.get("name"));
                 String link = textOrNull(node.get("link"));
+                String price = textOrNull(node.get("price"));
                 String picture = textOrNull(node.get("picture"));
                 if (name == null || link == null) {
                     return null;
                 }
-                return new Suggestion(category, name, link, picture, null);
+                return new Suggestion(category, name, link, price, picture, null);
             })
             .filter(Objects::nonNull)
             .limit(MAX_OPTIONS_PER_CATEGORY)
