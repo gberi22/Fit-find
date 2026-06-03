@@ -36,7 +36,7 @@
   color: var(--accent);
 }
 
-/* Loading / error */
+/* Error */
 
 .outfit-status {
   display: flex;
@@ -44,29 +44,6 @@
   align-items: center;
   gap: 24px;
   padding: 80px 0;
-}
-
-.spinner {
-  width: 56px;
-  height: 56px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.status-text {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--text-secondary);
 }
 
 .status-error {

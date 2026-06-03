@@ -9,8 +9,7 @@
 
     @if (loading()) {
       <div class="outfit-status">
-        <div class="spinner" aria-hidden="true"></div>
-        <p class="status-text">Assembling your outfit</p>
+        <app-loading-spinner message="Assembling your outfit" />
       </div>
     } @else if (errorMessage()) {
       <div class="outfit-status">
