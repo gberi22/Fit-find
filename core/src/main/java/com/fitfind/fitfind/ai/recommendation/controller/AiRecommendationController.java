@@ -1,5 +1,7 @@
 package com.fitfind.fitfind.ai.recommendation.controller;
 
+import com.fitfind.fitfind.ai.common.model.CategorySuggestions;
+import com.fitfind.fitfind.ai.common.model.enums.ClothingItem;
 import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.common.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.ai.recommendation.service.AiRecommendationService;
@@ -23,5 +25,16 @@ public class AiRecommendationController {
         @Valid @ModelAttribute OutfitSuggestionRequest request
     ) {
         return ResponseEntity.ok(aiRecommendationService.recommend(request, authentication.getName()));
+    }
+
+    @PostMapping(value = "/outfit-suggestions/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CategorySuggestions> recommendCategory(
+        Authentication authentication,
+        @RequestParam ClothingItem category,
+        @Valid @ModelAttribute OutfitSuggestionRequest request
+    ) {
+        return ResponseEntity.ok(
+            aiRecommendationService.recommendCategory(request, category, authentication.getName())
+        );
     }
 }

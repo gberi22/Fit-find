@@ -68,6 +68,12 @@ public class AiRecommendationService {
         return response;
     }
 
+    public CategorySuggestions recommendCategory(OutfitSuggestionRequest prompt, ClothingItem category, String email) {
+        rateLimitService.enforceRateLimit(email, RateLimitType.AI_GENERATION);
+        OutfitSuggestionRequest effective = withReferenceContext(prompt);
+        return recommendForCategory(category, effective);
+    }
+
     private OutfitSuggestionRequest withReferenceContext(OutfitSuggestionRequest prompt) {
         List<RawImage> images = readImages(prompt.additionalImages());
         if (images.isEmpty()) {
