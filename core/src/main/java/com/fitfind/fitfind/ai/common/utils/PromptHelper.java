@@ -109,6 +109,10 @@ public class PromptHelper {
 
                 Pick the THREE best items that fit the user's preferences and price range,
                 ordered from best to worst. The three items must be distinct.
+                Keep in mind that the total cost of the outfit should fit the price range,
+                not only the individual items. This does not mean that all of the suggestions combined
+                should be under the budget, but the combinations of the top three items
+                from each category should be
                 Reply with ONLY a valid JSON array, no markdown, no commentary, exactly this shape:
                 [
                   {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"},
