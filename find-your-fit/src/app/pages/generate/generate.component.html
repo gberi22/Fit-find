@@ -59,7 +59,6 @@
               type="button"
               class="chip"
               [class.chip--active]="isClothingSelected(option.value)"
-              [disabled]="isClothingDisabled(option.value)"
               (click)="toggleClothing(option.value)"
             >
               {{ option.label }}
@@ -210,17 +209,9 @@
         </mat-form-field>
       </section>
 
-      @if (serverError(); as message) {
-        <p class="form-error form-error--server" role="alert">{{ message }}</p>
-      }
-
-      @if (submitting()) {
-        <app-loading-spinner class="generate-loading" message="AI is styling your look…" />
-      } @else {
-        <button mat-flat-button color="primary" type="submit" class="generate-submit">
-          Find My Fit
-        </button>
-      }
+      <button mat-flat-button color="primary" type="submit" class="generate-submit">
+        Find My Fit
+      </button>
     </form>
   </div>
 </div>
