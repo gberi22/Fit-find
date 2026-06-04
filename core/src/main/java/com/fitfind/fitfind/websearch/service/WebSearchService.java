@@ -1,6 +1,7 @@
 package com.fitfind.fitfind.websearch.service;
 
 import com.fitfind.fitfind.websearch.config.WebSearchProperties;
+import com.fitfind.fitfind.websearch.exception.TransientSearchException;
 import com.fitfind.fitfind.websearch.model.SearchedClothing;
 import com.fitfind.fitfind.websearch.model.SerpApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -81,12 +82,6 @@ public class WebSearchService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Interrupted while retrying web search", e);
-        }
-    }
-
-    private static final class TransientSearchException extends RuntimeException {
-        private TransientSearchException(String message) {
-            super(message);
         }
     }
 }
