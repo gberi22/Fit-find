@@ -13,8 +13,8 @@ public class WebSearchProperties {
 
     private String key;
     private String baseUrl;
-    private Duration connectTimeout = Duration.ofSeconds(5);
-    private Duration readTimeout = Duration.ofSeconds(10);
-    private int maxAttempts = 3;
-    private Duration retryBackoff = Duration.ofMillis(500);
+    private Duration connectTimeout;
+    private Duration readTimeout;
+    private int maxAttempts;
+    private Duration retryBackoff;
 }
