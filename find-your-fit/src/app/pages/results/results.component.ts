@@ -36,6 +36,8 @@ export class ResultsComponent {
 
   readonly clothingItemLabel = clothingItemLabel;
 
+  readonly showAssemble = (this.request?.clothes.length ?? 0) > 1;
+
   private readonly errorMessageProp = 'styling your look';
 
   private readonly categoriesWithOptions = computed(
@@ -57,12 +59,21 @@ export class ResultsComponent {
       return;
     }
 
+    const cached = this.outfitState.response();
+    if (cached) {
+      this.response.set(cached);
+      return;
+    }
+
     this.loading.set(true);
     this.outfitService
       .generate(this.request)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (response) => this.response.set(response),
+        next: (response) => {
+          this.response.set(response);
+          this.outfitState.setResponse(response);
+        },
         error: (err: unknown) => this.errorMessage.set(errorMessage(err, this.errorMessageProp)),
       });
   }
@@ -104,11 +115,13 @@ export class ResultsComponent {
     if (!current) {
       return;
     }
-    this.response.set({
+    const next: OutfitSuggestionResponse = {
       categories: current.categories.map((cat) =>
         cat.category === updated.category ? updated : cat,
       ),
-    });
+    };
+    this.response.set(next);
+    this.outfitState.setResponse(next);
   }
 
   select(category: ClothingItem, suggestion: Suggestion): void {

@@ -23,7 +23,17 @@
       <div class="results-body">
         @for (cat of response()!.categories; track cat.category) {
           <section class="category-block">
-            <h2 class="category-title">{{ clothingItemLabel(cat.category) }}</h2>
+            <div class="category-head">
+              <h2 class="category-title">{{ clothingItemLabel(cat.category) }}</h2>
+              <button
+                type="button"
+                class="retry-btn"
+                [disabled]="isRetrying(cat.category)"
+                (click)="retry(cat.category)"
+              >
+                Try again
+              </button>
+            </div>
 
             @if (isRetrying(cat.category)) {
               <div class="category-retrying">
@@ -65,24 +75,23 @@
             } @else {
               <div class="category-empty-block">
                 <p class="category-empty">{{ cat.message }}</p>
-                <button type="button" class="ghost-btn" (click)="retry(cat.category)">
-                  Try again
-                </button>
               </div>
             }
           </section>
         }
 
-        <div class="assemble-bar">
-          <button
-            type="button"
-            class="assemble-btn"
-            [disabled]="!canAssemble()"
-            (click)="assemble()"
-          >
-            Assemble the outfit
-          </button>
-        </div>
+        @if (showAssemble) {
+          <div class="assemble-bar">
+            <button
+              type="button"
+              class="assemble-btn"
+              [disabled]="!canAssemble()"
+              (click)="assemble()"
+            >
+              Assemble the outfit
+            </button>
+          </div>
+        }
       </div>
     }
   </div>
