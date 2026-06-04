@@ -1,16 +1,10 @@
 package com.fitfind.fitfind.ai.recommendation.service;
 
-import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.models.ChatCompletions;
-import com.azure.ai.openai.models.ChatCompletionsOptions;
-import com.azure.ai.openai.models.ChatMessage;
-import com.azure.ai.openai.models.ChatRole;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.common.model.CategorySuggestions;
 import com.fitfind.fitfind.ai.common.model.RawImage;
 import com.fitfind.fitfind.ai.common.model.Suggestion;
-import com.fitfind.fitfind.ai.recommendation.config.AiRecommendationProperties;
 import com.fitfind.fitfind.ai.recommendation.config.AiVisionProperties;
 import com.fitfind.fitfind.ai.recommendation.exception.CategoryFailedException;
 import com.fitfind.fitfind.ai.recommendation.exception.InvalidReferenceImageException;
@@ -24,6 +18,7 @@ import com.fitfind.fitfind.websearch.model.SearchedClothing;
 import com.fitfind.fitfind.websearch.service.WebSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,8 +43,7 @@ public class AiRecommendationService {
     private static final String NOT_FOUND_MESSAGE =
         "We couldn't find a matching item for this category. Please try again.";
 
-    private final OpenAIClient openaiClient;
-    private final AiRecommendationProperties aiRecommendationProperties;
+    private final ChatClient chatClient;
     private final RateLimitService rateLimitService;
     private final WebSearchService webSearchService;
     private final AiHistoryService aiHistoryService;
@@ -215,11 +209,9 @@ public class AiRecommendationService {
     }
 
     private String chat(String message) {
-        ChatCompletionsOptions options = new ChatCompletionsOptions(
-            List.of(new ChatMessage(ChatRole.USER).setContent(message))
-        ).setModel(aiRecommendationProperties.getModel());
-
-        ChatCompletions completions = openaiClient.getChatCompletions(aiRecommendationProperties.getModel(), options);
-        return completions.getChoices().getFirst().getMessage().getContent();
+        return chatClient.prompt()
+                .user(message)
+                .call()
+                .content();
     }
 }
