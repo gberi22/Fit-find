@@ -5,6 +5,7 @@ import { OutfitService } from '@core/ai/outfit.service';
 import { Suggestion, clothingItemLabel } from '@shared/models/outfit.model';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
+import { errorMessage } from '@shared/utils/errorMessageHandler';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -25,6 +26,8 @@ export class OutfitComponent {
   readonly errorMessage = signal<string | null>(null);
 
   readonly clothingItemLabel = clothingItemLabel;
+
+  private readonly errorMessageProp = 'assembling your outfit';
 
   private readonly image = signal<{ imageBase64: string; mimeType: string } | null>(null);
   readonly imageSrc = computed(() => {
@@ -53,15 +56,7 @@ export class OutfitComponent {
             );
           }
         },
-        error: (err: unknown) => this.errorMessage.set(this.toErrorMessage(err)),
+        error: (err: unknown) => this.errorMessage.set(errorMessage(err, this.errorMessageProp)),
       });
-  }
-
-  private toErrorMessage(err: unknown): string {
-    const status = (err as { status?: number })?.status;
-    if (status === 429) {
-      return "You've hit the generation limit. Please wait a while and try again.";
-    }
-    return 'Something went wrong while assembling your outfit. Please try again.';
   }
 }

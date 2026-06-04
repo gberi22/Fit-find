@@ -12,6 +12,7 @@ import {
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 import { finalize } from 'rxjs';
+import {errorMessage} from '@shared/utils/errorMessageHandler';
 
 @Component({
   selector: 'app-results',
@@ -34,6 +35,8 @@ export class ResultsComponent {
   readonly retrying = signal<Set<ClothingItem>>(new Set());
 
   readonly clothingItemLabel = clothingItemLabel;
+
+  private readonly errorMessageProp = 'styling your look';
 
   private readonly categoriesWithOptions = computed(
     () => this.response()?.categories.filter((cat) => cat.options.length > 0) ?? [],
@@ -60,7 +63,7 @@ export class ResultsComponent {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => this.response.set(response),
-        error: (err: unknown) => this.errorMessage.set(this.toErrorMessage(err)),
+        error: (err: unknown) => this.errorMessage.set(errorMessage(err, this.errorMessageProp)),
       });
   }
 
@@ -92,7 +95,7 @@ export class ResultsComponent {
       )
       .subscribe({
         next: (updated) => this.replaceCategory(updated),
-        error: (err: unknown) => this.errorMessage.set(this.toErrorMessage(err)),
+        error: (err: unknown) => this.errorMessage.set(errorMessage(err, this.errorMessageProp)),
       });
   }
 
@@ -121,13 +124,5 @@ export class ResultsComponent {
 
     this.outfitState.setSelected([...this.selections().values()]);
     this.router.navigateByUrl('/outfit');
-  }
-
-  private toErrorMessage(err: unknown): string {
-    const status = (err as { status?: number })?.status;
-    if (status === 429) {
-      return "You've hit the generation limit. Please wait a while and try again.";
-    }
-    return 'Something went wrong while styling your look. Please try again.';
   }
 }
