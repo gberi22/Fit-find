@@ -12,7 +12,7 @@ import {
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 import { finalize } from 'rxjs';
-import {errorMessage} from '@shared/utils/errorMessageHandler';
+import { errorMessage } from '@shared/utils/errorMessageHandler';
 
 @Component({
   selector: 'app-results',
