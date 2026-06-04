@@ -155,6 +155,8 @@ public class PromptHelper {
                 for the human body.
 
                 HARD RULES (do not violate):
+                - Use the mannequin as a reference. Do NOT alter the mannequin. Do NOT replace the mannequin with a person.
+                - Only extract the necessary clothing items from the input garment images.
                 - Do NOT invent, replace, or add any clothing item not present in the input garment images.
                 - Do NOT alter the color, pattern, print, logo, fabric, cut, length, or
                   silhouette of any input garment. Preserve each garment's identity exactly.
