@@ -46,8 +46,6 @@
   margin: 0 auto;
 }
 
-/* Error */
-
 .results-status {
   display: flex;
   flex-direction: column;
@@ -83,8 +81,6 @@
   border-color: var(--accent);
   color: var(--accent);
 }
-
-/* Results */
 
 .results-body {
   display: flex;
@@ -213,8 +209,6 @@
 .option-link:hover {
   color: var(--accent-hover);
 }
-
-/* Assemble */
 
 .assemble-bar {
   display: flex;

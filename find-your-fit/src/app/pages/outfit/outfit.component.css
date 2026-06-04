@@ -36,8 +36,6 @@
   color: var(--accent);
 }
 
-/* Error */
-
 .outfit-status {
   display: flex;
   flex-direction: column;
@@ -73,8 +71,6 @@
   border-color: var(--accent);
   color: var(--accent);
 }
-
-/* Layout: image left, chosen items right */
 
 .outfit-layout {
   display: grid;
