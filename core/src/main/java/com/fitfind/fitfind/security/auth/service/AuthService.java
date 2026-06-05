@@ -1,7 +1,7 @@
 package com.fitfind.fitfind.security.auth.service;
 
 import com.fitfind.fitfind.client.model.Client;
-import com.fitfind.fitfind.client.model.ClientNotFoundException;
+import com.fitfind.fitfind.client.exception.ClientNotFoundException;
 import com.fitfind.fitfind.client.repository.ClientRepository;
 import com.fitfind.fitfind.security.auth.model.AuthRequest;
 import com.fitfind.fitfind.security.auth.model.AuthResponse;

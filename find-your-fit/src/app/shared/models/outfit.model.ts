@@ -16,7 +16,6 @@ export type Style =
   | 'HIPPIE';
 
 export type ClothingItem =
-  | 'FULL_OUTFIT'
   | 'SHIRT'
   | 'T_SHIRT'
   | 'DRESS'
@@ -71,7 +70,6 @@ export const STYLE_OPTIONS: readonly Option<Style>[] = [
 ];
 
 export const CLOTHING_ITEM_OPTIONS: readonly Option<ClothingItem>[] = [
-  { value: 'FULL_OUTFIT', label: 'Full Outfit' },
   { value: 'SHIRT', label: 'Shirt' },
   { value: 'T_SHIRT', label: 'T-Shirt' },
   { value: 'DRESS', label: 'Dress' },
@@ -111,6 +109,7 @@ export interface Suggestion {
   category: ClothingItem;
   name: string | null;
   link: string | null;
+  price: string | null;
   picture: string | null;
   message: string | null;
 }
@@ -123,4 +122,15 @@ export interface CategorySuggestions {
 
 export interface OutfitSuggestionResponse {
   categories: CategorySuggestions[];
+}
+
+export interface OutfitImageRequest {
+  gender: Gender;
+  suggestions: Suggestion[];
+}
+
+export interface OutfitImageResponse {
+  imageBase64: string;
+  mimeType: string;
+  message: string | null;
 }

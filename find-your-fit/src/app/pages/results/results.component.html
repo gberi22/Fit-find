@@ -1,0 +1,98 @@
+<app-navbar />
+
+<div class="results-page fade-in">
+  <div class="results-inner">
+    <header class="results-head">
+      <p class="results-label">Your Curated Looks</p>
+      <h1 class="results-title">Build Your <em>Outfit</em></h1>
+      <p class="results-subtitle">
+        Pick your favourite piece in each category, then assemble them into a single look.
+      </p>
+    </header>
+
+    @if (loading()) {
+      <div class="results-status">
+        <app-loading-spinner message="Finding your match" />
+      </div>
+    } @else if (errorMessage()) {
+      <div class="results-status">
+        <p class="status-error" role="alert">{{ errorMessage() }}</p>
+        <a class="ghost-btn" routerLink="/generate">Back to generate</a>
+      </div>
+    } @else if (response()) {
+      <div class="results-body">
+        @for (cat of response()!.categories; track cat.category) {
+          <section class="category-block">
+            <div class="category-head">
+              <h2 class="category-title">{{ clothingItemLabel(cat.category) }}</h2>
+              <button
+                type="button"
+                class="retry-btn"
+                [disabled]="isRetrying(cat.category)"
+                (click)="retry(cat.category)"
+              >
+                Try again
+              </button>
+            </div>
+
+            @if (isRetrying(cat.category)) {
+              <div class="category-retrying">
+                <app-loading-spinner [diameter]="20" />
+                <p class="status-text">Finding your match</p>
+              </div>
+            } @else if (cat.options.length) {
+              <div class="option-row">
+                @for (opt of cat.options; track opt.link) {
+                  <button
+                    type="button"
+                    class="option-card"
+                    [class.option-card--active]="isSelected(cat.category, opt)"
+                    (click)="select(cat.category, opt)"
+                  >
+                    <div class="option-image">
+                      @if (opt.picture) {
+                        <img [src]="opt.picture" [alt]="opt.name ?? 'Suggested item'" />
+                      } @else {
+                        <span class="option-image-fallback">No image</span>
+                      }
+                    </div>
+                    <p class="option-name">{{ opt.name }}</p>
+                    <p class="option-price">{{ opt.price }}</p>
+                    @if (opt.link) {
+                      <a
+                        class="option-link"
+                        [href]="opt.link"
+                        target="_blank"
+                        rel="noopener"
+                        (click)="$event.stopPropagation()"
+                      >
+                        View item
+                      </a>
+                    }
+                  </button>
+                }
+              </div>
+            } @else {
+              <div class="category-empty-block">
+                <p class="category-empty">{{ cat.message }}</p>
+              </div>
+            }
+          </section>
+        }
+
+        @if (showAssemble) {
+          <div class="assemble-bar">
+            <button
+              type="button"
+              class="assemble-btn"
+              [disabled]="!canAssemble()"
+              (click)="assemble()"
+            >
+              Assemble the outfit
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

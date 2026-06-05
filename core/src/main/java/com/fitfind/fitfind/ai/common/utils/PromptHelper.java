@@ -72,18 +72,17 @@ public class PromptHelper {
                 Size: %s
                 Category: %s
                 Styles: %s
-                Price range: %s - %s
                 Additional comments: %s
 
                 Reply with ONLY the query string, no quotes, no extra text, no markdown.
+                Analyze additional comments and attach relevant keywords to the query.
+                Do NOT attach the exact 'additional comments' parameter to the query.
                 Keep it concise (under 12 words) and optimized for Google Shopping.
                 """.formatted(
                 prompt.gender(),
                 prompt.size(),
                 category.name(),
                 stylesText,
-                prompt.minPrice(),
-                prompt.maxPrice(),
                 prompt.additionalComments() == null ? "" : prompt.additionalComments()
         );
     }
@@ -111,12 +110,13 @@ public class PromptHelper {
                 ordered from best to worst. The three items must be distinct.
                 Reply with ONLY a valid JSON array, no markdown, no commentary, exactly this shape:
                 [
-                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"},
-                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"},
-                  {"name": "<title>", "link": "<product url>", "picture": "<image url>"}
+                  {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"},
+                  {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"},
+                  {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"}
                 ]
 
-                Use the values directly from each chosen result item (title -> name, link -> link, picture -> picture).
+                Use the values directly from each chosen result item
+                (title -> name, link -> link, price -> price, picture -> picture).
                 If fewer than 3 suitable items exist, return as many as are suitable (1 or 2 entries).
                 If absolutely no item is suitable, reply with an empty array: []
                 """.formatted(
@@ -157,6 +157,9 @@ public class PromptHelper {
                 for the human body.
 
                 HARD RULES (do not violate):
+                - Use the mannequin as a reference. Do NOT replace the mannequin with a person.
+                - You can alter the mannequin's pose if necessary to fit the garments.
+                - Only extract the necessary clothing items from the input garment images.
                 - Do NOT invent, replace, or add any clothing item not present in the input garment images.
                 - Do NOT alter the color, pattern, print, logo, fabric, cut, length, or
                   silhouette of any input garment. Preserve each garment's identity exactly.

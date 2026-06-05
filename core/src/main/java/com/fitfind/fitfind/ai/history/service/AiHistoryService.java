@@ -6,7 +6,7 @@ import com.fitfind.fitfind.ai.history.repository.AiHistoryRepository;
 import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.common.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.client.model.Client;
-import com.fitfind.fitfind.client.model.ClientNotFoundException;
+import com.fitfind.fitfind.client.exception.ClientNotFoundException;
 import com.fitfind.fitfind.client.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

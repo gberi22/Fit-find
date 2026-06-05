@@ -1,11 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
-import { OutfitSuggestionRequest, OutfitSuggestionResponse } from '@shared/models/outfit.model';
+import {
+  CategorySuggestions,
+  ClothingItem,
+  OutfitImageRequest,
+  OutfitImageResponse,
+  OutfitSuggestionRequest,
+  OutfitSuggestionResponse,
+} from '@shared/models/outfit.model';
 import { Observable } from 'rxjs';
 
 const ENDPOINTS = {
   OUTFIT_SUGGESTIONS: '/api/ai/outfit-suggestions',
+  OUTFIT_SUGGESTIONS_CATEGORY: '/api/ai/outfit-suggestions/category',
+  OUTFIT_IMAGE: '/api/ai/outfit-image',
 } as const;
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +22,26 @@ export class OutfitService {
   private readonly http = inject(HttpClient);
 
   generate(value: OutfitSuggestionRequest): Observable<OutfitSuggestionResponse> {
+    return this.http.post<OutfitSuggestionResponse>(
+      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS}`,
+      this.toFormData(value),
+    );
+  }
+
+  retryCategory(
+    value: OutfitSuggestionRequest,
+    category: ClothingItem,
+  ): Observable<CategorySuggestions> {
+    const form = this.toFormData(value);
+    form.append('category', category);
+
+    return this.http.post<CategorySuggestions>(
+      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS_CATEGORY}`,
+      form,
+    );
+  }
+
+  private toFormData(value: OutfitSuggestionRequest): FormData {
     const form = new FormData();
     form.append('gender', value.gender);
     form.append('size', value.size);
@@ -26,9 +55,13 @@ export class OutfitService {
     }
     value.additionalImages.forEach((file) => form.append('additionalImages', file, file.name));
 
-    return this.http.post<OutfitSuggestionResponse>(
-      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS}`,
-      form,
+    return form;
+  }
+
+  generateImage(value: OutfitImageRequest): Observable<OutfitImageResponse> {
+    return this.http.post<OutfitImageResponse>(
+      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_IMAGE}`,
+      value,
     );
   }
 }

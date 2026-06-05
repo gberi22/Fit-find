@@ -6,6 +6,7 @@ public record Suggestion(
     ClothingItem category,
     String name,
     String link,
+    String price,
     String picture,
     String message
 ) { }
