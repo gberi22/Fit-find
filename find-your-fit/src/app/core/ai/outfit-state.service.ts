@@ -29,5 +29,10 @@ export class OutfitStateService {
 
   setSelected(suggestions: Suggestion[]): void {
     this._selected.set(suggestions);
+    this._image.set(null);
+  }
+
+  setImage(image: OutfitImageResponse): void {
+    this._image.set(image);
   }
 }

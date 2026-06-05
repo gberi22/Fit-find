@@ -42,6 +42,12 @@ export class OutfitComponent {
       return;
     }
 
+    const cached = this.outfitState.image();
+    if (cached?.imageBase64) {
+      this.image.set({ imageBase64: cached.imageBase64, mimeType: cached.mimeType });
+      return;
+    }
+
     this.loading.set(true);
     this.outfitService
       .generateImage({ gender: request.gender, suggestions: this.items })
@@ -50,6 +56,7 @@ export class OutfitComponent {
         next: (res) => {
           if (res.imageBase64) {
             this.image.set({ imageBase64: res.imageBase64, mimeType: res.mimeType });
+            this.outfitState.setImage(res);
           } else {
             this.errorMessage.set(
               res.message ?? 'We could not assemble your outfit. Please try again.',
