@@ -37,7 +37,7 @@
 
             @if (isRetrying(cat.category)) {
               <div class="category-retrying">
-                <div class="spinner" aria-hidden="true"></div>
+                <app-loading-spinner [diameter]="20" />
                 <p class="status-text">Finding your match</p>
               </div>
             } @else if (cat.options.length) {

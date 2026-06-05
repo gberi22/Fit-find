@@ -154,13 +154,8 @@
 .category-retrying {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
   padding: 16px 0;
-}
-
-.category-retrying .spinner {
-  width: 32px;
-  height: 32px;
 }
 
 .option-row {
