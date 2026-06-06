@@ -68,6 +68,12 @@
         @if (form.controls.clothes.touched && form.controls.clothes.invalid) {
           <p class="field-error">Select at least one clothing item.</p>
         }
+        @if (form.controls.clothes.value.length === 1) {
+          <p class="field-note">
+            With a single piece, only item search is available. Pick at least 2 pieces to generate
+            your outfit image, publish, or save your look.
+          </p>
+        }
       </section>
 
       <section class="field-block">

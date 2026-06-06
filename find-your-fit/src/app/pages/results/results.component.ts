@@ -36,26 +36,21 @@ export class ResultsComponent {
 
   readonly clothingItemLabel = clothingItemLabel;
 
-  readonly showAssemble = (this.request?.clothes.length ?? 0) > 1;
-
   private readonly errorMessageProp = 'styling your look';
 
   private readonly categoriesWithOptions = computed(
     () => this.response()?.categories.filter((cat) => cat.options.length > 0) ?? [],
   );
 
-  readonly canAssemble = computed(() => {
-    const selectable = this.categoriesWithOptions();
-    if (selectable.length === 0) {
-      return false;
-    }
-    const selected = this.selections();
-    return selectable.every((cat) => selected.has(cat.category));
-  });
+  readonly selectableCount = computed(() => this.categoriesWithOptions().length);
+
+  readonly selectedCount = computed(() => this.selections().size);
+
+  readonly canAssemble = computed(() => this.selectedCount() >= 2);
 
   constructor() {
     if (!this.request) {
-      this.router.navigateByUrl('/generate');
+      this.router.navigateByUrl('/generate', { replaceUrl: true });
       return;
     }
 
@@ -136,6 +131,6 @@ export class ResultsComponent {
     }
 
     this.outfitState.setSelected([...this.selections().values()]);
-    this.router.navigateByUrl('/outfit');
+    this.router.navigateByUrl('/outfit', { replaceUrl: true });
   }
 }

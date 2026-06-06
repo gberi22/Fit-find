@@ -355,6 +355,13 @@ input.mat-mdc-input-element:-webkit-autofill:active {
   margin-top: 8px;
 }
 
+.field-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+
 .form-error--server {
   font-size: 13px;
   color: var(--error);

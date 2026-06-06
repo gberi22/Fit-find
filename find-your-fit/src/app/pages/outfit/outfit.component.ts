@@ -38,7 +38,7 @@ export class OutfitComponent {
   constructor() {
     const request = this.outfitState.request();
     if (!request || this.items.length === 0) {
-      this.router.navigateByUrl('/generate');
+      this.router.navigateByUrl('/generate', { replaceUrl: true });
       return;
     }
 

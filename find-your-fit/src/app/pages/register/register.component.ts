@@ -83,7 +83,7 @@ export class RegisterComponent {
       .register({ firstName, lastName, email, password })
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
-        next: () => this.router.navigateByUrl('/'),
+        next: () => this.router.navigateByUrl('/', { replaceUrl: true }),
         error: (err: unknown) => this.serverError.set(toAuthErrorMessage(err)),
       });
   }
