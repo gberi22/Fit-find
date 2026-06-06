@@ -16,6 +16,6 @@ export class ProfileComponent {
 
   signOut(): void {
     this.auth.logout();
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

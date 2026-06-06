@@ -136,6 +136,6 @@ export class ResultsComponent {
     }
 
     this.outfitState.setSelected([...this.selections().values()]);
-    this.router.navigateByUrl('/outfit');
+    this.router.navigateByUrl('/outfit', { replaceUrl: true });
   }
 }

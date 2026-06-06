@@ -14,7 +14,7 @@
     } @else if (errorMessage()) {
       <div class="outfit-status">
         <p class="status-error" role="alert">{{ errorMessage() }}</p>
-        <a class="ghost-btn" routerLink="/results">Back to results</a>
+        <a class="ghost-btn" routerLink="/results" [replaceUrl]="true">Back to results</a>
       </div>
     } @else if (imageSrc()) {
       <div class="outfit-layout">

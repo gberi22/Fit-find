@@ -17,7 +17,7 @@
     } @else if (errorMessage()) {
       <div class="results-status">
         <p class="status-error" role="alert">{{ errorMessage() }}</p>
-        <a class="ghost-btn" routerLink="/generate">Back to generate</a>
+        <a class="ghost-btn" routerLink="/generate" [replaceUrl]="true">Back to generate</a>
       </div>
     } @else if (response()) {
       <div class="results-body">
