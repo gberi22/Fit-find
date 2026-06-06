@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/feed")
+@RequestMapping("/api/public/feed")
 @RequiredArgsConstructor
 public class FeedController {
     private final FeedService feedService;

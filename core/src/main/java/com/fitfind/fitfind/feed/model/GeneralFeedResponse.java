@@ -4,12 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record GeneralFeedResponse(
-        List<LookItem> looks,
+        List<LookCardResponse> looks,
         Long totalElements,
         int totalPages
-) {
-    public record LookItem(
-            Long id,
-            LocalDateTime createdAt
-    ) { }
-}
+) { }

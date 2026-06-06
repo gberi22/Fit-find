@@ -21,12 +21,13 @@ public class FeedService {
         Pageable pageable = PageRequest.of(page, size)
                 .withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Look> result = feedRepository.findLookByIsPublishedTrue(isPublished, pageable);
-        List<GeneralFeedResponse.LookItem> items = result.getContent().stream()
-                .map(look -> new GeneralFeedResponse.LookItem(
-                        look.getId(),
-                        look.getCreatedAt()
-                ))
-                .toList();
-        return new GeneralFeedResponse(items, result.getTotalElements(), result.getTotalPages());
+//        List<GeneralFeedResponse.LookItem> items = result.getContent().stream()
+//                .map(look -> new GeneralFeedResponse.LookItem(
+//                        look.getId(),
+//                        look.getCreatedAt()
+//                ))
+//                .toList();
+//        return new GeneralFeedResponse(items, result.getTotalElements(), result.getTotalPages());
+        return null;
     }
 }
