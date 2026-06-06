@@ -55,7 +55,7 @@ export class ResultsComponent {
 
   constructor() {
     if (!this.request) {
-      this.router.navigateByUrl('/generate');
+      this.router.navigateByUrl('/generate', { replaceUrl: true });
       return;
     }
 

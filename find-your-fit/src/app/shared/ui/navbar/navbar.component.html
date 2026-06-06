@@ -6,6 +6,12 @@
     <li><a class="nav-link" routerLink="/support">Support</a></li>
     @if (isAuthenticated()) {
       <li><a class="nav-link" routerLink="/generate">Generate</a></li>
+      @if (outfitRequest()) {
+        <li><a class="nav-link" routerLink="/results">View Results</a></li>
+      }
+      @if (outfitSelected().length) {
+        <li><a class="nav-link" routerLink="/outfit">View Outfit</a></li>
+      }
       <li>
         <a class="nav-btn" routerLink="/profile">
           <span class="nav-avatar" aria-hidden="true">
