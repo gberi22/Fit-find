@@ -1,5 +1,8 @@
 CREATE SEQUENCE IF NOT EXISTS client_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE IF NOT EXISTS ai_history_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS stores_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS products_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS looks_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE IF NOT EXISTS client (
     id          BIGSERIAL PRIMARY KEY,
@@ -30,4 +33,41 @@ CREATE TABLE IF NOT EXISTS ai_history (
     request     JSONB NOT NULL,
     response    JSONB NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS stores (
+    id   BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    url  VARCHAR(500)
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id         BIGSERIAL PRIMARY KEY,
+    store_id   BIGINT REFERENCES stores(id),
+    name       VARCHAR(255) NOT NULL,
+    price      VARCHAR(50),
+    url        VARCHAR(500) NOT NULL UNIQUE,
+    category   VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS looks (
+    id              BIGSERIAL PRIMARY KEY,
+    client_id       BIGINT NOT NULL REFERENCES client(id),
+    gender          VARCHAR(10) NOT NULL,
+    size            VARCHAR(10),
+    styles          JSONB NOT NULL,
+    budget_min      DECIMAL(10, 2),
+    budget_max      DECIMAL(10, 2),
+    image           BYTEA,
+    image_mime_type VARCHAR(50),
+    is_published    BOOLEAN NOT NULL DEFAULT FALSE,
+    deleted_at      TIMESTAMP,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS look_products (
+    look_id    BIGINT NOT NULL REFERENCES looks(id) ON DELETE CASCADE,
+    product_id BIGINT NOT NULL REFERENCES products(id),
+    PRIMARY KEY (look_id, product_id)
 );
