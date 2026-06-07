@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.common.model.enums.Gender;
 import com.fitfind.fitfind.ai.common.model.enums.Style;
-import com.fitfind.fitfind.feed.model.GeneralFeedResponse;
+import com.fitfind.fitfind.feed.model.FeedRequest;
+import com.fitfind.fitfind.feed.model.FeedResponse;
 import com.fitfind.fitfind.feed.model.LookCardProjection;
 import com.fitfind.fitfind.feed.model.LookCardResponse;
 import com.fitfind.fitfind.feed.repository.FeedRepository;
@@ -28,15 +29,16 @@ public class FeedService {
     private final FeedRepository feedRepository;
     private final ObjectMapper objectMapper;
 
-    // TODO: ratings
-    public GeneralFeedResponse list(
-            Gender gender,
-            List<Style> styles,
-            BigDecimal minBudget,
-            BigDecimal maxBudget,
+    public FeedResponse list(
+            FeedRequest request,
             int page,
             int size
     ) {
+        Gender gender = request.gender();
+        List<Style> styles = request.style();
+        BigDecimal minBudget = request.minBudget();
+        BigDecimal maxBudget = request.maxBudget();
+
         Pageable pageable = PageRequest.of(page, size);
         String genderParam = gender == null ? null : gender.name();
         String[] stylesParam = (styles == null || styles.isEmpty())
@@ -50,7 +52,7 @@ public class FeedService {
                 .map(this::toCard)
                 .toList();
 
-        return new GeneralFeedResponse(looks, result.getTotalElements(), result.getTotalPages());
+        return new FeedResponse(looks, result.getTotalElements(), result.getTotalPages());
     }
 
     private LookCardResponse toCard(LookCardProjection projection) {
