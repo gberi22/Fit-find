@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.common.model.enums.Gender;
 import com.fitfind.fitfind.ai.common.model.enums.Style;
-import com.fitfind.fitfind.feed.model.FeedRequest;
+import com.fitfind.fitfind.feed.model.FeedRequestFilters;
 import com.fitfind.fitfind.feed.model.FeedResponse;
 import com.fitfind.fitfind.feed.model.LookCardProjection;
 import com.fitfind.fitfind.feed.model.LookCardResponse;
@@ -30,14 +30,14 @@ public class FeedService {
     private final ObjectMapper objectMapper;
 
     public FeedResponse list(
-            FeedRequest request,
+            FeedRequestFilters requestFilters,
             int page,
             int size
     ) {
-        Gender gender = request.gender();
-        List<Style> styles = request.style();
-        BigDecimal minBudget = request.minBudget();
-        BigDecimal maxBudget = request.maxBudget();
+        Gender gender = requestFilters.gender();
+        List<Style> styles = requestFilters.style();
+        BigDecimal minBudget = requestFilters.minBudget();
+        BigDecimal maxBudget = requestFilters.maxBudget();
 
         Pageable pageable = PageRequest.of(page, size);
         String genderParam = gender == null ? null : gender.name();

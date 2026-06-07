@@ -1,6 +1,6 @@
 package com.fitfind.fitfind.feed.controller;
 
-import com.fitfind.fitfind.feed.model.FeedRequest;
+import com.fitfind.fitfind.feed.model.FeedRequestFilters;
 import com.fitfind.fitfind.feed.model.FeedResponse;
 import com.fitfind.fitfind.feed.service.FeedService;
 import jakarta.validation.constraints.Max;
@@ -19,9 +19,9 @@ public class FeedController {
     public ResponseEntity<FeedResponse> generalFeed(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "12") @Min(1) @Max(50) int size,
-            @RequestBody FeedRequest request
+            @ModelAttribute FeedRequestFilters requestFilters
     ) {
         return ResponseEntity.ok(
-                feedService.list(request, page, size));
+                feedService.list(requestFilters, page, size));
     }
 }
