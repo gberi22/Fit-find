@@ -1,11 +1,13 @@
 package com.fitfind.fitfind.client.model;
 
+import com.fitfind.fitfind.wardrobe.model.Look;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,4 +40,12 @@ public class Client {
 
     @CurrentTimestamp
     private LocalDateTime createdAt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "saved_looks",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "look_id")
+    )
+    private List<Look> savedLooks;
 }
