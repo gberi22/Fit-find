@@ -6,3 +6,10 @@ databaseChangeLog:
         - sqlFile:
             path: changes/01_init.sql
             relativeToChangelogFile: true
+  - changeSet:
+      id: 2
+      author: fitfind
+      changes:
+        - sqlFile:
+            path: changes/02_saved_looks.sql
+            relativeToChangelogFile: true
