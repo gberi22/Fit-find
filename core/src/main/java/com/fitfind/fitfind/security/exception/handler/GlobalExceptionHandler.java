@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiErrors, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    @ExceptionHandler(TransientSearchException.class)
+    @ExceptionHandler(LookNotFoundException.class)
     public ResponseEntity<ApiErrors> handleLookNotFoundException(LookNotFoundException ex) {
         ApiErrors apiErrors = ApiErrors.builder()
                 .withMessage(ex.getMessage())
