@@ -5,9 +5,6 @@ import com.fitfind.fitfind.look.common.repository.LookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -15,14 +12,14 @@ public class FeedLookService {
     private final LookRepository lookRepository;
 
     public Look lookById(Long id) {
-        return lookRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+        return lookRepository.findByIdAndIsPublishedTrue(id)
+                .orElseThrow(() -> new IllegalArgumentException("Look not published."));
     }
 
     public byte[] lookImage(Look look) {
         byte[] image = look.getImage();
         if (image == null || image.length == 0) {
-            throw new ResponseStatusException(NOT_FOUND);
+            throw new IllegalArgumentException("Look image not found.");
         }
 
         return image;

@@ -30,6 +30,15 @@ public interface FeedRepository extends JpaRepository<Look, Long> {
               AND (CAST(:styles AS text[]) IS NULL OR jsonb_exists_any(l.styles, CAST(:styles AS text[])))
             ORDER BY l.created_at DESC
             """,
+        countQuery = """
+            SELECT count(*)
+            FROM looks l
+            WHERE l.is_published = true AND l.deleted_at IS NULL
+              AND (CAST(:gender AS text) IS NULL OR l.gender = :gender)
+              AND (CAST(:minBudget AS numeric) IS NULL OR l.budget_max IS NULL OR l.budget_max >= :minBudget)
+              AND (CAST(:maxBudget AS numeric) IS NULL OR l.budget_min IS NULL OR l.budget_min <= :maxBudget)
+              AND (CAST(:styles AS text[]) IS NULL OR jsonb_exists_any(l.styles, CAST(:styles AS text[])))
+            """,
         nativeQuery = true
     )
     Page<LookCardProjection> findPublishedFeed(
