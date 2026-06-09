@@ -38,10 +38,6 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_seq")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
-
     @Column(nullable = false)
     private String name;
 
