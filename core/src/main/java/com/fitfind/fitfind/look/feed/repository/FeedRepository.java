@@ -1,6 +1,6 @@
 package com.fitfind.fitfind.look.feed.repository;
 
-import com.fitfind.fitfind.look.common.model.LookCardProjection;
+import com.fitfind.fitfind.look.common.model.response.LookCardProjection;
 import com.fitfind.fitfind.look.common.model.Look;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

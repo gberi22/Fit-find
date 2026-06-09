@@ -7,7 +7,7 @@ import com.fitfind.fitfind.ai.imagegen.exception.ImageGenerationException;
 import com.fitfind.fitfind.registration.exception.EmailAlreadyExistsException;
 import com.fitfind.fitfind.security.exception.model.ApiErrors;
 import com.fitfind.fitfind.security.ratelimit.exception.TooManyRequestException;
-import com.fitfind.fitfind.wardrobe.exception.LookNotFoundException;
+import com.fitfind.fitfind.look.common.exception.LookNotFoundException;
 import com.fitfind.fitfind.websearch.exception.TransientSearchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

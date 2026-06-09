@@ -1,7 +1,7 @@
 package com.fitfind.fitfind.look.feed.controller;
 
-import com.fitfind.fitfind.look.feed.model.FeedRequestFilters;
-import com.fitfind.fitfind.look.feed.model.FeedResponse;
+import com.fitfind.fitfind.look.feed.model.request.FeedFiltersRequest;
+import com.fitfind.fitfind.look.feed.model.response.FeedResponse;
 import com.fitfind.fitfind.look.feed.service.FeedService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -19,7 +19,7 @@ public class FeedController {
     public ResponseEntity<FeedResponse> generalFeed(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size,
-            @ModelAttribute FeedRequestFilters requestFilters
+            @ModelAttribute FeedFiltersRequest requestFilters
     ) {
         return ResponseEntity.ok(feedService.list(requestFilters, page, size));
     }

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.common.model.enums.Gender;
 import com.fitfind.fitfind.ai.common.model.enums.Style;
-import com.fitfind.fitfind.look.feed.model.FeedRequestFilters;
-import com.fitfind.fitfind.look.feed.model.FeedResponse;
-import com.fitfind.fitfind.look.common.model.LookCardProjection;
-import com.fitfind.fitfind.look.common.model.LookCardResponse;
+import com.fitfind.fitfind.look.feed.model.request.FeedFiltersRequest;
+import com.fitfind.fitfind.look.feed.model.response.FeedResponse;
+import com.fitfind.fitfind.look.common.model.response.LookCardProjection;
+import com.fitfind.fitfind.look.common.model.response.LookCardResponse;
 import com.fitfind.fitfind.look.feed.repository.FeedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class FeedService {
     private final ObjectMapper objectMapper;
 
     public FeedResponse list(
-            FeedRequestFilters requestFilters,
+            FeedFiltersRequest requestFilters,
             int page,
             int size
     ) {
