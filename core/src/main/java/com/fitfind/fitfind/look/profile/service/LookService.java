@@ -11,7 +11,7 @@ import com.fitfind.fitfind.look.common.model.response.LookResponse;
 import com.fitfind.fitfind.look.common.model.response.LookSummaryResponse;
 import com.fitfind.fitfind.look.common.model.response.LooksPageResponse;
 import com.fitfind.fitfind.look.common.model.response.ProductResponse;
-import com.fitfind.fitfind.look.profile.repository.LookRepository;
+import com.fitfind.fitfind.look.common.repository.LookRepository;
 import com.fitfind.fitfind.look.profile.repository.ProductRepository;
 import com.fitfind.fitfind.look.profile.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
