@@ -1,10 +1,8 @@
 package com.fitfind.fitfind.look.profile.controller;
 
-import com.fitfind.fitfind.look.common.model.response.LookResponse;
-import com.fitfind.fitfind.look.common.model.response.LooksPageResponse;
-import com.fitfind.fitfind.look.profile.service.LookService;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import com.fitfind.fitfind.look.common.model.response.LookCardResponse;
+import com.fitfind.fitfind.look.common.model.response.LooksResponse;
+import com.fitfind.fitfind.look.profile.service.ProfileLookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,34 +12,30 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/looks")
 @RequiredArgsConstructor
-public class LookController {
+public class ProfileLookController {
 
-    private final LookService lookService;
+    private final ProfileLookService profileLookService;
 
     // todo: create request for it
     @PostMapping
     public ResponseEntity<Void> createLook(
         Authentication authentication
     ) {
-        lookService.create(authentication.getName());
+        profileLookService.create(authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    public ResponseEntity<LooksPageResponse> getMyLooks(
-        Authentication authentication,
-        @RequestParam(defaultValue = "0") @Min(0) int page,
-        @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size
-    ) {
-        return ResponseEntity.ok(lookService.list(authentication.getName(), page, size));
+    public ResponseEntity<LooksResponse> getMyLooks(Authentication authentication) {
+        return ResponseEntity.ok(profileLookService.list(authentication.getName()));
     }
 
     @GetMapping("/{lookId}")
-    public ResponseEntity<LookResponse> getLook(
+    public ResponseEntity<LookCardResponse> getLook(
         Authentication authentication,
         @PathVariable Long lookId
     ) {
-        return ResponseEntity.ok(lookService.get(authentication.getName(), lookId));
+        return ResponseEntity.ok(profileLookService.get(authentication.getName(), lookId));
     }
 
     @PutMapping("/{lookId}/publish")
@@ -49,7 +43,7 @@ public class LookController {
         Authentication authentication,
         @PathVariable Long lookId
     ) {
-        lookService.setPublished(authentication.getName(), lookId, true);
+        profileLookService.setPublished(authentication.getName(), lookId, true);
         return ResponseEntity.noContent().build();
     }
 
@@ -58,7 +52,7 @@ public class LookController {
         Authentication authentication,
         @PathVariable Long lookId
     ) {
-        lookService.setPublished(authentication.getName(), lookId, false);
+        profileLookService.setPublished(authentication.getName(), lookId, false);
         return ResponseEntity.noContent().build();
     }
 
@@ -67,7 +61,7 @@ public class LookController {
         Authentication authentication,
         @PathVariable Long lookId
     ) {
-        lookService.delete(authentication.getName(), lookId);
+        profileLookService.delete(authentication.getName(), lookId);
         return ResponseEntity.noContent().build();
     }
 }
