@@ -3,6 +3,7 @@ package com.fitfind.fitfind.look.feed.service;
 import com.fitfind.fitfind.look.common.model.Look;
 import com.fitfind.fitfind.look.common.repository.LookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,5 +26,11 @@ public class FeedLookService {
         }
 
         return image;
+    }
+
+    public MediaType lookContentType(Look look) {
+        return look.getImageMimeType() == null
+                ? MediaType.APPLICATION_OCTET_STREAM
+                : MediaType.parseMediaType(look.getImageMimeType());
     }
 }

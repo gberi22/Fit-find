@@ -22,9 +22,7 @@ public class FeedLookController {
     public ResponseEntity<byte[]> lookImage(@PathVariable Long id) {
         Look look = feedLookService.lookById(id);
         byte[] image = feedLookService.lookImage(look);
-        MediaType contentType = look.getImageMimeType() == null
-                ? MediaType.APPLICATION_OCTET_STREAM
-                : MediaType.parseMediaType(look.getImageMimeType());
+        MediaType contentType = feedLookService.lookContentType(look);
 
         return ResponseEntity.ok().contentType(contentType).body(image);
     }

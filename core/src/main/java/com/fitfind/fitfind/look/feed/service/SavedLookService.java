@@ -26,6 +26,7 @@ public class SavedLookService {
         if (look.getClient().getId().equals(client.getId())) {
             throw new ResponseStatusException(CONFLICT, "You cannot save your own look");
         }
+
         if (!client.getSavedLooks().contains(look)) {
             client.getSavedLooks().add(look);
             clientRepository.save(client);
