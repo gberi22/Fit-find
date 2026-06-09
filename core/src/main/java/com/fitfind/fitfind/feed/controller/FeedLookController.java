@@ -1,7 +1,7 @@
-package com.fitfind.fitfind.wardrobe.controller;
+package com.fitfind.fitfind.feed.controller;
 
 import com.fitfind.fitfind.wardrobe.model.Look;
-import com.fitfind.fitfind.wardrobe.service.LookService;
+import com.fitfind.fitfind.feed.service.FeedLookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/public/looks")
 @RequiredArgsConstructor
-public class LookController {
-    private final LookService lookService;
+public class FeedLookController {
+    private final FeedLookService feedLookService;
 
     @GetMapping("/{id}/image")
     @Transactional(readOnly = true)
     public ResponseEntity<byte[]> lookImage(@PathVariable Long id) {
-        Look look = lookService.lookById(id);
-        byte[] image = lookService.lookImage(look);
+        Look look = feedLookService.lookById(id);
+        byte[] image = feedLookService.lookImage(look);
         MediaType contentType = look.getImageMimeType() == null
                 ? MediaType.APPLICATION_OCTET_STREAM
                 : MediaType.parseMediaType(look.getImageMimeType());

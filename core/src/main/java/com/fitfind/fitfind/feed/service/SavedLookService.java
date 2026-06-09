@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.wardrobe.service;
+package com.fitfind.fitfind.feed.service;
 
 import com.fitfind.fitfind.client.exception.ClientNotFoundException;
 import com.fitfind.fitfind.client.model.Client;

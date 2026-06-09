@@ -8,6 +8,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record LookCardResponse(
-        Long id, String imageUrl, List<Style> styles, Gender gender,
-        BigDecimal budgetMin, BigDecimal budgetMax, String username,
-        double avgRating, long ratingCount, LocalDateTime createdAt) {}
+        Long id,
+        String imageUrl,
+        List<Style> styles,
+        Gender gender,
+        BigDecimal budgetMin,
+        BigDecimal budgetMax,
+        String username,
+        double avgRating,
+        long ratingCount,
+        LocalDateTime createdAt
+) { }

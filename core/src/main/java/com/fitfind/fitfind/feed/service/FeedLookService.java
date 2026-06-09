@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.wardrobe.service;
+package com.fitfind.fitfind.feed.service;
 
 import com.fitfind.fitfind.wardrobe.model.Look;
 import com.fitfind.fitfind.wardrobe.repository.LookRepository;
@@ -10,7 +10,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-public class LookService {
+public class FeedLookService {
     private final LookRepository lookRepository;
 
     public Look lookById(Long id) {
