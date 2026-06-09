@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class SavedLookController {
     private final SavedLookService savedLookService;
 
-    @PostMapping("/{id}/save")
-    public ResponseEntity<Void> save(Authentication authentication, @PathVariable Long id) {
-        savedLookService.save(authentication.getName(), id);
+    @PostMapping("/{lookId}")
+    public ResponseEntity<Void> save(Authentication authentication, @PathVariable Long lookId) {
+        savedLookService.save(authentication.getName(), lookId);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}/save")
-    public ResponseEntity<Void> unsave(Authentication authentication, @PathVariable Long id) {
-        savedLookService.unsave(authentication.getName(), id);
+    @DeleteMapping("/{lookId}")
+    public ResponseEntity<Void> unsave(Authentication authentication, @PathVariable Long lookId) {
+        savedLookService.unsave(authentication.getName(), lookId);
         return ResponseEntity.noContent().build();
     }
 }
