@@ -1,8 +1,8 @@
-package com.fitfind.fitfind.wardrobe.controller;
+package com.fitfind.fitfind.look.profile.controller;
 
-import com.fitfind.fitfind.wardrobe.model.response.LookResponse;
-import com.fitfind.fitfind.wardrobe.model.response.LooksPageResponse;
-import com.fitfind.fitfind.wardrobe.service.LookService;
+import com.fitfind.fitfind.look.common.model.response.LookResponse;
+import com.fitfind.fitfind.look.common.model.response.LooksPageResponse;
+import com.fitfind.fitfind.look.profile.service.LookService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;

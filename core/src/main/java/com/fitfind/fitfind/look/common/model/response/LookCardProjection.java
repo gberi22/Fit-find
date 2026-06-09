@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.look.common.model;
+package com.fitfind.fitfind.look.common.model.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

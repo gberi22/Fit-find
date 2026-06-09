@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.look.common.model;
+package com.fitfind.fitfind.look.common.model.response;
 
 import com.fitfind.fitfind.ai.common.model.enums.Gender;
 import com.fitfind.fitfind.ai.common.model.enums.Style;

@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.wardrobe.model.response;
+package com.fitfind.fitfind.look.common.model.response;
 
 import com.fitfind.fitfind.ai.common.model.enums.ClothingItem;
 
