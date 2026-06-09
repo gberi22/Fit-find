@@ -49,13 +49,13 @@ public class FeedService {
                 feedRepository.findPublishedFeed(genderParam, minBudget, maxBudget, stylesParam, pageable);
 
         List<LookCardResponse> looks = result.getContent().stream()
-                .map(this::toCard)
+                .map(this::lookItemToCard)
                 .toList();
 
         return new FeedResponse(looks, result.getTotalElements(), result.getTotalPages());
     }
 
-    private LookCardResponse toCard(LookCardProjection projection) {
+    private LookCardResponse lookItemToCard(LookCardProjection projection) {
         String imageUrl = projection.getImageMimeType() == null
                 ? null
                 : "/api/public/looks/" + projection.getId() + "/image";

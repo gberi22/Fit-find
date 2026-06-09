@@ -21,7 +21,7 @@ public class SavedLookService {
 
     @Transactional
     public void save(String email, Long lookId) {
-        Client client = client(email);
+        Client client = findClientByEmail(email);
         Look look = publishedLook(lookId);
         if (look.getClient().getId().equals(client.getId())) {
             throw new ResponseStatusException(CONFLICT, "You cannot save your own look");
@@ -34,14 +34,14 @@ public class SavedLookService {
 
     @Transactional
     public void unsave(String email, Long lookId) {
-        Client client = client(email);
+        Client client = findClientByEmail(email);
         Look look = publishedLook(lookId);
         if (client.getSavedLooks().remove(look)) {
             clientRepository.save(client);
         }
     }
 
-    private Client client(String email) {
+    private Client findClientByEmail(String email) {
         return clientRepository.findClientByEmail(email)
                 .orElseThrow(() -> new ClientNotFoundException("Client not found: " + email));
     }
