@@ -68,8 +68,6 @@ public class FeedService {
                 projection.getBudgetMin(),
                 projection.getBudgetMax(),
                 buildUsername(projection.getFirstName(), projection.getLastName()),
-                0.0,
-                0L,
                 projection.getCreatedAt()
         );
     }

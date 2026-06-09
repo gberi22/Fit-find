@@ -15,7 +15,5 @@ public record LookCardResponse(
         BigDecimal budgetMin,
         BigDecimal budgetMax,
         String username,
-        double avgRating,
-        long ratingCount,
         LocalDateTime createdAt
 ) { }
