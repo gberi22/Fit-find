@@ -1,8 +1,8 @@
-package com.fitfind.fitfind.feed.controller;
+package com.fitfind.fitfind.look.feed.controller;
 
-import com.fitfind.fitfind.feed.model.FeedRequestFilters;
-import com.fitfind.fitfind.feed.model.FeedResponse;
-import com.fitfind.fitfind.feed.service.FeedService;
+import com.fitfind.fitfind.look.feed.model.FeedRequestFilters;
+import com.fitfind.fitfind.look.feed.model.FeedResponse;
+import com.fitfind.fitfind.look.feed.service.FeedService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;

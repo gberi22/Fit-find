@@ -1,6 +1,6 @@
 package com.fitfind.fitfind.client.model;
 
-import com.fitfind.fitfind.wardrobe.model.Look;
+import com.fitfind.fitfind.look.common.model.Look;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;

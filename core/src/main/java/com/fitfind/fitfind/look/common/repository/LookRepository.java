@@ -1,6 +1,6 @@
-package com.fitfind.fitfind.wardrobe.repository;
+package com.fitfind.fitfind.look.common.repository;
 
-import com.fitfind.fitfind.wardrobe.model.Look;
+import com.fitfind.fitfind.look.common.model.Look;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

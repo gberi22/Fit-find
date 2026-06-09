@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.wardrobe.model;
+package com.fitfind.fitfind.look.common.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

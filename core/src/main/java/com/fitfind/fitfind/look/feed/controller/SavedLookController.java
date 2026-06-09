@@ -1,6 +1,6 @@
-package com.fitfind.fitfind.feed.controller;
+package com.fitfind.fitfind.look.feed.controller;
 
-import com.fitfind.fitfind.feed.service.SavedLookService;
+import com.fitfind.fitfind.look.feed.service.SavedLookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

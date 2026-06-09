@@ -1,7 +1,7 @@
-package com.fitfind.fitfind.feed.controller;
+package com.fitfind.fitfind.look.feed.controller;
 
-import com.fitfind.fitfind.wardrobe.model.Look;
-import com.fitfind.fitfind.feed.service.FeedLookService;
+import com.fitfind.fitfind.look.common.model.Look;
+import com.fitfind.fitfind.look.feed.service.FeedLookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

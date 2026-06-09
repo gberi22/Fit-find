@@ -1,7 +1,7 @@
-package com.fitfind.fitfind.feed.repository;
+package com.fitfind.fitfind.look.feed.repository;
 
-import com.fitfind.fitfind.feed.model.LookCardProjection;
-import com.fitfind.fitfind.wardrobe.model.Look;
+import com.fitfind.fitfind.look.common.model.LookCardProjection;
+import com.fitfind.fitfind.look.common.model.Look;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

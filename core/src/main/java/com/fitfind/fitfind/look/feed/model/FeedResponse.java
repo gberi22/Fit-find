@@ -1,4 +1,6 @@
-package com.fitfind.fitfind.feed.model;
+package com.fitfind.fitfind.look.feed.model;
+
+import com.fitfind.fitfind.look.common.model.LookCardResponse;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.fitfind.fitfind.wardrobe.model;
+package com.fitfind.fitfind.look.common.model;
 
 import com.fitfind.fitfind.ai.common.model.enums.ClothingItem;
 import jakarta.persistence.Column;

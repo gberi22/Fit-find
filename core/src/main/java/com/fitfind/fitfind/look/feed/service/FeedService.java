@@ -1,14 +1,14 @@
-package com.fitfind.fitfind.feed.service;
+package com.fitfind.fitfind.look.feed.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfind.fitfind.ai.common.model.enums.Gender;
 import com.fitfind.fitfind.ai.common.model.enums.Style;
-import com.fitfind.fitfind.feed.model.FeedRequestFilters;
-import com.fitfind.fitfind.feed.model.FeedResponse;
-import com.fitfind.fitfind.feed.model.LookCardProjection;
-import com.fitfind.fitfind.feed.model.LookCardResponse;
-import com.fitfind.fitfind.feed.repository.FeedRepository;
+import com.fitfind.fitfind.look.feed.model.FeedRequestFilters;
+import com.fitfind.fitfind.look.feed.model.FeedResponse;
+import com.fitfind.fitfind.look.common.model.LookCardProjection;
+import com.fitfind.fitfind.look.common.model.LookCardResponse;
+import com.fitfind.fitfind.look.feed.repository.FeedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

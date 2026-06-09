@@ -1,7 +1,7 @@
-package com.fitfind.fitfind.feed.service;
+package com.fitfind.fitfind.look.feed.service;
 
-import com.fitfind.fitfind.wardrobe.model.Look;
-import com.fitfind.fitfind.wardrobe.repository.LookRepository;
+import com.fitfind.fitfind.look.common.model.Look;
+import com.fitfind.fitfind.look.common.repository.LookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
