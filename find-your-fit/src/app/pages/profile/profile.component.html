@@ -3,11 +3,109 @@
 <div class="profile-page fade-in">
   <div class="profile-inner">
     <header class="profile-head">
-      <p class="profile-label">Your Account</p>
-      <h1 class="profile-title">Profile</h1>
-      <p class="profile-subtitle">Manage your FitFind account.</p>
+      <span class="profile-avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.69-8 6v1h16v-1c0-3.31-3.58-6-8-6Z"
+          />
+        </svg>
+      </span>
+      <div class="profile-identity">
+        <p class="profile-label">Your Account</p>
+        <h1 class="profile-name">{{ displayName }}</h1>
+      </div>
     </header>
 
-    <button type="button" class="profile-signout" (click)="signOut()">Sign Out</button>
+    <nav class="profile-tabs" role="tablist">
+      <button
+        type="button"
+        class="profile-tab"
+        role="tab"
+        [class.profile-tab--active]="activeTab() === 'generated'"
+        [attr.aria-selected]="activeTab() === 'generated'"
+        (click)="selectTab('generated')"
+      >
+        Generated
+      </button>
+      <button
+        type="button"
+        class="profile-tab"
+        role="tab"
+        [class.profile-tab--active]="activeTab() === 'saved'"
+        [attr.aria-selected]="activeTab() === 'saved'"
+        (click)="selectTab('saved')"
+      >
+        Saved
+      </button>
+    </nav>
+
+    @if (activeTab() === 'generated') {
+      <div class="profile-filter" role="group" aria-label="Filter generated looks">
+        <button
+          type="button"
+          class="filter-pill"
+          [class.filter-pill--active]="filter() === 'all'"
+          (click)="selectFilter('all')"
+        >
+          All
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.filter-pill--active]="filter() === 'published'"
+          (click)="selectFilter('published')"
+        >
+          Published
+        </button>
+        <button
+          type="button"
+          class="filter-pill"
+          [class.filter-pill--active]="filter() === 'drafts'"
+          (click)="selectFilter('drafts')"
+        >
+          Drafts
+        </button>
+      </div>
+
+      @if (filteredGenerated().length) {
+        <div class="look-grid">
+          @for (look of filteredGenerated(); track look.id) {
+            <article class="look-card">
+              <div class="look-image">
+                @if (look.imageUrl) {
+                  <img [src]="look.imageUrl" alt="Generated look" />
+                } @else {
+                  <span class="look-image-fallback">No image</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="profile-empty">
+          <p class="profile-empty-text">No looks here yet. Generate a look to get started.</p>
+        </div>
+      }
+    } @else {
+      @if (savedLooks().length) {
+        <div class="look-grid">
+          @for (look of savedLooks(); track look.id) {
+            <article class="look-card">
+              <div class="look-image">
+                @if (look.imageUrl) {
+                  <img [src]="look.imageUrl" alt="Saved look" />
+                } @else {
+                  <span class="look-image-fallback">No image</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="profile-empty">
+          <p class="profile-empty-text">Nothing saved yet. Save looks from the public feed.</p>
+        </div>
+      }
+    }
   </div>
 </div>
