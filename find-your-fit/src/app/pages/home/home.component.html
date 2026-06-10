@@ -60,25 +60,5 @@
     </div>
   </section>
 
-  <section class="looks-section">
-    <p class="section-label">Community</p>
-    <h2 class="section-title">Trending looks this week</h2>
-    <div class="looks-grid">
-      @for (look of placeholderLooks; track look.title) {
-        <div class="look-card">
-          <div class="look-card-img">{{ look.icon }}</div>
-          <div class="look-card-overlay">
-            <span class="look-card-style">{{ look.style }}</span>
-            <span class="look-card-title">{{ look.title }}</span>
-            <div class="look-card-meta">
-              <span>★ {{ look.rating }}</span>
-              <span>{{ look.budget }}</span>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-  </section>
-
   <app-footer />
 </div>

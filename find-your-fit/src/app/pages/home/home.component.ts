@@ -4,14 +4,6 @@ import { AuthService } from '@auth/auth.service';
 import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
-interface PlaceholderLook {
-  style: string;
-  title: string;
-  rating: string;
-  budget: string;
-  icon: string;
-}
-
 @Component({
   selector: 'app-home',
   imports: [RouterLink, NavbarComponent, FooterComponent],
@@ -27,11 +19,4 @@ export class HomeComponent {
   get startStylingLink(): string {
     return this.isAuthenticated() ? '/generate' : '/register';
   }
-
-  readonly placeholderLooks: readonly PlaceholderLook[] = [
-    { style: 'Minimalist', title: 'Sunday Brunch', rating: '4.8', budget: '$120', icon: '🤍' },
-    { style: 'Streetwear', title: 'City Walk', rating: '4.5', budget: '$180', icon: '🖤' },
-    { style: 'Vintage', title: 'Café Date', rating: '4.9', budget: '$95', icon: '🤎' },
-    { style: 'Formal', title: 'Evening Gala', rating: '4.7', budget: '$340', icon: '💛' },
-  ];
 }
