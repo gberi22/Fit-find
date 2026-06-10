@@ -11,7 +11,6 @@
         </svg>
       </span>
       <div class="profile-identity">
-        <p class="profile-label">Your Account</p>
         <h1 class="profile-name">{{ displayName }}</h1>
       </div>
     </header>
@@ -67,7 +66,15 @@
         </button>
       </div>
 
-      @if (filteredGenerated().length) {
+      @if (generatedLoading()) {
+        <div class="profile-status">
+          <app-loading-spinner message="Loading your looks" />
+        </div>
+      } @else if (generatedError()) {
+        <div class="profile-empty">
+          <p class="profile-empty-text">Couldn't load your looks. Please try again later.</p>
+        </div>
+      } @else if (filteredGenerated().length) {
         <div class="look-grid">
           @for (look of filteredGenerated(); track look.id) {
             <article class="look-card">
@@ -78,6 +85,9 @@
                   <span class="look-image-fallback">No image</span>
                 }
               </div>
+              @if (!look.published) {
+                <span class="look-badge">Draft</span>
+              }
             </article>
           }
         </div>
@@ -87,7 +97,15 @@
         </div>
       }
     } @else {
-      @if (savedLooks().length) {
+      @if (savedLoading()) {
+        <div class="profile-status">
+          <app-loading-spinner message="Loading saved looks" />
+        </div>
+      } @else if (savedError()) {
+        <div class="profile-empty">
+          <p class="profile-empty-text">Couldn't load saved looks. Please try again later.</p>
+        </div>
+      } @else if (savedLooks().length) {
         <div class="look-grid">
           @for (look of savedLooks(); track look.id) {
             <article class="look-card">
