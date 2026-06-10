@@ -4,7 +4,6 @@ import com.fitfind.fitfind.ai.common.model.enums.Gender;
 import com.fitfind.fitfind.ai.common.model.enums.Size;
 import com.fitfind.fitfind.ai.common.model.enums.Style;
 import com.fitfind.fitfind.client.model.Client;
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,6 +32,7 @@ import org.hibernate.type.SqlTypes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "looks")
@@ -69,10 +69,10 @@ public class Look {
 
     private BigDecimal budgetMax;
 
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] image;
-
     private String imageMimeType;
+
+    @Column(nullable = false, unique = true)
+    private UUID imageKey;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
