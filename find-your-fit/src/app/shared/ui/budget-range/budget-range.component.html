@@ -1,0 +1,58 @@
+<div class="budget-inputs">
+  <span class="budget-prefix">$</span>
+  <input
+    class="budget-num"
+    type="number"
+    inputmode="numeric"
+    [min]="floor()"
+    [max]="ceil()"
+    [value]="min()"
+    (input)="onMinInput($any($event.target).valueAsNumber)"
+    aria-label="Minimum budget"
+  />
+  <span class="budget-dash">—</span>
+  <span class="budget-prefix">$</span>
+  <input
+    class="budget-num"
+    type="number"
+    inputmode="numeric"
+    [min]="floor()"
+    [max]="ceil()"
+    [value]="max()"
+    (input)="onMaxInput($any($event.target).valueAsNumber)"
+    aria-label="Maximum budget"
+  />
+</div>
+
+<div class="rng">
+  <div class="rng-track"></div>
+  <div
+    class="rng-fill"
+    [style.left.%]="percent(min())"
+    [style.width.%]="percent(max()) - percent(min())"
+  ></div>
+  <input
+    class="rng-min"
+    type="range"
+    [min]="floor()"
+    [max]="ceil()"
+    [step]="gap()"
+    [value]="min()"
+    (input)="onMinSlide($event)"
+    aria-label="Minimum budget slider"
+  />
+  <input
+    class="rng-max"
+    type="range"
+    [min]="floor()"
+    [max]="ceil()"
+    [step]="gap()"
+    [value]="max()"
+    (input)="onMaxSlide($event)"
+    aria-label="Maximum budget slider"
+  />
+</div>
+<div class="rng-scale">
+  <span>${{ floor() }}</span>
+  <span>${{ ceil() }}</span>
+</div>
