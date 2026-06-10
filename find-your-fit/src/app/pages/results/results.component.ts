@@ -9,6 +9,7 @@ import {
   Suggestion,
   clothingItemLabel,
 } from '@shared/models/outfit.model';
+import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 import { finalize } from 'rxjs';
@@ -16,7 +17,7 @@ import { errorMessage } from '@shared/utils/errorMessageHandler';
 
 @Component({
   selector: 'app-results',
-  imports: [LoadingSpinnerComponent, NavbarComponent, RouterLink],
+  imports: [FooterComponent, LoadingSpinnerComponent, NavbarComponent, RouterLink],
   templateUrl: './results.component.html',
   styleUrl: './results.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

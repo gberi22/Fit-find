@@ -11,6 +11,7 @@ import { LookSummary } from '@shared/models/look-card.model';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { LookDetailComponent } from '@shared/ui/look-detail/look-detail.component';
 import { LookGridComponent } from '@shared/ui/look-grid/look-grid.component';
+import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 type ProfileTab = 'generated' | 'saved';
@@ -18,7 +19,7 @@ type LookFilter = 'all' | 'published' | 'drafts';
 
 @Component({
   selector: 'app-profile',
-  imports: [NavbarComponent, LoadingSpinnerComponent, LookGridComponent, LookDetailComponent],
+  imports: [FooterComponent, NavbarComponent, LoadingSpinnerComponent, LookGridComponent, LookDetailComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -23,6 +23,7 @@ import {
   Size,
   Style,
 } from '@shared/models/outfit.model';
+import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 const MAX_IMAGES = 5;
@@ -62,6 +63,7 @@ function nonEmptyArray(control: AbstractControl): ValidationErrors | null {
   selector: 'app-generate',
   imports: [
     ReactiveFormsModule,
+    FooterComponent,
     NavbarComponent,
     MatFormFieldModule,
     MatInputModule,
