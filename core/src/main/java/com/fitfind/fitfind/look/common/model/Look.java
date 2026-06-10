@@ -80,8 +80,7 @@ public class Look {
     )
     private List<Product> products;
 
-    @Column(nullable = false)
-    private boolean isPublished;
+    private LocalDateTime publishedAt;
 
     @CurrentTimestamp
     private LocalDateTime createdAt;

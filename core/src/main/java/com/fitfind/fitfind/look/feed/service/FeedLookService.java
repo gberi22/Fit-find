@@ -11,7 +11,7 @@ public class FeedLookService {
     private final LookRepository lookRepository;
 
     public Look lookById(Long id) {
-        return lookRepository.findByIdAndIsPublishedTrue(id)
+        return lookRepository.findByIdAndPublishedAtNotNull(id)
                 .orElseThrow(() -> new IllegalArgumentException("Look not published."));
     }
 }

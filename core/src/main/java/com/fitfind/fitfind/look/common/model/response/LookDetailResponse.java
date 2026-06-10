@@ -11,6 +11,7 @@ import java.util.List;
 public record LookDetailResponse(
     Long id,
     String imageUrl,
+    String username,
     List<Style> styles,
     Gender gender,
     Size size,
@@ -18,5 +19,6 @@ public record LookDetailResponse(
     BigDecimal budgetMax,
     boolean published,
     LocalDateTime createdAt,
+    LocalDateTime publishedAt,
     List<ProductResponse> products
 ) { }
