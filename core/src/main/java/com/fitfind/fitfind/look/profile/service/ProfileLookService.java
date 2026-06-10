@@ -1,9 +1,8 @@
 package com.fitfind.fitfind.look.profile.service;
 
 import com.fitfind.fitfind.ai.common.model.Suggestion;
-import com.fitfind.fitfind.client.exception.ClientNotFoundException;
 import com.fitfind.fitfind.client.model.Client;
-import com.fitfind.fitfind.client.repository.ClientRepository;
+import com.fitfind.fitfind.client.service.ClientService;
 import com.fitfind.fitfind.look.common.exception.LookNotFoundException;
 import com.fitfind.fitfind.look.common.model.Look;
 import com.fitfind.fitfind.look.common.model.LookImage;
@@ -33,12 +32,12 @@ public class ProfileLookService {
     private final LookRepository lookRepository;
     private final LookImageRepository lookImageRepository;
     private final ProductRepository productRepository;
-    private final ClientRepository clientRepository;
+    private final ClientService clientService;
     private final LookResponseMapper lookResponseMapper;
 
     @Transactional
     public void create(String email, SaveLookRequest request) {
-        Client client = findClientByEmail(email);
+        Client client = clientService.findClientByEmail(email);
 
         List<Product> products = request.suggestions().stream()
             .filter(suggestion -> StringUtils.hasText(suggestion.link()))
@@ -68,7 +67,7 @@ public class ProfileLookService {
 
     @Transactional(readOnly = true)
     public LooksResponse list(String email) {
-        Client client = findClientByEmail(email);
+        Client client = clientService.findClientByEmail(email);
         List<LookSummaryResponse> looks = lookRepository.findByClientOrderByCreatedAtDesc(client).stream()
             .map(lookResponseMapper::SummaryProjectionToSummaryResponse)
             .toList();
@@ -77,7 +76,7 @@ public class ProfileLookService {
 
     @Transactional(readOnly = true)
     public LooksResponse savedList(String email) {
-        Client client = findClientByEmail(email);
+        Client client = clientService.findClientByEmail(email);
         List<LookSummaryResponse> looks = client.getSavedLooks().stream()
             .map(lookResponseMapper::SummaryProjectionToSummaryResponse)
             .toList();
@@ -114,13 +113,8 @@ public class ProfileLookService {
     }
 
     private Look findLook(String email, Long lookId) {
-        Client client = findClientByEmail(email);
+        Client client = clientService.findClientByEmail(email);
         return lookRepository.findByIdAndClient(lookId, client)
                 .orElseThrow(() -> new LookNotFoundException("Look not found: " + lookId));
-    }
-
-    private Client findClientByEmail(String email) {
-        return clientRepository.findClientByEmail(email)
-            .orElseThrow(() -> new ClientNotFoundException("Client not found: " + email));
     }
 }
