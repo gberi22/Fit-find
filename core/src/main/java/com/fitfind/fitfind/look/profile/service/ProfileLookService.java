@@ -38,6 +38,32 @@ public class ProfileLookService {
 
     @Transactional
     public void create(String email, SaveLookRequest request) {
+        Client client = findClientByEmail(email);
+
+        List<Product> products = request.suggestions().stream()
+            .filter(suggestion -> StringUtils.hasText(suggestion.link()))
+            .map(this::findOrCreateProduct)
+            .toList();
+
+        byte[] image = Base64.getDecoder().decode(request.imageBase64());
+
+        Look look = lookRepository.save(Look.builder()
+            .withClient(client)
+            .withGender(request.gender())
+            .withSize(request.size())
+            .withStyles(request.styles())
+            .withBudgetMin(request.budgetMin())
+            .withBudgetMax(request.budgetMax())
+            .withImageMimeType(request.imageMimeType())
+            .withImageKey(UUID.randomUUID())
+            .withProducts(products)
+            .build()
+        );
+
+        lookImageRepository.save(LookImage.builder()
+            .withLookId(look.getId())
+            .withImage(image)
+            .build());
     }
 
     @Transactional(readOnly = true)

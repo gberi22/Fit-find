@@ -12,14 +12,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/looks")
+@RequestMapping("/api/profile/looks")
 @RequiredArgsConstructor
 public class ProfileLookController {
 
     private final ProfileLookService profileLookService;
 
     @PostMapping
-    public ResponseEntity<Long> createLook(
+    public ResponseEntity<Void> createLook(
         Authentication authentication,
         @Valid @RequestBody SaveLookRequest request
     ) {
