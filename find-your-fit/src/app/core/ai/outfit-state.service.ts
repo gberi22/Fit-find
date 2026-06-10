@@ -52,6 +52,13 @@ export class OutfitStateService {
     this._image.set(image);
   }
 
+  // Drops the assembled outfit (selection + generated image) once it has been saved,
+  // so the /outfit page and its navbar tab are no longer reachable.
+  clearOutfit(): void {
+    this._selected.set([]);
+    this._image.set(null);
+  }
+
   clear(): void {
     this._request.set(null);
     this._response.set(null);

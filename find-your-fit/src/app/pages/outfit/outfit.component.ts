@@ -44,7 +44,7 @@ export class OutfitComponent {
   constructor() {
     const request = this.outfitState.request();
     if (!request || this.items.length === 0) {
-      this.router.navigateByUrl('/generate', { replaceUrl: true });
+      this.router.navigateByUrl('/results', { replaceUrl: true });
       return;
     }
 
@@ -101,7 +101,12 @@ export class OutfitComponent {
       })
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: () => this.saved.set(true),
+        next: () => {
+          this.saved.set(true);
+          // The look now lives in the profile; drop the ephemeral outfit so the
+          // View Outfit page/tab can no longer be reached.
+          this.outfitState.clearOutfit();
+        },
         error: (err: unknown) => this.saveError.set(errorMessage(err, 'saving your look')),
       });
   }
