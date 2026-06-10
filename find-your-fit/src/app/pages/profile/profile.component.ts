@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '@auth/auth.service';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ProfileLook } from '@shared/models/look-card.model';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
+
+type ProfileTab = 'generated' | 'saved';
+type LookFilter = 'all' | 'published' | 'drafts';
 
 @Component({
   selector: 'app-profile',
@@ -11,11 +13,33 @@ import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent {
-  private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
+  // TODO: replace with backend
+  readonly displayName = 'Jane Doe';
 
-  signOut(): void {
-    this.auth.logout();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+  readonly activeTab = signal<ProfileTab>('generated');
+  readonly filter = signal<LookFilter>('all');
+
+  // TODO: replace with backend
+  readonly generatedLooks = signal<ProfileLook[]>([]);
+  readonly savedLooks = signal<ProfileLook[]>([]);
+
+  readonly filteredGenerated = computed(() => {
+    const looks = this.generatedLooks();
+    switch (this.filter()) {
+      case 'published':
+        return looks.filter((look) => look.isPublished);
+      case 'drafts':
+        return looks.filter((look) => !look.isPublished);
+      default:
+        return looks;
+    }
+  });
+
+  selectTab(tab: ProfileTab): void {
+    this.activeTab.set(tab);
+  }
+
+  selectFilter(value: LookFilter): void {
+    this.filter.set(value);
   }
 }
