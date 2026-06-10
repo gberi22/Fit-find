@@ -1,6 +1,6 @@
 package com.fitfind.fitfind.look.feed.repository;
 
-import com.fitfind.fitfind.look.common.model.response.LookCardProjection;
+import com.fitfind.fitfind.look.common.model.response.LookSummaryProjection;
 import com.fitfind.fitfind.look.common.model.Look;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,14 +16,10 @@ public interface FeedRepository extends JpaRepository<Look, Long> {
 
     @Query(
         value = """
-            SELECT l.id AS id, l.gender AS gender, l.budget_min AS budgetMin,
-                   l.budget_max AS budgetMax, l.styles AS styles,
-                   l.image_mime_type AS imageMimeType,
-                   c.first_name AS firstName, c.last_name AS lastName,
-                   l.created_at AS createdAt
+            SELECT l.id AS id, l.image_key AS imageKey,
+                   l.is_published AS isPublished, l.created_at AS createdAt
             FROM looks l
-            JOIN client c ON c.id = l.client_id
-            WHERE l.is_published = true AND l.deleted_at IS NULL
+            WHERE l.is_published = true
               AND (CAST(:gender AS text) IS NULL OR l.gender = :gender)
               AND (CAST(:minBudget AS numeric) IS NULL OR l.budget_max IS NULL OR l.budget_max >= :minBudget)
               AND (CAST(:maxBudget AS numeric) IS NULL OR l.budget_min IS NULL OR l.budget_min <= :maxBudget)
@@ -33,7 +29,7 @@ public interface FeedRepository extends JpaRepository<Look, Long> {
         countQuery = """
             SELECT count(*)
             FROM looks l
-            WHERE l.is_published = true AND l.deleted_at IS NULL
+            WHERE l.is_published = true
               AND (CAST(:gender AS text) IS NULL OR l.gender = :gender)
               AND (CAST(:minBudget AS numeric) IS NULL OR l.budget_max IS NULL OR l.budget_max >= :minBudget)
               AND (CAST(:maxBudget AS numeric) IS NULL OR l.budget_min IS NULL OR l.budget_min <= :maxBudget)
@@ -41,7 +37,7 @@ public interface FeedRepository extends JpaRepository<Look, Long> {
             """,
         nativeQuery = true
     )
-    Page<LookCardProjection> findPublishedFeed(
+    Page<LookSummaryProjection> findPublishedFeed(
             @Param("gender") String gender,
             @Param("minBudget") BigDecimal minBudget,
             @Param("maxBudget") BigDecimal maxBudget,

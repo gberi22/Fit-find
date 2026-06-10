@@ -1,7 +1,10 @@
 package com.fitfind.fitfind.look.common.model.response;
 
-// todo: only look id and image are needed for summary look on profile page
+import java.time.LocalDateTime;
+
 public record LookSummaryResponse(
     Long id,
-    String imageMimeType
+    String imageUrl,
+    boolean published,
+    LocalDateTime createdAt
 ) { }

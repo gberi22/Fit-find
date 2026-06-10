@@ -26,7 +26,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
@@ -42,7 +41,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-@SQLRestriction("deleted_at IS NULL")
 @SequenceGenerator(name = "looks_seq", sequenceName = "looks_seq", allocationSize = 1)
 public class Look {
 
@@ -84,8 +82,6 @@ public class Look {
 
     @Column(nullable = false)
     private boolean isPublished;
-
-    private LocalDateTime deletedAt;
 
     @CurrentTimestamp
     private LocalDateTime createdAt;

@@ -55,7 +55,6 @@ CREATE TABLE IF NOT EXISTS looks (
     image_mime_type VARCHAR(50),
     image_key       UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
     is_published    BOOLEAN NOT NULL DEFAULT FALSE,
-    deleted_at      TIMESTAMP,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
