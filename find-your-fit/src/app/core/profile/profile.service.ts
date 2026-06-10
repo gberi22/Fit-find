@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
 import { ClientNameResponse, LookSummary, LooksResponse } from '@shared/models/look-card.model';
+import { SaveLookRequest } from '@shared/models/outfit.model';
 import { Observable, map } from 'rxjs';
 
 const ENDPOINTS = {
@@ -18,6 +19,10 @@ export class ProfileService {
     return this.http
       .get<ClientNameResponse>(`${environment.apiBaseUrl}${ENDPOINTS.FULL_NAME}`)
       .pipe(map((response) => response.fullName));
+  }
+
+  saveLook(request: SaveLookRequest): Observable<void> {
+    return this.http.post<void>(`${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}`, request);
   }
 
   getMyLooks(): Observable<LookSummary[]> {

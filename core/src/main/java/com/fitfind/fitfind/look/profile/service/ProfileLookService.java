@@ -56,6 +56,7 @@ public class ProfileLookService {
             .withImageMimeType(request.imageMimeType())
             .withImageKey(UUID.randomUUID())
             .withProducts(products)
+            .withPublishedAt(request.published() ? LocalDateTime.now() : null)
             .build()
         );
 

@@ -134,3 +134,15 @@ export interface OutfitImageResponse {
   mimeType: string;
   message: string | null;
 }
+
+export interface SaveLookRequest {
+  gender: Gender;
+  size: Size;
+  styles: Style[];
+  budgetMin: number;
+  budgetMax: number;
+  suggestions: Suggestion[];
+  imageBase64: string;
+  imageMimeType: string;
+  published: boolean;
+}
