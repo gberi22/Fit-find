@@ -97,6 +97,14 @@
       </section>
 
       <section class="field-block">
+        <h2 class="field-title">Budget</h2>
+        <p class="field-hint">Pick a price for each item.</p>
+        <app-budget-range
+          [min]="form.controls.minPrice.value ?? budgetMin"
+          (minChange)="setMinPrice($event)"
+          [max]="form.controls.maxPrice.value ?? budgetMax"
+          (maxChange)="setMaxPrice($event)"
+        />
         <div class="budget-head">
           <h2 class="field-title">Budget</h2>
           <div class="budget-inputs">

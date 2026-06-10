@@ -65,69 +65,13 @@
           </div>
 
           <div class="field-block">
-            <div class="budget-head">
-              <h2 class="field-title">Budget</h2>
-              <div class="budget-inputs">
-                <span class="budget-prefix">$</span>
-                <input
-                  class="budget-num"
-                  type="number"
-                  inputmode="numeric"
-                  [min]="budgetMin"
-                  [max]="budgetMax"
-                  [value]="minBudget()"
-                  (input)="onMinInput($any($event.target).valueAsNumber)"
-                  aria-label="Minimum budget"
-                />
-                <span class="budget-dash">—</span>
-                <span class="budget-prefix">$</span>
-                <input
-                  class="budget-num"
-                  type="number"
-                  inputmode="numeric"
-                  [min]="budgetMin"
-                  [max]="budgetMax"
-                  [value]="maxBudget()"
-                  (input)="onMaxInput($any($event.target).valueAsNumber)"
-                  aria-label="Maximum budget"
-                />
-              </div>
-            </div>
-
-            <div class="rng">
-              <div class="rng-track"></div>
-              <div
-                class="rng-fill"
-                [style.left.%]="priceCalculatorForSlider(minBudget())"
-                [style.width.%]="
-                  priceCalculatorForSlider(maxBudget()) - priceCalculatorForSlider(minBudget())
-                "
-              ></div>
-              <input
-                class="rng-min"
-                type="range"
-                [min]="budgetMin"
-                [max]="budgetMax"
-                [step]="minMaxBudgetGap"
-                [value]="minBudget()"
-                (input)="onMinSlide($event)"
-                aria-label="Minimum budget slider"
-              />
-              <input
-                class="rng-max"
-                type="range"
-                [min]="budgetMin"
-                [max]="budgetMax"
-                [step]="minMaxBudgetGap"
-                [value]="maxBudget()"
-                (input)="onMaxSlide($event)"
-                aria-label="Maximum budget slider"
-              />
-            </div>
-            <div class="rng-scale">
-              <span>${{ budgetMin }}</span>
-              <span>${{ budgetMax }}</span>
-            </div>
+            <h2 class="field-title">Budget</h2>
+            <app-budget-range
+              [min]="minBudget()"
+              (minChange)="minBudget.set($event)"
+              [max]="maxBudget()"
+              (maxChange)="maxBudget.set($event)"
+            />
           </div>
 
           <div class="filter-actions">

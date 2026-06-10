@@ -2,16 +2,16 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { MatButtonModule } from '@angular/material/button';
 import { EMPTY_FILTERS, FeedFilters } from '@core/look/feed.model';
 import { GENDER_OPTIONS, Gender, STYLE_OPTIONS, Style } from '@shared/models/outfit.model';
+import { BudgetRangeComponent } from '@shared/ui/budget-range/budget-range.component';
 import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 const BUDGET_MIN = 0;
 const BUDGET_MAX = 500;
-const MIN_MAX_BUDGET_GAP = 5;
 
 @Component({
   selector: 'app-feed',
-  imports: [NavbarComponent, FooterComponent, MatButtonModule],
+  imports: [NavbarComponent, FooterComponent, BudgetRangeComponent, MatButtonModule],
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,9 +20,6 @@ export class FeedComponent {
   protected readonly genderOptions = GENDER_OPTIONS;
   protected readonly styleOptions = STYLE_OPTIONS;
   protected readonly placeholders = Array.from({ length: 12 });
-  protected readonly budgetMin = BUDGET_MIN;
-  protected readonly budgetMax = BUDGET_MAX;
-  protected readonly minMaxBudgetGap = MIN_MAX_BUDGET_GAP;
 
   protected readonly filtersOpen = signal(true);
   protected readonly gender = signal<Gender | null>(null);
@@ -58,32 +55,6 @@ export class FeedComponent {
     return this.styles().includes(value);
   }
 
-  protected priceCalculatorForSlider(value: number): number {
-    return ((value - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
-  }
-
-  protected onMinSlide(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const clamped = Math.min(input.valueAsNumber, this.maxBudget() - MIN_MAX_BUDGET_GAP);
-    this.minBudget.set(clamped);
-    input.value = String(clamped);
-  }
-
-  protected onMaxSlide(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const clamped = Math.max(input.valueAsNumber, this.minBudget() + MIN_MAX_BUDGET_GAP);
-    this.maxBudget.set(clamped);
-    input.value = String(clamped);
-  }
-
-  protected onMinInput(value: number): void {
-    this.minBudget.set(Math.min(this.clampBudget(value), this.maxBudget()));
-  }
-
-  protected onMaxInput(value: number): void {
-    this.maxBudget.set(Math.max(this.clampBudget(value), this.minBudget()));
-  }
-
   protected applyFilters(): void {
     this.appliedFilters.set({
       gender: this.gender(),
@@ -100,12 +71,5 @@ export class FeedComponent {
     this.minBudget.set(BUDGET_MIN);
     this.maxBudget.set(BUDGET_MAX);
     this.appliedFilters.set(EMPTY_FILTERS);
-  }
-
-  private clampBudget(value: number): number {
-    if (Number.isNaN(value)) {
-      return BUDGET_MIN;
-    }
-    return Math.max(BUDGET_MIN, Math.min(BUDGET_MAX, value));
   }
 }
