@@ -41,6 +41,10 @@ export const routes: Routes = [
     loadComponent: () => import('@pages/profile/profile.component').then((m) => m.ProfileComponent),
   },
   {
+    path: 'feed',
+    loadComponent: () => import('@pages/feed/feed.component').then((m) => m.FeedComponent),
+  },
+  {
     path: 'support',
     loadComponent: () => import('@pages/support/support.component').then((m) => m.SupportComponent),
   },
