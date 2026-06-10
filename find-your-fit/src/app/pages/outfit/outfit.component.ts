@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterLink } from '@angular/router';
 import { OutfitStateService } from '@core/ai/outfit-state.service';
 import { OutfitService } from '@core/ai/outfit.service';
+import { ProfileService } from '@core/profile/profile.service';
 import { Suggestion, clothingItemLabel } from '@shared/models/outfit.model';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
@@ -18,12 +19,17 @@ import { finalize } from 'rxjs';
 export class OutfitComponent {
   private readonly outfitService = inject(OutfitService);
   private readonly outfitState = inject(OutfitStateService);
+  private readonly profileService = inject(ProfileService);
   private readonly router = inject(Router);
 
   readonly items: Suggestion[] = this.outfitState.selected();
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  readonly saving = signal(false);
+  readonly saved = signal(false);
+  readonly saveError = signal<string | null>(null);
 
   readonly clothingItemLabel = clothingItemLabel;
 
@@ -64,6 +70,39 @@ export class OutfitComponent {
           }
         },
         error: (err: unknown) => this.errorMessage.set(errorMessage(err, this.errorMessageProp)),
+      });
+  }
+
+  save(published: boolean): void {
+    if (this.saving() || this.saved()) {
+      return;
+    }
+
+    const request = this.outfitState.request();
+    const image = this.image();
+    if (!request || !image) {
+      return;
+    }
+
+    this.saving.set(true);
+    this.saveError.set(null);
+
+    this.profileService
+      .saveLook({
+        gender: request.gender,
+        size: request.size,
+        styles: request.styles,
+        budgetMin: request.minPrice,
+        budgetMax: request.maxPrice,
+        suggestions: this.items,
+        imageBase64: image.imageBase64,
+        imageMimeType: image.mimeType,
+        published,
+      })
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: () => this.saved.set(true),
+        error: (err: unknown) => this.saveError.set(errorMessage(err, 'saving your look')),
       });
   }
 }
