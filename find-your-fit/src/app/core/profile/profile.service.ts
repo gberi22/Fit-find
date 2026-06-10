@@ -1,0 +1,34 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { environment } from '@env/environment';
+import { LookSummary, LooksResponse } from '@shared/models/look-card.model';
+import { Observable, map } from 'rxjs';
+
+const ENDPOINTS = {
+  MY_LOOKS: '/api/profile/looks',
+  SAVED_LOOKS: '/api/profile/looks/saved',
+} as const;
+
+@Injectable({ providedIn: 'root' })
+export class ProfileService {
+  private readonly http = inject(HttpClient);
+
+  getMyLooks(): Observable<LookSummary[]> {
+    return this.fetchLooks(ENDPOINTS.MY_LOOKS);
+  }
+
+  getSavedLooks(): Observable<LookSummary[]> {
+    return this.fetchLooks(ENDPOINTS.SAVED_LOOKS);
+  }
+
+  private fetchLooks(endpoint: string): Observable<LookSummary[]> {
+    return this.http.get<LooksResponse>(`${environment.apiBaseUrl}${endpoint}`).pipe(
+      map((response) =>
+        response.looks.map((look) => ({
+          ...look,
+          imageUrl: `${environment.apiBaseUrl}${look.imageUrl}`,
+        })),
+      ),
+    );
+  }
+}
