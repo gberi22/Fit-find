@@ -63,8 +63,10 @@ export class ProfileService {
   }
 
   private fetchLookDetail(path: string): Observable<LookDetailResponse> {
-    return this.http.get<LookDetailResponse>(`${environment.apiBaseUrl}${path}`).pipe(
-      map((detail) => ({ ...detail, imageUrl: `${environment.apiBaseUrl}${detail.imageUrl}` })),
-    );
+    return this.http
+      .get<LookDetailResponse>(`${environment.apiBaseUrl}${path}`)
+      .pipe(
+        map((detail) => ({ ...detail, imageUrl: `${environment.apiBaseUrl}${detail.imageUrl}` })),
+      );
   }
 }
