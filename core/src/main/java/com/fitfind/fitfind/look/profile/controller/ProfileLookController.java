@@ -1,8 +1,10 @@
 package com.fitfind.fitfind.look.profile.controller;
 
-import com.fitfind.fitfind.look.common.model.response.LookCardResponse;
+import com.fitfind.fitfind.look.common.model.response.LookDetailResponse;
 import com.fitfind.fitfind.look.common.model.response.LooksResponse;
+import com.fitfind.fitfind.look.profile.model.request.SaveLookRequest;
 import com.fitfind.fitfind.look.profile.service.ProfileLookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,12 @@ public class ProfileLookController {
 
     private final ProfileLookService profileLookService;
 
-    // todo: create request for it
     @PostMapping
-    public ResponseEntity<Void> createLook(
-        Authentication authentication
+    public ResponseEntity<Long> createLook(
+        Authentication authentication,
+        @Valid @RequestBody SaveLookRequest request
     ) {
-        profileLookService.create(authentication.getName());
+        profileLookService.create(authentication.getName(), request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -30,8 +32,13 @@ public class ProfileLookController {
         return ResponseEntity.ok(profileLookService.list(authentication.getName()));
     }
 
+    @GetMapping("/saved")
+    public ResponseEntity<LooksResponse> getSavedLooks(Authentication authentication) {
+        return ResponseEntity.ok(profileLookService.savedList(authentication.getName()));
+    }
+
     @GetMapping("/{lookId}")
-    public ResponseEntity<LookCardResponse> getLook(
+    public ResponseEntity<LookDetailResponse> getLook(
         Authentication authentication,
         @PathVariable Long lookId
     ) {
