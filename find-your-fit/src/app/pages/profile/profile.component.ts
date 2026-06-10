@@ -7,9 +7,11 @@ import {
   signal,
 } from '@angular/core';
 import { ProfileService } from '@core/profile/profile.service';
-import { LookSummary } from '@shared/models/look-card.model';
+import { LookDetailResponse, LookSummary } from '@shared/models/look-card.model';
+import { clothingItemLabel } from '@shared/models/outfit.model';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
+import { finalize } from 'rxjs';
 
 type ProfileTab = 'generated' | 'saved';
 type LookFilter = 'all' | 'published' | 'drafts';
@@ -49,6 +51,16 @@ export class ProfileComponent implements OnInit {
     }
   });
 
+  readonly modalOpen = signal(false);
+  readonly selectedLook = signal<LookDetailResponse | null>(null);
+  readonly detailLoading = signal(false);
+  readonly detailError = signal(false);
+  readonly ownedLook = signal(false);
+  readonly publishing = signal(false);
+  readonly publishError = signal(false);
+
+  readonly clothingItemLabel = clothingItemLabel;
+
   ngOnInit(): void {
     this.profileService.getFullName().subscribe({
       next: (fullName) => this.displayName.set(fullName),
@@ -83,5 +95,51 @@ export class ProfileComponent implements OnInit {
 
   selectFilter(value: LookFilter): void {
     this.filter.set(value);
+  }
+
+  openLook(lookId: number, owned: boolean): void {
+    this.ownedLook.set(owned);
+    this.modalOpen.set(true);
+    this.selectedLook.set(null);
+    this.detailError.set(false);
+    this.publishError.set(false);
+    this.detailLoading.set(true);
+
+    const detail$ = owned
+      ? this.profileService.getLook(lookId)
+      : this.profileService.getPublicLook(lookId);
+
+    detail$.pipe(finalize(() => this.detailLoading.set(false))).subscribe({
+      next: (detail) => this.selectedLook.set(detail),
+      error: () => this.detailError.set(true),
+    });
+  }
+
+  closeLook(): void {
+    this.modalOpen.set(false);
+    this.selectedLook.set(null);
+  }
+
+  publish(): void {
+    const detail = this.selectedLook();
+    if (!detail || this.publishing()) {
+      return;
+    }
+
+    this.publishing.set(true);
+    this.publishError.set(false);
+
+    this.profileService
+      .publishLook(detail.id)
+      .pipe(finalize(() => this.publishing.set(false)))
+      .subscribe({
+        next: () => {
+          this.selectedLook.set({ ...detail, published: true });
+          this.generatedLooks.update((looks) =>
+            looks.map((look) => (look.id === detail.id ? { ...look, published: true } : look)),
+          );
+        },
+        error: () => this.publishError.set(true),
+      });
   }
 }

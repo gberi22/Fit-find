@@ -77,7 +77,7 @@
       } @else if (filteredGenerated().length) {
         <div class="look-grid">
           @for (look of filteredGenerated(); track look.id) {
-            <article class="look-card">
+            <button type="button" class="look-card" (click)="openLook(look.id, true)">
               <div class="look-image">
                 @if (look.imageUrl) {
                   <img [src]="look.imageUrl" alt="Generated look" />
@@ -88,7 +88,7 @@
               @if (!look.published) {
                 <span class="look-badge">Draft</span>
               }
-            </article>
+            </button>
           }
         </div>
       } @else {
@@ -108,7 +108,7 @@
       } @else if (savedLooks().length) {
         <div class="look-grid">
           @for (look of savedLooks(); track look.id) {
-            <article class="look-card">
+            <button type="button" class="look-card" (click)="openLook(look.id, false)">
               <div class="look-image">
                 @if (look.imageUrl) {
                   <img [src]="look.imageUrl" alt="Saved look" />
@@ -116,7 +116,7 @@
                   <span class="look-image-fallback">No image</span>
                 }
               </div>
-            </article>
+            </button>
           }
         </div>
       } @else {
@@ -127,3 +127,82 @@
     }
   </div>
 </div>
+
+@if (modalOpen()) {
+  <div class="look-modal" role="dialog" aria-modal="true" (click)="closeLook()">
+    <div class="look-modal-card" (click)="$event.stopPropagation()">
+      <button type="button" class="look-modal-close" aria-label="Close" (click)="closeLook()">
+        &times;
+      </button>
+
+      @if (detailLoading()) {
+        <div class="look-modal-status">
+          <app-loading-spinner message="Loading look" />
+        </div>
+      } @else if (detailError()) {
+        <div class="look-modal-status">
+          <p class="profile-empty-text">Couldn't load this look. Please try again.</p>
+        </div>
+      } @else if (selectedLook(); as detail) {
+        <div class="look-modal-layout">
+          <div class="look-modal-image">
+            @if (detail.imageUrl) {
+              <img [src]="detail.imageUrl" alt="Look" />
+            } @else {
+              <span class="look-image-fallback">No image</span>
+            }
+          </div>
+
+          <div class="look-modal-side">
+            <p class="look-modal-name">{{ detail.username }}</p>
+
+            <div class="look-modal-products">
+              @for (product of detail.products; track product.url) {
+                <div class="modal-product">
+                  <div class="modal-product-image">
+                    @if (product.imageUrl) {
+                      <img [src]="product.imageUrl" [alt]="product.name ?? 'Item'" />
+                    } @else {
+                      <span class="look-image-fallback">No image</span>
+                    }
+                  </div>
+                  <div class="modal-product-body">
+                    <p class="modal-product-category">{{ clothingItemLabel(product.category) }}</p>
+                    <p class="modal-product-name">{{ product.name }}</p>
+                    @if (product.price) {
+                      <p class="modal-product-price">{{ product.price }}</p>
+                    }
+                    @if (product.url) {
+                      <a
+                        class="modal-product-link"
+                        [href]="product.url"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        View item
+                      </a>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (ownedLook() && !detail.published) {
+              <button
+                type="button"
+                class="look-publish-btn"
+                [disabled]="publishing()"
+                (click)="publish()"
+              >
+                Publish
+              </button>
+              @if (publishError()) {
+                <p class="save-error" role="alert">Couldn't publish this look. Please try again.</p>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
