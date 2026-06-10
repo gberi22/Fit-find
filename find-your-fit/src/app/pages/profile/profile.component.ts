@@ -24,8 +24,7 @@ type LookFilter = 'all' | 'published' | 'drafts';
 export class ProfileComponent implements OnInit {
   private readonly profileService = inject(ProfileService);
 
-  // TODO: the backend has no endpoint for the logged-in user's name yet; placeholder for now.
-  readonly displayName = 'Jane Doe';
+  readonly displayName = signal('');
 
   readonly activeTab = signal<ProfileTab>('generated');
   readonly filter = signal<LookFilter>('all');
@@ -51,6 +50,10 @@ export class ProfileComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.profileService.getFullName().subscribe({
+      next: (fullName) => this.displayName.set(fullName),
+    });
+
     this.profileService.getMyLooks().subscribe({
       next: (looks) => {
         this.generatedLooks.set(looks);

@@ -7,3 +7,8 @@ export interface LookSummary {
 export interface LooksResponse {
   looks: LookSummary[];
 }
+
+// Mirrors backend ClientNameResponse (GET /api/user/full-name).
+export interface ClientNameResponse {
+  fullName: string;
+}

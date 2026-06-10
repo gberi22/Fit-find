@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
-import { LookSummary, LooksResponse } from '@shared/models/look-card.model';
+import { ClientNameResponse, LookSummary, LooksResponse } from '@shared/models/look-card.model';
 import { Observable, map } from 'rxjs';
 
 const ENDPOINTS = {
+  FULL_NAME: '/api/user/full-name',
   MY_LOOKS: '/api/profile/looks',
   SAVED_LOOKS: '/api/profile/looks/saved',
 } as const;
@@ -12,6 +13,12 @@ const ENDPOINTS = {
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
   private readonly http = inject(HttpClient);
+
+  getFullName(): Observable<string> {
+    return this.http
+      .get<ClientNameResponse>(`${environment.apiBaseUrl}${ENDPOINTS.FULL_NAME}`)
+      .pipe(map((response) => response.fullName));
+  }
 
   getMyLooks(): Observable<LookSummary[]> {
     return this.fetchLooks(ENDPOINTS.MY_LOOKS);
