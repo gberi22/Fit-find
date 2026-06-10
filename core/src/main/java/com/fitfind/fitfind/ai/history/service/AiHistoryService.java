@@ -6,8 +6,7 @@ import com.fitfind.fitfind.ai.history.repository.AiHistoryRepository;
 import com.fitfind.fitfind.ai.common.model.request.OutfitSuggestionRequest;
 import com.fitfind.fitfind.ai.common.model.response.OutfitSuggestionResponse;
 import com.fitfind.fitfind.client.model.Client;
-import com.fitfind.fitfind.client.exception.ClientNotFoundException;
-import com.fitfind.fitfind.client.repository.ClientRepository;
+import com.fitfind.fitfind.client.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +21,10 @@ import java.util.List;
 public class AiHistoryService {
 
     private final AiHistoryRepository aiHistoryRepository;
-    private final ClientRepository clientRepository;
+    private final ClientService clientService;
 
     public void record(String email, OutfitSuggestionRequest request, OutfitSuggestionResponse response) {
-        Client client = clientRepository.findClientByEmail(email)
-            .orElseThrow(() -> new ClientNotFoundException("Client not found: " + email));
+        Client client = clientService.findClientByEmail(email);
         AiHistory history = AiHistory.builder()
             .withClient(client)
             .withRequest(request)
@@ -38,8 +36,7 @@ public class AiHistoryService {
     public AiHistoryResponse list(String email, int page, int size) {
         Pageable pageable = PageRequest.of(page, size)
             .withSort(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Client client = clientRepository.findClientByEmail(email)
-            .orElseThrow(() -> new ClientNotFoundException("Client not found: " + email));
+        Client client = clientService.findClientByEmail(email);
         Page<AiHistory> result = aiHistoryRepository.findByClient(client, pageable);
         List<AiHistoryResponse.HistoryItem> items = result.getContent().stream()
             .map(history -> new AiHistoryResponse.HistoryItem(

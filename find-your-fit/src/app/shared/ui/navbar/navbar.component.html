@@ -13,16 +13,36 @@
         <li><a class="nav-link" routerLink="/outfit">View Outfit</a></li>
       }
       <li>
-        <a class="nav-btn" routerLink="/profile">
-          <span class="nav-avatar" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.69-8 6v1h16v-1c0-3.31-3.58-6-8-6Z"
-              />
-            </svg>
-          </span>
-          Profile
-        </a>
+        <div class="nav-profile">
+          <button
+            type="button"
+            class="nav-avatar-btn"
+            [class.nav-avatar-btn--open]="menuOpen()"
+            [attr.aria-expanded]="menuOpen()"
+            aria-haspopup="menu"
+            aria-label="Profile menu"
+            (click)="toggleMenu()"
+          >
+            <span class="nav-avatar" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.69-8 6v1h16v-1c0-3.31-3.58-6-8-6Z"
+                />
+              </svg>
+            </span>
+          </button>
+          @if (menuOpen()) {
+            <div class="nav-menu-backdrop" (click)="closeMenu()"></div>
+            <div class="nav-menu" role="menu">
+              <a class="nav-menu-item" role="menuitem" routerLink="/profile" (click)="closeMenu()">
+                Profile
+              </a>
+              <button type="button" class="nav-menu-item" role="menuitem" (click)="logout()">
+                Logout
+              </button>
+            </div>
+          }
+        </div>
       </li>
     } @else {
       <li><a class="nav-link" routerLink="/login">Sign In</a></li>

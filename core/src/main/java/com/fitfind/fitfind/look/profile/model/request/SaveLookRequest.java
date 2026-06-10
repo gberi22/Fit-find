@@ -19,5 +19,6 @@ public record SaveLookRequest(
     BigDecimal budgetMax,
     @NotEmpty List<Suggestion> suggestions,
     @NotBlank String imageBase64,
-    @NotBlank String imageMimeType
+    @NotBlank String imageMimeType,
+    boolean published
 ) { }

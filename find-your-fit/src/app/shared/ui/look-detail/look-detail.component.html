@@ -1,0 +1,78 @@
+<div class="look-modal" role="dialog" aria-modal="true" (click)="close()">
+  <div class="look-modal-card" (click)="$event.stopPropagation()">
+    <button type="button" class="look-modal-close" aria-label="Close" (click)="close()">
+      &times;
+    </button>
+
+    @if (loading()) {
+      <div class="look-modal-status">
+        <app-loading-spinner message="Loading look" />
+      </div>
+    } @else if (error()) {
+      <div class="look-modal-status">
+        <p class="look-modal-message">Couldn't load this look. Please try again.</p>
+      </div>
+    } @else if (detail(); as look) {
+      <div class="look-modal-layout">
+        <div class="look-modal-image">
+          @if (look.imageUrl) {
+            <img [src]="look.imageUrl" alt="Look" />
+          } @else {
+            <span class="look-image-fallback">No image</span>
+          }
+        </div>
+
+        <div class="look-modal-side">
+          <p class="look-modal-name">{{ look.username }}</p>
+
+          <div class="look-modal-products">
+            @for (product of look.products; track product.url) {
+              <div class="modal-product">
+                <div class="modal-product-image">
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.name ?? 'Item'" />
+                  } @else {
+                    <span class="look-image-fallback">No image</span>
+                  }
+                </div>
+                <div class="modal-product-body">
+                  <p class="modal-product-category">{{ clothingItemLabel(product.category) }}</p>
+                  <p class="modal-product-name">{{ product.name }}</p>
+                  @if (product.price) {
+                    <p class="modal-product-price">{{ product.price }}</p>
+                  }
+                  @if (product.url) {
+                    <a
+                      class="modal-product-link"
+                      [href]="product.url"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      View item
+                    </a>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (owned() && !look.published) {
+            <button
+              type="button"
+              class="look-publish-btn"
+              [disabled]="publishing()"
+              (click)="publish()"
+            >
+              Publish
+            </button>
+            @if (publishError()) {
+              <p class="look-modal-error" role="alert">
+                Couldn't publish this look. Please try again.
+              </p>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

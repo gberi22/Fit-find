@@ -1,0 +1,16 @@
+<div class="look-grid">
+  @for (look of looks(); track look.id) {
+    <button type="button" class="look-card" (click)="lookSelected.emit(look)">
+      <div class="look-image">
+        @if (look.imageUrl) {
+          <img [src]="look.imageUrl" alt="Look" />
+        } @else {
+          <span class="look-image-fallback">No image</span>
+        }
+      </div>
+      @if (!look.published) {
+        <span class="look-badge">Draft</span>
+      }
+    </button>
+  }
+</div>

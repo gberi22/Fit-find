@@ -167,6 +167,8 @@ public class PromptHelper {
                   from its corresponding input photo.
                 - If two items occupy the same body region, layer them naturally (e.g. jacket
                   over shirt). Never omit an item.
+                - If the picture for the 'SHOES' or 'BOOTS' item shows ONLY ONE item instead of a pair,
+                  make sure the mannequin wears that shoe/boot on both feet instead of only on one.
 
                 Scene:
                 - Full-body, front-facing, neutral standing pose.

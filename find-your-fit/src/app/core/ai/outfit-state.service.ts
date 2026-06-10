@@ -52,6 +52,11 @@ export class OutfitStateService {
     this._image.set(image);
   }
 
+  clearOutfit(): void {
+    this._selected.set([]);
+    this._image.set(null);
+  }
+
   clear(): void {
     this._request.set(null);
     this._response.set(null);

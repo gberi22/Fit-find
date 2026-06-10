@@ -173,6 +173,60 @@
   color: var(--accent-hover);
 }
 
+.save-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: var(--accent-subtle);
+}
+
+.save-btn--gold {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+.save-btn--gold:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.save-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.save-success {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--success);
+}
+
+.save-error {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--error);
+}
+
 @media (max-width: 860px) {
   .outfit-page {
     padding: 120px 24px 72px;
