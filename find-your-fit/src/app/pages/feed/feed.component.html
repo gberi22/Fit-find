@@ -1,0 +1,165 @@
+<app-navbar />
+
+<div class="feed-page fade-in">
+  <div class="feed-inner">
+    <div class="feed-bar">
+      <header class="feed-head">
+        <p class="feed-label">Community</p>
+        <h1 class="feed-title">Browse <em>Looks</em></h1>
+      </header>
+      <button
+        type="button"
+        class="filters-toggle"
+        [class.filters-toggle--active]="filtersOpen()"
+        [attr.aria-expanded]="filtersOpen()"
+        (click)="toggleFilters()"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="7" y1="12" x2="17" y2="12" />
+          <line x1="10" y1="18" x2="14" y2="18" />
+        </svg>
+        Filters
+      </button>
+    </div>
+
+    <div class="feed-layout" [class.feed-layout--collapsed]="!filtersOpen()">
+      @if (filtersOpen()) {
+        <aside class="filter-bar">
+          <div class="field-block">
+            <h2 class="field-title">Gender</h2>
+            <div class="chip-row">
+              @for (option of genderOptions; track option.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.chip--active]="gender() === option.value"
+                  (click)="selectGender(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="field-block">
+            <h2 class="field-title">Styles</h2>
+            <div class="chip-row">
+              @for (option of styleOptions; track option.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.chip--active]="isStyleSelected(option.value)"
+                  (click)="toggleStyle(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="field-block">
+            <div class="budget-head">
+              <h2 class="field-title">Budget</h2>
+              <div class="budget-inputs">
+                <span class="budget-prefix">$</span>
+                <input
+                  class="budget-num"
+                  type="number"
+                  inputmode="numeric"
+                  [min]="budgetMin"
+                  [max]="budgetMax"
+                  [value]="minBudget()"
+                  (input)="onMinInput($any($event.target).valueAsNumber)"
+                  aria-label="Minimum budget"
+                />
+                <span class="budget-dash">—</span>
+                <span class="budget-prefix">$</span>
+                <input
+                  class="budget-num"
+                  type="number"
+                  inputmode="numeric"
+                  [min]="budgetMin"
+                  [max]="budgetMax"
+                  [value]="maxBudget()"
+                  (input)="onMaxInput($any($event.target).valueAsNumber)"
+                  aria-label="Maximum budget"
+                />
+              </div>
+            </div>
+
+            <div class="rng">
+              <div class="rng-track"></div>
+              <div
+                class="rng-fill"
+                [style.left.%]="priceCalculatorForSlider(minBudget())"
+                [style.width.%]="
+                  priceCalculatorForSlider(maxBudget()) - priceCalculatorForSlider(minBudget())
+                "
+              ></div>
+              <input
+                class="rng-min"
+                type="range"
+                [min]="budgetMin"
+                [max]="budgetMax"
+                [step]="minMaxBudgetGap"
+                [value]="minBudget()"
+                (input)="onMinSlide($event)"
+                aria-label="Minimum budget slider"
+              />
+              <input
+                class="rng-max"
+                type="range"
+                [min]="budgetMin"
+                [max]="budgetMax"
+                [step]="minMaxBudgetGap"
+                [value]="maxBudget()"
+                (input)="onMaxSlide($event)"
+                aria-label="Maximum budget slider"
+              />
+            </div>
+            <div class="rng-scale">
+              <span>${{ budgetMin }}</span>
+              <span>${{ budgetMax }}</span>
+            </div>
+          </div>
+
+          <div class="filter-actions">
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              class="apply-btn"
+              (click)="applyFilters()"
+            >
+              Apply Filters
+            </button>
+            <button
+              type="button"
+              class="link-btn"
+              [disabled]="!hasActiveFilters()"
+              (click)="clearFilters()"
+            >
+              Clear
+            </button>
+          </div>
+        </aside>
+      }
+
+      <!-- TODO: replace this placeholder grid -->
+      <section class="look-grid" aria-label="Looks">
+        @for (placeholder of placeholders; track $index) {
+          <div class="look-tile look-tile--placeholder"></div>
+        }
+      </section>
+    </div>
+  </div>
+</div>
+
+<app-footer />
