@@ -9,7 +9,9 @@ public interface LookSummaryProjection {
 
     UUID getImageKey();
 
-    boolean getIsPublished();
+    LocalDateTime getPublishedAt();
 
-    LocalDateTime getCreatedAt();
+    default boolean getPublished() {
+        return getPublishedAt() != null;
+    }
 }
