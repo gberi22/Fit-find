@@ -25,7 +25,6 @@ export class LookDetailComponent {
   private readonly profileService = inject(ProfileService);
 
   readonly lookId = input.required<number>();
-  // Whether the look belongs to the current user — enables publishing of drafts.
   readonly owned = input<boolean>(false);
 
   readonly closed = output<void>();
@@ -40,8 +39,6 @@ export class LookDetailComponent {
   readonly clothingItemLabel = clothingItemLabel;
 
   constructor() {
-    // Refetch whenever the requested look changes; `owned` is read untracked so a
-    // late ownership change alone doesn't trigger a redundant request.
     effect(() => {
       const id = this.lookId();
       this.load(id, untracked(this.owned));

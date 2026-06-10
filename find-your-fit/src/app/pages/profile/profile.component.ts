@@ -7,18 +7,18 @@ import {
   signal,
 } from '@angular/core';
 import { ProfileService } from '@core/profile/profile.service';
-import { LookDetailResponse, LookSummary } from '@shared/models/look-card.model';
-import { clothingItemLabel } from '@shared/models/outfit.model';
+import { LookSummary } from '@shared/models/look-card.model';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
+import { LookDetailComponent } from '@shared/ui/look-detail/look-detail.component';
+import { LookGridComponent } from '@shared/ui/look-grid/look-grid.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
-import { finalize } from 'rxjs';
 
 type ProfileTab = 'generated' | 'saved';
 type LookFilter = 'all' | 'published' | 'drafts';
 
 @Component({
   selector: 'app-profile',
-  imports: [NavbarComponent, LoadingSpinnerComponent],
+  imports: [NavbarComponent, LoadingSpinnerComponent, LookGridComponent, LookDetailComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,15 +51,9 @@ export class ProfileComponent implements OnInit {
     }
   });
 
-  readonly modalOpen = signal(false);
-  readonly selectedLook = signal<LookDetailResponse | null>(null);
-  readonly detailLoading = signal(false);
-  readonly detailError = signal(false);
-  readonly ownedLook = signal(false);
-  readonly publishing = signal(false);
-  readonly publishError = signal(false);
-
-  readonly clothingItemLabel = clothingItemLabel;
+  // The look open in the detail modal, plus whether it is the user's own look.
+  readonly selectedLookId = signal<number | null>(null);
+  readonly selectedOwned = signal(false);
 
   ngOnInit(): void {
     this.profileService.getFullName().subscribe({
@@ -97,49 +91,18 @@ export class ProfileComponent implements OnInit {
     this.filter.set(value);
   }
 
-  openLook(lookId: number, owned: boolean): void {
-    this.ownedLook.set(owned);
-    this.modalOpen.set(true);
-    this.selectedLook.set(null);
-    this.detailError.set(false);
-    this.publishError.set(false);
-    this.detailLoading.set(true);
-
-    const detail$ = owned
-      ? this.profileService.getLook(lookId)
-      : this.profileService.getPublicLook(lookId);
-
-    detail$.pipe(finalize(() => this.detailLoading.set(false))).subscribe({
-      next: (detail) => this.selectedLook.set(detail),
-      error: () => this.detailError.set(true),
-    });
+  openLook(look: LookSummary, owned: boolean): void {
+    this.selectedOwned.set(owned);
+    this.selectedLookId.set(look.id);
   }
 
   closeLook(): void {
-    this.modalOpen.set(false);
-    this.selectedLook.set(null);
+    this.selectedLookId.set(null);
   }
 
-  publish(): void {
-    const detail = this.selectedLook();
-    if (!detail || this.publishing()) {
-      return;
-    }
-
-    this.publishing.set(true);
-    this.publishError.set(false);
-
-    this.profileService
-      .publishLook(detail.id)
-      .pipe(finalize(() => this.publishing.set(false)))
-      .subscribe({
-        next: () => {
-          this.selectedLook.set({ ...detail, published: true });
-          this.generatedLooks.update((looks) =>
-            looks.map((look) => (look.id === detail.id ? { ...look, published: true } : look)),
-          );
-        },
-        error: () => this.publishError.set(true),
-      });
+  onPublished(lookId: number): void {
+    this.generatedLooks.update((looks) =>
+      looks.map((look) => (look.id === lookId ? { ...look, published: true } : look)),
+    );
   }
 }
