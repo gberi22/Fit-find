@@ -12,14 +12,16 @@
 
 .look-modal-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 760px;
-  max-height: 86vh;
-  overflow-y: auto;
+  max-width: 920px;
+  height: min(680px, 88vh);
+  overflow: hidden;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px;
+  padding: 30px;
 }
 
 .look-modal-close {
@@ -43,7 +45,9 @@
 }
 
 .look-modal-status {
+  flex: 1;
   display: flex;
+  align-items: center;
   justify-content: center;
   padding: 64px 0;
 }
@@ -56,13 +60,19 @@
 }
 
 .look-modal-layout {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 24px;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 30px;
+  align-items: stretch;
 }
 
 .look-modal-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -71,6 +81,8 @@
 
 .look-modal-image img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
@@ -82,12 +94,15 @@
 }
 
 .look-modal-side {
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .look-modal-name {
+  flex: none;
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 400;
@@ -95,24 +110,31 @@
 }
 
 .look-modal-products {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .modal-product {
   display: flex;
-  gap: 14px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
 }
 
 .modal-product-image {
-  flex: 0 0 72px;
-  width: 72px;
-  height: 72px;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius);
+  overflow: hidden;
   background: var(--bg-input);
   display: flex;
   align-items: center;
@@ -126,36 +148,46 @@
 }
 
 .modal-product-body {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 10px 14px 10px 0;
+  gap: 2px;
 }
 
 .modal-product-category {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .modal-product-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.3;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-product-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1px;
 }
 
 .modal-product-price {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .modal-product-link {
-  margin-top: auto;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.5px;
   color: var(--accent);
@@ -167,12 +199,71 @@
   color: var(--accent-hover);
 }
 
-.look-publish-btn {
-  margin-top: 4px;
-  padding: 14px;
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  color: var(--bg-primary);
+.look-meta {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.look-meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.look-tag {
+  padding: 5px 12px;
+  background: var(--accent-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+}
+
+.look-meta-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.look-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+}
+
+.look-meta-row dt {
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.look-meta-row dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.look-actions {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.look-action-btn {
+  padding: 13px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
@@ -183,14 +274,76 @@
   transition: all 0.25s;
 }
 
-.look-publish-btn:hover:not(:disabled) {
+.look-action-btn:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+}
+
+.look-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.look-action-btn--gold {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-primary);
+}
+
+.look-action-btn--gold:hover:not(:disabled) {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
 }
 
-.look-publish-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.look-action-btn--ghost {
+  color: var(--text-secondary);
+}
+
+.look-action-btn--ghost:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.look-action-btn--danger {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.look-action-btn--danger:hover:not(:disabled) {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.look-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.look-confirm-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.look-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.look-signin-hint {
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  transition: all 0.25s;
+}
+
+.look-signin-hint:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .look-modal-error {
@@ -204,10 +357,22 @@
   }
 
   .look-modal-card {
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
     padding: 20px;
   }
 
   .look-modal-layout {
     grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .look-modal-image img {
+    max-height: 56vh;
+  }
+
+  .look-modal-products {
+    overflow-y: visible;
   }
 }
