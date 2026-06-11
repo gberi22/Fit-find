@@ -20,9 +20,9 @@
         type="button"
         class="profile-tab"
         role="tab"
-        [class.profile-tab--active]="activeTab() === 'generated'"
-        [attr.aria-selected]="activeTab() === 'generated'"
-        (click)="selectTab('generated')"
+        [class.profile-tab--active]="activeTab() === 'your-looks'"
+        [attr.aria-selected]="activeTab() === 'your-looks'"
+        (click)="selectTab('your-looks')"
       >
         Your Looks
       </button>
@@ -38,8 +38,8 @@
       </button>
     </nav>
 
-    @if (activeTab() === 'generated') {
-      <div class="profile-filter" role="group" aria-label="Filter generated looks">
+    @if (activeTab() === 'your-looks') {
+      <div class="profile-filter" role="group" aria-label="Filter your generated looks">
         <button
           type="button"
           class="filter-pill"
@@ -66,16 +66,16 @@
         </button>
       </div>
 
-      @if (generatedLoading()) {
+      @if (yourLooksLoading()) {
         <div class="profile-status">
           <app-loading-spinner message="Loading your looks" />
         </div>
-      } @else if (generatedError()) {
+      } @else if (yourLooksError()) {
         <div class="profile-empty">
           <p class="profile-empty-text">Couldn't load your looks. Please try again later.</p>
         </div>
-      } @else if (filteredGenerated().length) {
-        <app-look-grid [looks]="filteredGenerated()" (lookSelected)="openLook($event, 'owner')" />
+      } @else if (filteredYourLooks().length) {
+        <app-look-grid [looks]="filteredYourLooks()" (lookSelected)="openLook($event, 'owner')" />
       } @else {
         <div class="profile-empty">
           <p class="profile-empty-text">No looks here yet. Generate a look to get started.</p>
