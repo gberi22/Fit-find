@@ -25,6 +25,40 @@
         <div class="look-modal-side">
           <p class="look-modal-name">{{ look.username }}</p>
 
+          <div class="look-meta">
+            @if (look.styles.length) {
+              <div class="look-meta-tags">
+                @for (style of look.styles; track style) {
+                  <span class="look-tag">{{ styleLabel(style) }}</span>
+                }
+              </div>
+            }
+            <dl class="look-meta-rows">
+              <div class="look-meta-row">
+                <dt>Gender</dt>
+                <dd>{{ genderLabel(look.gender) }}</dd>
+              </div>
+              @if (look.size) {
+                <div class="look-meta-row">
+                  <dt>Size</dt>
+                  <dd>{{ sizeLabel(look.size) }}</dd>
+                </div>
+              }
+              @if (look.budgetMin != null && look.budgetMax != null) {
+                <div class="look-meta-row">
+                  <dt>Budget</dt>
+                  <dd>${{ look.budgetMin }} – ${{ look.budgetMax }}</dd>
+                </div>
+              }
+              <div class="look-meta-row">
+                <dt>{{ look.published ? 'Published' : 'Created' }}</dt>
+                <dd>
+                  {{ (look.published ? look.publishedAt : look.createdAt) | date: 'mediumDate' }}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
           <div class="look-modal-products">
             @for (product of look.products; track product.url) {
               <div class="modal-product">
@@ -38,39 +72,110 @@
                 <div class="modal-product-body">
                   <p class="modal-product-category">{{ clothingItemLabel(product.category) }}</p>
                   <p class="modal-product-name">{{ product.name }}</p>
-                  @if (product.price) {
-                    <p class="modal-product-price">{{ product.price }}</p>
-                  }
-                  @if (product.url) {
-                    <a
-                      class="modal-product-link"
-                      [href]="product.url"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      View item
-                    </a>
-                  }
+                  <div class="modal-product-meta">
+                    @if (product.price) {
+                      <span class="modal-product-price">{{ product.price }}</span>
+                    }
+                    @if (product.url) {
+                      <a
+                        class="modal-product-link"
+                        [href]="product.url"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        View item
+                      </a>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
 
-          @if (owned() && !look.published) {
-            <button
-              type="button"
-              class="look-publish-btn"
-              [disabled]="publishing()"
-              (click)="publish()"
-            >
-              Publish
-            </button>
-            @if (publishError()) {
-              <p class="look-modal-error" role="alert">
-                Couldn't publish this look. Please try again.
-              </p>
+          <div class="look-actions">
+            @if (mode() === 'owner') {
+              @if (look.published) {
+                <button
+                  type="button"
+                  class="look-action-btn"
+                  [disabled]="pending()"
+                  (click)="unpublish()"
+                >
+                  Unpublish
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="look-action-btn look-action-btn--gold"
+                  [disabled]="pending()"
+                  (click)="publish()"
+                >
+                  Publish
+                </button>
+              }
+
+              @if (confirmingDelete()) {
+                <div class="look-confirm">
+                  <span class="look-confirm-text">Delete this look permanently?</span>
+                  <div class="look-confirm-actions">
+                    <button
+                      type="button"
+                      class="look-action-btn look-action-btn--danger"
+                      [disabled]="pending()"
+                      (click)="confirmDelete()"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      type="button"
+                      class="look-action-btn look-action-btn--ghost"
+                      [disabled]="pending()"
+                      (click)="cancelDelete()"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <button
+                  type="button"
+                  class="look-action-btn look-action-btn--ghost"
+                  [disabled]="pending()"
+                  (click)="requestDelete()"
+                >
+                  Delete
+                </button>
+              }
+            } @else if (mode() === 'saved') {
+              <button
+                type="button"
+                class="look-action-btn look-action-btn--ghost"
+                [disabled]="pending()"
+                (click)="unsave()"
+              >
+                Remove from saved
+              </button>
+            } @else {
+              @if (canSave()) {
+                <button
+                  type="button"
+                  class="look-action-btn look-action-btn--gold"
+                  [disabled]="pending() || savedDone()"
+                  (click)="save()"
+                >
+                  {{ savedDone() ? 'Saved ✓' : 'Save' }}
+                </button>
+              } @else {
+                <a class="look-signin-hint" routerLink="/login" (click)="close()">
+                  Sign in to save this look
+                </a>
+              }
             }
-          }
+
+            @if (actionError()) {
+              <p class="look-modal-error" role="alert">{{ actionError() }}</p>
+            }
+          </div>
         </div>
       </div>
     }

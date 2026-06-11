@@ -4,6 +4,7 @@ import { OutfitStateService } from '@core/ai/outfit-state.service';
 import { OutfitService } from '@core/ai/outfit.service';
 import { ProfileService } from '@core/profile/profile.service';
 import { Suggestion, clothingItemLabel } from '@shared/models/outfit.model';
+import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 import { errorMessage } from '@shared/utils/errorMessageHandler';
@@ -11,7 +12,7 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-outfit',
-  imports: [LoadingSpinnerComponent, NavbarComponent, RouterLink],
+  imports: [FooterComponent, LoadingSpinnerComponent, NavbarComponent, RouterLink],
   templateUrl: './outfit.component.html',
   styleUrl: './outfit.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -97,72 +97,14 @@
       </section>
 
       <section class="field-block">
-        <div class="budget-head">
-          <h2 class="field-title">Budget</h2>
-          <div class="budget-inputs">
-            <span class="budget-prefix">$</span>
-            <input
-              class="budget-num"
-              type="number"
-              inputmode="numeric"
-              [min]="budgetMin"
-              [max]="budgetMax"
-              [value]="form.controls.minPrice.value"
-              (keydown)="blockNonNumeric($event)"
-              (input)="onMinInput($any($event.target).valueAsNumber)"
-              aria-label="Minimum budget"
-            />
-            <span class="budget-dash">—</span>
-            <span class="budget-prefix">$</span>
-            <input
-              class="budget-num"
-              type="number"
-              inputmode="numeric"
-              [min]="budgetMin"
-              [max]="budgetMax"
-              [value]="form.controls.maxPrice.value"
-              (keydown)="blockNonNumeric($event)"
-              (input)="onMaxInput($any($event.target).valueAsNumber)"
-              aria-label="Maximum budget"
-            />
-          </div>
-        </div>
-
-        <div class="rng">
-          <div class="rng-track"></div>
-          <div
-            class="rng-fill"
-            [style.left.%]="priceCalculatorForSlider(form.controls.minPrice.value)"
-            [style.width.%]="
-              priceCalculatorForSlider(form.controls.maxPrice.value) -
-              priceCalculatorForSlider(form.controls.minPrice.value)
-            "
-          ></div>
-          <input
-            class="rng-min"
-            type="range"
-            [min]="budgetMin"
-            [max]="budgetMax"
-            [step]="minMaxBudgetGap"
-            [value]="form.controls.minPrice.value"
-            (input)="onMinSlide($event)"
-            aria-label="Minimum budget slider"
-          />
-          <input
-            class="rng-max"
-            type="range"
-            [min]="budgetMin"
-            [max]="budgetMax"
-            [step]="minMaxBudgetGap"
-            [value]="form.controls.maxPrice.value"
-            (input)="onMaxSlide($event)"
-            aria-label="Maximum budget slider"
-          />
-        </div>
-        <div class="rng-scale">
-          <span>${{ budgetMin }}</span>
-          <span>${{ budgetMax }}</span>
-        </div>
+        <h2 class="field-title">Budget</h2>
+        <p class="field-hint">Pick a price for each item.</p>
+        <app-budget-range
+          [min]="form.controls.minPrice.value ?? budgetMin"
+          (minChange)="setMinPrice($event)"
+          [max]="form.controls.maxPrice.value ?? budgetMax"
+          (maxChange)="setMaxPrice($event)"
+        />
 
         @if (form.hasError('budgetRange')) {
           <p class="field-error">Minimum price must be lower than the maximum.</p>
@@ -221,3 +163,5 @@
     </form>
   </div>
 </div>
+
+<app-footer />

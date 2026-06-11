@@ -1,0 +1,132 @@
+<app-navbar />
+
+<div class="feed-page fade-in">
+  <div class="feed-inner">
+    <div class="feed-bar">
+      <header class="feed-head">
+        <p class="feed-label">Community</p>
+        <h1 class="feed-title">Browse <em>Looks</em></h1>
+      </header>
+      <button
+        type="button"
+        class="filters-toggle"
+        [class.filters-toggle--active]="filtersOpen()"
+        [attr.aria-expanded]="filtersOpen()"
+        (click)="toggleFilters()"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="7" y1="12" x2="17" y2="12" />
+          <line x1="10" y1="18" x2="14" y2="18" />
+        </svg>
+        Filters
+      </button>
+    </div>
+
+    <div class="feed-layout" [class.feed-layout--collapsed]="!filtersOpen()">
+      @if (filtersOpen()) {
+        <aside class="filter-bar">
+          <div class="field-block">
+            <h2 class="field-title">Gender</h2>
+            <div class="chip-row">
+              @for (option of genderOptions; track option.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.chip--active]="gender() === option.value"
+                  (click)="selectGender(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="field-block">
+            <h2 class="field-title">Styles</h2>
+            <div class="chip-row">
+              @for (option of styleOptions; track option.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.chip--active]="isStyleSelected(option.value)"
+                  (click)="toggleStyle(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="field-block">
+            <h2 class="field-title">Budget</h2>
+            <app-budget-range
+              [min]="minBudget()"
+              (minChange)="minBudget.set($event)"
+              [max]="maxBudget()"
+              (maxChange)="maxBudget.set($event)"
+            />
+          </div>
+
+          <div class="filter-actions">
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              class="apply-btn"
+              (click)="applyFilters()"
+            >
+              Apply Filters
+            </button>
+            <button
+              type="button"
+              class="link-btn"
+              [disabled]="!hasActiveFilters()"
+              (click)="clearFilters()"
+            >
+              Clear
+            </button>
+          </div>
+        </aside>
+      }
+
+      <div class="feed-results">
+        @if (loading()) {
+          <div class="feed-status">
+            <app-loading-spinner message="Loading looks" />
+          </div>
+        } @else if (error()) {
+          <div class="feed-empty">Couldn't load the feed. Please try again later.</div>
+        } @else if (looks().length) {
+          <app-look-grid [looks]="looks()" (lookSelected)="openLook($event)" />
+
+          @if (totalPages() > 1) {
+            <nav class="pager" aria-label="Feed pagination">
+              <button type="button" class="pager-btn" [disabled]="!canPrev()" (click)="prevPage()">
+                ← Prev
+              </button>
+              <span class="pager-status">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+              <button type="button" class="pager-btn" [disabled]="!canNext()" (click)="nextPage()">
+                Next →
+              </button>
+            </nav>
+          }
+        } @else {
+          <div class="feed-empty">No looks match your filters yet.</div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (selectedLookId(); as lookId) {
+  <app-look-detail [lookId]="lookId" mode="public" [canSave]="canSave()" (closed)="closeLook()" />
+}
+
+<app-footer />

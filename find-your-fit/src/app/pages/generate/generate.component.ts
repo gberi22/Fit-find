@@ -23,13 +23,14 @@ import {
   Size,
   Style,
 } from '@shared/models/outfit.model';
+import { BudgetRangeComponent } from '@shared/ui/budget-range/budget-range.component';
+import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 const MAX_IMAGES = 5;
 
 const BUDGET_MIN = 0;
 const BUDGET_MAX = 500;
-const MIN_MAX_BUDGET_GAP = 5;
 const DEFAULT_MIN_PRICE = 50;
 const DEFAULT_MAX_PRICE = 200;
 
@@ -62,6 +63,8 @@ function nonEmptyArray(control: AbstractControl): ValidationErrors | null {
   selector: 'app-generate',
   imports: [
     ReactiveFormsModule,
+    BudgetRangeComponent,
+    FooterComponent,
     NavbarComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -83,7 +86,6 @@ export class GenerateComponent implements OnDestroy {
   readonly maxImages = MAX_IMAGES;
   readonly budgetMin = BUDGET_MIN;
   readonly budgetMax = BUDGET_MAX;
-  readonly minMaxBudgetGap = MIN_MAX_BUDGET_GAP;
 
   readonly form = this.formBuilder.group<GenerateForm>(
     {
@@ -130,66 +132,14 @@ export class GenerateComponent implements OnDestroy {
     control.markAsTouched();
   }
 
-  priceCalculatorForSlider(value: number | null): number {
-    const v = value ?? BUDGET_MIN;
-    return ((v - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
-  }
-
-  onMinSlide(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const max = this.form.controls.maxPrice.value ?? BUDGET_MAX;
-    const clamped = Math.min(input.valueAsNumber, max - MIN_MAX_BUDGET_GAP);
-    this.form.controls.minPrice.setValue(clamped);
-    input.value = String(clamped);
-  }
-
-  onMaxSlide(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const min = this.form.controls.minPrice.value ?? BUDGET_MIN;
-    const clamped = Math.max(input.valueAsNumber, min + MIN_MAX_BUDGET_GAP);
-    this.form.controls.maxPrice.setValue(clamped);
-    input.value = String(clamped);
-  }
-
-  onMinInput(value: number): void {
-    const max = this.form.controls.maxPrice.value ?? BUDGET_MAX;
-    this.form.controls.minPrice.setValue(Math.min(this.clampBudget(value), max));
+  setMinPrice(value: number): void {
+    this.form.controls.minPrice.setValue(value);
     this.form.controls.minPrice.markAsTouched();
   }
 
-  onMaxInput(value: number): void {
-    const min = this.form.controls.minPrice.value ?? BUDGET_MIN;
-    this.form.controls.maxPrice.setValue(Math.max(this.clampBudget(value), min));
+  setMaxPrice(value: number): void {
+    this.form.controls.maxPrice.setValue(value);
     this.form.controls.maxPrice.markAsTouched();
-  }
-
-  private clampBudget(value: number): number {
-    if (Number.isNaN(value)) {
-      return BUDGET_MIN;
-    }
-    return Math.max(BUDGET_MIN, Math.min(BUDGET_MAX, value));
-  }
-
-  blockNonNumeric(event: KeyboardEvent): void {
-    const control = [
-      'Backspace',
-      'Delete',
-      'Tab',
-      'Escape',
-      'Enter',
-      'ArrowLeft',
-      'ArrowRight',
-      'ArrowUp',
-      'ArrowDown',
-      'Home',
-      'End',
-    ];
-    if (control.includes(event.key) || event.ctrlKey || event.metaKey) {
-      return;
-    }
-    if (!/^[0-9]$/.test(event.key)) {
-      event.preventDefault();
-    }
   }
 
   onFilesSelected(event: Event): void {

@@ -9,8 +9,9 @@ import {
 import { ProfileService } from '@core/profile/profile.service';
 import { LookSummary } from '@shared/models/look-card.model';
 import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
-import { LookDetailComponent } from '@shared/ui/look-detail/look-detail.component';
+import { LookDetailComponent, LookDetailMode } from '@shared/ui/look-detail/look-detail.component';
 import { LookGridComponent } from '@shared/ui/look-grid/look-grid.component';
+import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
 type ProfileTab = 'generated' | 'saved';
@@ -18,7 +19,13 @@ type LookFilter = 'all' | 'published' | 'drafts';
 
 @Component({
   selector: 'app-profile',
-  imports: [NavbarComponent, LoadingSpinnerComponent, LookGridComponent, LookDetailComponent],
+  imports: [
+    FooterComponent,
+    NavbarComponent,
+    LoadingSpinnerComponent,
+    LookGridComponent,
+    LookDetailComponent,
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,9 +58,9 @@ export class ProfileComponent implements OnInit {
     }
   });
 
-  // The look open in the detail modal, plus whether it is the user's own look.
+  // The look open in the detail modal, plus the context it was opened from.
   readonly selectedLookId = signal<number | null>(null);
-  readonly selectedOwned = signal(false);
+  readonly selectedMode = signal<LookDetailMode>('owner');
 
   ngOnInit(): void {
     this.profileService.getFullName().subscribe({
@@ -91,8 +98,8 @@ export class ProfileComponent implements OnInit {
     this.filter.set(value);
   }
 
-  openLook(look: LookSummary, owned: boolean): void {
-    this.selectedOwned.set(owned);
+  openLook(look: LookSummary, mode: LookDetailMode): void {
+    this.selectedMode.set(mode);
     this.selectedLookId.set(look.id);
   }
 
@@ -101,8 +108,26 @@ export class ProfileComponent implements OnInit {
   }
 
   onPublished(lookId: number): void {
+    this.setPublished(lookId, true);
+  }
+
+  onUnpublished(lookId: number): void {
+    this.setPublished(lookId, false);
+  }
+
+  onDeleted(lookId: number): void {
+    this.generatedLooks.update((looks) => looks.filter((look) => look.id !== lookId));
+    this.closeLook();
+  }
+
+  onUnsaved(lookId: number): void {
+    this.savedLooks.update((looks) => looks.filter((look) => look.id !== lookId));
+    this.closeLook();
+  }
+
+  private setPublished(lookId: number, published: boolean): void {
     this.generatedLooks.update((looks) =>
-      looks.map((look) => (look.id === lookId ? { ...look, published: true } : look)),
+      looks.map((look) => (look.id === lookId ? { ...look, published } : look)),
     );
   }
 }
