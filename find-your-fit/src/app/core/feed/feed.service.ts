@@ -48,7 +48,10 @@ export class FeedService {
     return this.http
       .get<LookDetailResponse>(`${environmentDev.apiBaseUrl}${ENDPOINTS.PUBLIC_LOOKS}/${id}`)
       .pipe(
-        map((detail) => ({ ...detail, imageUrl: `${environmentDev.apiBaseUrl}${detail.imageUrl}` })),
+        map((detail) => ({
+          ...detail,
+          imageUrl: `${environmentDev.apiBaseUrl}${detail.imageUrl}`,
+        })),
       );
   }
 

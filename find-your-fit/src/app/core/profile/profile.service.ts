@@ -43,7 +43,10 @@ export class ProfileService {
   }
 
   publishLook(id: number): Observable<void> {
-    return this.http.put<void>(`${environmentDev.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/publish`, {});
+    return this.http.put<void>(
+      `${environmentDev.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/publish`,
+      {},
+    );
   }
 
   unpublishLook(id: number): Observable<void> {
@@ -72,7 +75,10 @@ export class ProfileService {
     return this.http
       .get<LookDetailResponse>(`${environmentDev.apiBaseUrl}${path}`)
       .pipe(
-        map((detail) => ({ ...detail, imageUrl: `${environmentDev.apiBaseUrl}${detail.imageUrl}` })),
+        map((detail) => ({
+          ...detail,
+          imageUrl: `${environmentDev.apiBaseUrl}${detail.imageUrl}`,
+        })),
       );
   }
 }
