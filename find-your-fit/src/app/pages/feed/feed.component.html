@@ -96,14 +96,37 @@
         </aside>
       }
 
-      <!-- TODO: replace this placeholder grid -->
-      <section class="look-grid" aria-label="Looks">
-        @for (placeholder of placeholders; track $index) {
-          <div class="look-tile look-tile--placeholder"></div>
+      <div class="feed-results">
+        @if (loading()) {
+          <div class="feed-status">
+            <app-loading-spinner message="Loading looks" />
+          </div>
+        } @else if (error()) {
+          <div class="feed-empty">Couldn't load the feed. Please try again later.</div>
+        } @else if (looks().length) {
+          <app-look-grid [looks]="looks()" (lookSelected)="openLook($event)" />
+
+          @if (totalPages() > 1) {
+            <nav class="pager" aria-label="Feed pagination">
+              <button type="button" class="pager-btn" [disabled]="!canPrev()" (click)="prevPage()">
+                ← Prev
+              </button>
+              <span class="pager-status">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+              <button type="button" class="pager-btn" [disabled]="!canNext()" (click)="nextPage()">
+                Next →
+              </button>
+            </nav>
+          }
+        } @else {
+          <div class="feed-empty">No looks match your filters yet.</div>
         }
-      </section>
+      </div>
     </div>
   </div>
 </div>
+
+@if (selectedLookId(); as lookId) {
+  <app-look-detail [lookId]="lookId" mode="public" [canSave]="canSave()" (closed)="closeLook()" />
+}
 
 <app-footer />

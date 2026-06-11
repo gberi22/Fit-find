@@ -1,25 +1,55 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { EMPTY_FILTERS, FeedFilters } from '@core/look/feed.model';
+import { AuthService } from '@auth/auth.service';
+import { EMPTY_FILTERS, FeedFilters } from '@core/feed/feed.model';
+import { FeedService } from '@core/feed/feed.service';
+import { LookSummary } from '@shared/models/look-card.model';
 import { GENDER_OPTIONS, Gender, STYLE_OPTIONS, Style } from '@shared/models/outfit.model';
 import { BudgetRangeComponent } from '@shared/ui/budget-range/budget-range.component';
 import { FooterComponent } from '@shared/ui/footer/footer.component';
+import { LoadingSpinnerComponent } from '@shared/ui/loading-spinner/loading-spinner.component';
+import { LookDetailComponent } from '@shared/ui/look-detail/look-detail.component';
+import { LookGridComponent } from '@shared/ui/look-grid/look-grid.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
+import { finalize } from 'rxjs';
 
+const PAGE_SIZE = 12;
 const BUDGET_MIN = 0;
 const BUDGET_MAX = 500;
 
 @Component({
   selector: 'app-feed',
-  imports: [NavbarComponent, FooterComponent, BudgetRangeComponent, MatButtonModule],
+  imports: [
+    NavbarComponent,
+    FooterComponent,
+    BudgetRangeComponent,
+    LookGridComponent,
+    LookDetailComponent,
+    LoadingSpinnerComponent,
+    MatButtonModule,
+  ],
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FeedComponent {
+export class FeedComponent implements OnInit {
+  private readonly feedService = inject(FeedService);
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+
   protected readonly genderOptions = GENDER_OPTIONS;
   protected readonly styleOptions = STYLE_OPTIONS;
-  protected readonly placeholders = Array.from({ length: 12 });
+  protected readonly budgetMin = BUDGET_MIN;
+  protected readonly budgetMax = BUDGET_MAX;
 
   protected readonly filtersOpen = signal(true);
   protected readonly gender = signal<Gender | null>(null);
@@ -27,7 +57,16 @@ export class FeedComponent {
   protected readonly minBudget = signal<number>(BUDGET_MIN);
   protected readonly maxBudget = signal<number>(BUDGET_MAX);
 
-  protected readonly appliedFilters = signal<FeedFilters>(EMPTY_FILTERS);
+  protected readonly looks = signal<LookSummary[]>([]);
+  protected readonly loading = signal(false);
+  protected readonly error = signal(false);
+  protected readonly page = signal(0);
+  protected readonly totalPages = signal(0);
+
+  protected readonly selectedLookId = signal<number | null>(null);
+  protected readonly canSave = computed(() => this.authService.isAuthenticated());
+
+  private appliedFilters: FeedFilters = EMPTY_FILTERS;
 
   protected readonly hasActiveFilters = computed(
     () =>
@@ -36,6 +75,13 @@ export class FeedComponent {
       this.minBudget() !== BUDGET_MIN ||
       this.maxBudget() !== BUDGET_MAX,
   );
+
+  protected readonly canPrev = computed(() => this.page() > 0);
+  protected readonly canNext = computed(() => this.page() + 1 < this.totalPages());
+
+  ngOnInit(): void {
+    this.load();
+  }
 
   protected toggleFilters(): void {
     this.filtersOpen.update((open) => !open);
@@ -56,13 +102,14 @@ export class FeedComponent {
   }
 
   protected applyFilters(): void {
-    this.appliedFilters.set({
+    this.appliedFilters = {
       gender: this.gender(),
       styles: this.styles(),
       minBudget: this.minBudget(),
       maxBudget: this.maxBudget(),
-    });
-    // TODO: pass appliedFilters() to <app-look-grid> / FeedService once the grid lands.
+    };
+    this.page.set(0);
+    this.load();
   }
 
   protected clearFilters(): void {
@@ -70,6 +117,52 @@ export class FeedComponent {
     this.styles.set([]);
     this.minBudget.set(BUDGET_MIN);
     this.maxBudget.set(BUDGET_MAX);
-    this.appliedFilters.set(EMPTY_FILTERS);
+    this.appliedFilters = EMPTY_FILTERS;
+    this.page.set(0);
+    this.load();
+  }
+
+  protected prevPage(): void {
+    if (this.canPrev()) {
+      this.page.update((current) => current - 1);
+      this.load();
+    }
+  }
+
+  protected nextPage(): void {
+    if (this.canNext()) {
+      this.page.update((current) => current + 1);
+      this.load();
+    }
+  }
+
+  protected openLook(look: LookSummary): void {
+    this.selectedLookId.set(look.id);
+  }
+
+  protected closeLook(): void {
+    this.selectedLookId.set(null);
+  }
+
+  private load(): void {
+    this.loading.set(true);
+    this.error.set(false);
+    this.feedService
+      .getFeed(this.appliedFilters, this.page(), PAGE_SIZE)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe({
+        next: (response) => {
+          this.looks.set(response.looks);
+          this.totalPages.set(response.totalPages);
+        },
+        error: () => {
+          this.error.set(true);
+          this.looks.set([]);
+          this.totalPages.set(0);
+        },
+      });
   }
 }
