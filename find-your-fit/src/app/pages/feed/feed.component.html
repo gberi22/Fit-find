@@ -126,7 +126,16 @@
 </div>
 
 @if (selectedLookId(); as lookId) {
-  <app-look-detail [lookId]="lookId" mode="public" [canSave]="canSave()" (closed)="closeLook()" />
+  <app-look-detail
+    [lookId]="lookId"
+    mode="public"
+    [canSave]="canSave()"
+    [owned]="selectedOwned()"
+    [alreadySaved]="selectedSaved()"
+    (saved)="onLookSaved($event)"
+    (unsaved)="onLookUnsaved($event)"
+    (closed)="closeLook()"
+  />
 }
 
 <app-footer />

@@ -42,6 +42,8 @@ export class LookDetailComponent {
   readonly lookId = input.required<number>();
   readonly mode = input<LookDetailMode>('owner');
   readonly canSave = input(false);
+  readonly owned = input(false);
+  readonly alreadySaved = input(false);
 
   readonly closed = output<void>();
   readonly published = output<number>();
@@ -130,7 +132,10 @@ export class LookDetailComponent {
       .unsaveLook(current.id)
       .pipe(finalize(() => this.pending.set(false)))
       .subscribe({
-        next: () => this.unsaved.emit(current.id),
+        next: () => {
+          this.savedDone.set(false);
+          this.unsaved.emit(current.id);
+        },
         error: (err: unknown) => this.actionError.set(errorMessage(err, 'removing this look')),
       });
   }
@@ -181,7 +186,7 @@ export class LookDetailComponent {
     this.error.set(false);
     this.actionError.set(null);
     this.confirmingDelete.set(false);
-    this.savedDone.set(false);
+    this.savedDone.set(untracked(this.alreadySaved));
     this.loading.set(true);
 
     const detail$ =

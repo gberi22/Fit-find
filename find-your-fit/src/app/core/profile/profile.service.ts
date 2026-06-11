@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '@env/environment';
+import { environmentDev } from '@env/environment.dev';
 import {
   ClientNameResponse,
   LookDetailResponse,
@@ -22,12 +22,12 @@ export class ProfileService {
 
   getFullName(): Observable<string> {
     return this.http
-      .get<ClientNameResponse>(`${environment.apiBaseUrl}${ENDPOINTS.FULL_NAME}`)
+      .get<ClientNameResponse>(`${environmentDev.apiBaseUrl}${ENDPOINTS.FULL_NAME}`)
       .pipe(map((response) => response.fullName));
   }
 
   saveLook(request: SaveLookRequest): Observable<void> {
-    return this.http.post<void>(`${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}`, request);
+    return this.http.post<void>(`${environmentDev.apiBaseUrl}${ENDPOINTS.MY_LOOKS}`, request);
   }
 
   getMyLooks(): Observable<LookSummary[]> {
@@ -43,36 +43,40 @@ export class ProfileService {
   }
 
   publishLook(id: number): Observable<void> {
-    return this.http.put<void>(`${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/publish`, {});
+    return this.http.put<void>(
+      `${environmentDev.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/publish`,
+      {},
+    );
   }
 
   unpublishLook(id: number): Observable<void> {
     return this.http.put<void>(
-      `${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/unpublish`,
+      `${environmentDev.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/unpublish`,
       {},
     );
   }
 
   deleteLook(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}`);
+    return this.http.delete<void>(`${environmentDev.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}`);
   }
 
   private fetchLooks(endpoint: string): Observable<LookSummary[]> {
-    return this.http.get<LooksResponse>(`${environment.apiBaseUrl}${endpoint}`).pipe(
+    return this.http.get<LooksResponse>(`${environmentDev.apiBaseUrl}${endpoint}`).pipe(
       map((response) =>
         response.looks.map((look) => ({
           ...look,
-          imageUrl: `${environment.apiBaseUrl}${look.imageUrl}`,
+          imageUrl: `${environmentDev.apiBaseUrl}${look.imageUrl}`,
         })),
       ),
     );
   }
 
   private fetchLookDetail(path: string): Observable<LookDetailResponse> {
-    return this.http
-      .get<LookDetailResponse>(`${environment.apiBaseUrl}${path}`)
-      .pipe(
-        map((detail) => ({ ...detail, imageUrl: `${environment.apiBaseUrl}${detail.imageUrl}` })),
-      );
+    return this.http.get<LookDetailResponse>(`${environmentDev.apiBaseUrl}${path}`).pipe(
+      map((detail) => ({
+        ...detail,
+        imageUrl: `${environmentDev.apiBaseUrl}${detail.imageUrl}`,
+      })),
+    );
   }
 }

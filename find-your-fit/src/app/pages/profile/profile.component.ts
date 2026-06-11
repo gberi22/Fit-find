@@ -14,7 +14,7 @@ import { LookGridComponent } from '@shared/ui/look-grid/look-grid.component';
 import { FooterComponent } from '@shared/ui/footer/footer.component';
 import { NavbarComponent } from '@shared/ui/navbar/navbar.component';
 
-type ProfileTab = 'generated' | 'saved';
+type ProfileTab = 'your-looks' | 'saved';
 type LookFilter = 'all' | 'published' | 'drafts';
 
 @Component({
@@ -35,19 +35,19 @@ export class ProfileComponent implements OnInit {
 
   readonly displayName = signal('');
 
-  readonly activeTab = signal<ProfileTab>('generated');
+  readonly activeTab = signal<ProfileTab>('your-looks');
   readonly filter = signal<LookFilter>('all');
 
-  readonly generatedLooks = signal<LookSummary[]>([]);
-  readonly generatedLoading = signal(true);
-  readonly generatedError = signal(false);
+  readonly yourLooks = signal<LookSummary[]>([]);
+  readonly yourLooksLoading = signal(true);
+  readonly yourLooksError = signal(false);
 
   readonly savedLooks = signal<LookSummary[]>([]);
   readonly savedLoading = signal(true);
   readonly savedError = signal(false);
 
-  readonly filteredGenerated = computed(() => {
-    const looks = this.generatedLooks();
+  readonly filteredYourLooks = computed(() => {
+    const looks = this.yourLooks();
     switch (this.filter()) {
       case 'published':
         return looks.filter((look) => look.published);
@@ -58,7 +58,6 @@ export class ProfileComponent implements OnInit {
     }
   });
 
-  // The look open in the detail modal, plus the context it was opened from.
   readonly selectedLookId = signal<number | null>(null);
   readonly selectedMode = signal<LookDetailMode>('owner');
 
@@ -69,12 +68,12 @@ export class ProfileComponent implements OnInit {
 
     this.profileService.getMyLooks().subscribe({
       next: (looks) => {
-        this.generatedLooks.set(looks);
-        this.generatedLoading.set(false);
+        this.yourLooks.set(looks);
+        this.yourLooksLoading.set(false);
       },
       error: () => {
-        this.generatedError.set(true);
-        this.generatedLoading.set(false);
+        this.yourLooksError.set(true);
+        this.yourLooksLoading.set(false);
       },
     });
 
@@ -116,7 +115,7 @@ export class ProfileComponent implements OnInit {
   }
 
   onDeleted(lookId: number): void {
-    this.generatedLooks.update((looks) => looks.filter((look) => look.id !== lookId));
+    this.yourLooks.update((looks) => looks.filter((look) => look.id !== lookId));
     this.closeLook();
   }
 
@@ -126,7 +125,7 @@ export class ProfileComponent implements OnInit {
   }
 
   private setPublished(lookId: number, published: boolean): void {
-    this.generatedLooks.update((looks) =>
+    this.yourLooks.update((looks) =>
       looks.map((look) => (look.id === lookId ? { ...look, published } : look)),
     );
   }

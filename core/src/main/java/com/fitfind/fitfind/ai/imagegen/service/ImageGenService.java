@@ -136,7 +136,6 @@ public class ImageGenService {
         return host;
     }
 
-    // SSRF defense
     private void requirePublicHost(String host) {
         InetAddress[] addresses;
         try {

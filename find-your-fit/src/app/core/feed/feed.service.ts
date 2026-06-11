@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '@env/environment';
+import { environmentDev } from '@env/environment.dev';
 import { LookDetailResponse } from '@shared/models/look-card.model';
 import { Observable, map } from 'rxjs';
 import { FeedFilters, FeedResponse } from './feed.model';
@@ -32,13 +32,13 @@ export class FeedService {
     }
 
     return this.http
-      .get<FeedResponse>(`${environment.apiBaseUrl}${ENDPOINTS.FEED}`, { params })
+      .get<FeedResponse>(`${environmentDev.apiBaseUrl}${ENDPOINTS.FEED}`, { params })
       .pipe(
         map((response) => ({
           ...response,
           looks: response.looks.map((look) => ({
             ...look,
-            imageUrl: `${environment.apiBaseUrl}${look.imageUrl}`,
+            imageUrl: `${environmentDev.apiBaseUrl}${look.imageUrl}`,
           })),
         })),
       );
@@ -46,17 +46,20 @@ export class FeedService {
 
   getLookDetail(id: number): Observable<LookDetailResponse> {
     return this.http
-      .get<LookDetailResponse>(`${environment.apiBaseUrl}${ENDPOINTS.PUBLIC_LOOKS}/${id}`)
+      .get<LookDetailResponse>(`${environmentDev.apiBaseUrl}${ENDPOINTS.PUBLIC_LOOKS}/${id}`)
       .pipe(
-        map((detail) => ({ ...detail, imageUrl: `${environment.apiBaseUrl}${detail.imageUrl}` })),
+        map((detail) => ({
+          ...detail,
+          imageUrl: `${environmentDev.apiBaseUrl}${detail.imageUrl}`,
+        })),
       );
   }
 
   saveLook(id: number): Observable<void> {
-    return this.http.post<void>(`${environment.apiBaseUrl}${ENDPOINTS.FEED_LOOKS}/${id}`, {});
+    return this.http.post<void>(`${environmentDev.apiBaseUrl}${ENDPOINTS.FEED_LOOKS}/${id}`, {});
   }
 
   unsaveLook(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiBaseUrl}${ENDPOINTS.FEED_LOOKS}/${id}`);
+    return this.http.delete<void>(`${environmentDev.apiBaseUrl}${ENDPOINTS.FEED_LOOKS}/${id}`);
   }
 }

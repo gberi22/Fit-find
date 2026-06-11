@@ -108,6 +108,15 @@ public class PromptHelper {
 
                 Pick the THREE best items that fit the user's preferences and price range,
                 ordered from best to worst. The three items must be distinct.
+
+                BUDGET IS A HARD CONSTRAINT (never violate):
+                - Every chosen item's price MUST be at or above %s AND at or below %s.
+                - NEVER pick an item priced below the minimum or above the maximum, even if
+                  it is otherwise a perfect match.
+                - If an item has no price, or its price cannot be clearly read as a number in
+                  the same currency, do NOT pick it.
+                - It is better to return fewer items (or none) than to return an out-of-budget item.
+
                 Reply with ONLY a valid JSON array, no markdown, no commentary, exactly this shape:
                 [
                   {"name": "<title>", "link": "<product url>", "price": "<price>", "picture": "<image url>"},
@@ -127,7 +136,9 @@ public class PromptHelper {
                 prompt.minPrice(),
                 prompt.maxPrice(),
                 prompt.additionalComments() == null ? "" : prompt.additionalComments(),
-                resultsJson
+                resultsJson,
+                prompt.minPrice(),
+                prompt.maxPrice()
         );
     }
 
@@ -147,8 +158,9 @@ public class PromptHelper {
                 You are compositing a virtual try-on image.
 
                 Inputs:
-                - Image 1: the %s mannequin reference. Use THIS exact mannequin
-                  (same body shape, pose, framing, lighting) as the subject.
+                - Image 1: the %s mannequin reference. This exact mannequin is the
+                  base subject of the output. Keep its identity, body shape, surface
+                  material/finish, framing, and lighting exactly as in Image 1.
                 - Images 2..%d: product photos of clothing items, in this order:
                 %s
 
@@ -156,9 +168,17 @@ public class PromptHelper {
                 wearing ALL of these exact garments together, layered correctly
                 for the human body.
 
+                ABSOLUTE RULE (never violate, no exceptions):
+                - The subject MUST be the mannequin from Image 1, unchanged. NEVER replace
+                  it with a real human, a photorealistic person, a model, or any different
+                  mannequin. Do not turn the mannequin into a person or add a person to the
+                  scene. If you cannot dress the mannequin, still output the mannequin from
+                  Image 1 — never substitute a different subject.
+
                 HARD RULES (do not violate):
-                - Use the mannequin as a reference. Do NOT replace the mannequin with a person.
-                - You can alter the mannequin's pose if necessary to fit the garments.
+                - The ONLY change permitted to the mannequin is its pose, and only when
+                  strictly necessary to fit or layer the garments. Do not change its body,
+                  proportions, material, color, face, or finish in any other way.
                 - Only extract the necessary clothing items from the input garment images.
                 - Do NOT invent, replace, or add any clothing item not present in the input garment images.
                 - Do NOT alter the color, pattern, print, logo, fabric, cut, length, or
