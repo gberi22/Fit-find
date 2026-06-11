@@ -14,7 +14,6 @@ const ENDPOINTS = {
   FULL_NAME: '/api/user/full-name',
   MY_LOOKS: '/api/profile/looks',
   SAVED_LOOKS: '/api/profile/looks/saved',
-  PUBLIC_LOOKS: '/api/public/looks',
 } as const;
 
 @Injectable({ providedIn: 'root' })
@@ -43,12 +42,19 @@ export class ProfileService {
     return this.fetchLookDetail(`${ENDPOINTS.MY_LOOKS}/${id}`);
   }
 
-  getPublicLook(id: number): Observable<LookDetailResponse> {
-    return this.fetchLookDetail(`${ENDPOINTS.PUBLIC_LOOKS}/${id}`);
-  }
-
   publishLook(id: number): Observable<void> {
     return this.http.put<void>(`${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/publish`, {});
+  }
+
+  unpublishLook(id: number): Observable<void> {
+    return this.http.put<void>(
+      `${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}/unpublish`,
+      {},
+    );
+  }
+
+  deleteLook(id: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiBaseUrl}${ENDPOINTS.MY_LOOKS}/${id}`);
   }
 
   private fetchLooks(endpoint: string): Observable<LookSummary[]> {

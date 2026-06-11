@@ -75,7 +75,7 @@
           <p class="profile-empty-text">Couldn't load your looks. Please try again later.</p>
         </div>
       } @else if (filteredGenerated().length) {
-        <app-look-grid [looks]="filteredGenerated()" (lookSelected)="openLook($event, true)" />
+        <app-look-grid [looks]="filteredGenerated()" (lookSelected)="openLook($event, 'owner')" />
       } @else {
         <div class="profile-empty">
           <p class="profile-empty-text">No looks here yet. Generate a look to get started.</p>
@@ -91,7 +91,7 @@
           <p class="profile-empty-text">Couldn't load saved looks. Please try again later.</p>
         </div>
       } @else if (savedLooks().length) {
-        <app-look-grid [looks]="savedLooks()" (lookSelected)="openLook($event, false)" />
+        <app-look-grid [looks]="savedLooks()" (lookSelected)="openLook($event, 'saved')" />
       } @else {
         <div class="profile-empty">
           <p class="profile-empty-text">Nothing saved yet. Save looks from the public feed.</p>
@@ -104,12 +104,13 @@
 @if (selectedLookId(); as lookId) {
   <app-look-detail
     [lookId]="lookId"
-    [owned]="selectedOwned()"
+    [mode]="selectedMode()"
     (closed)="closeLook()"
     (published)="onPublished($event)"
+    (unpublished)="onUnpublished($event)"
+    (deleted)="onDeleted($event)"
+    (unsaved)="onUnsaved($event)"
   />
 }
-
-<app-footer />
 
 <app-footer />
