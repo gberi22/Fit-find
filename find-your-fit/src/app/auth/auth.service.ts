@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
+import { OutfitStateService } from '@core/ai/outfit-state.service';
 import { environment } from '@env/environment';
 import { Observable, tap } from 'rxjs';
 import { AuthRequest } from './dto/auth-request';
@@ -16,6 +17,7 @@ const ENDPOINTS = {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly tokens = inject(TokenStorageService);
+  private readonly outfitState = inject(OutfitStateService);
 
   private readonly authenticated = signal<boolean>(this.tokens.hasToken());
   readonly isAuthenticated = this.authenticated.asReadonly();
@@ -25,6 +27,7 @@ export class AuthService {
       .post<AuthResponse>(`${environment.apiBaseUrl}${ENDPOINTS.LOGIN}`, request)
       .pipe(
         tap((response) => {
+          this.outfitState.clear();
           this.tokens.setToken(response.token);
           this.authenticated.set(true);
         }),
@@ -36,6 +39,7 @@ export class AuthService {
       .post<AuthResponse>(`${environment.apiBaseUrl}${ENDPOINTS.REGISTER}`, request)
       .pipe(
         tap((response) => {
+          this.outfitState.clear();
           this.tokens.setToken(response.token);
           this.authenticated.set(true);
         }),
@@ -43,6 +47,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.outfitState.clear();
     this.tokens.clear();
     this.authenticated.set(false);
   }
