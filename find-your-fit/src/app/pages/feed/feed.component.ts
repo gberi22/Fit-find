@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '@auth/auth.service';
 import { EMPTY_FILTERS, FeedFilters } from '@core/feed/feed.model';
 import { FeedService } from '@core/feed/feed.service';
+import { ProfileService } from '@core/profile/profile.service';
 import { LookSummary } from '@shared/models/look-card.model';
 import { GENDER_OPTIONS, Gender, STYLE_OPTIONS, Style } from '@shared/models/outfit.model';
 import { BudgetRangeComponent } from '@shared/ui/budget-range/budget-range.component';
@@ -43,6 +44,7 @@ const BUDGET_MAX = 500;
 })
 export class FeedComponent implements OnInit {
   private readonly feedService = inject(FeedService);
+  private readonly profileService = inject(ProfileService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -66,6 +68,18 @@ export class FeedComponent implements OnInit {
   protected readonly selectedLookId = signal<number | null>(null);
   protected readonly canSave = computed(() => this.authService.isAuthenticated());
 
+  private readonly myLookIds = signal<Set<number>>(new Set());
+  private readonly savedLookIds = signal<Set<number>>(new Set());
+
+  protected readonly selectedOwned = computed(() => {
+    const id = this.selectedLookId();
+    return id !== null && this.myLookIds().has(id);
+  });
+  protected readonly selectedSaved = computed(() => {
+    const id = this.selectedLookId();
+    return id !== null && this.savedLookIds().has(id);
+  });
+
   private appliedFilters: FeedFilters = EMPTY_FILTERS;
 
   protected readonly hasActiveFilters = computed(
@@ -81,6 +95,39 @@ export class FeedComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+    this.loadOwnership();
+  }
+
+  private loadOwnership(): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+    this.profileService
+      .getMyLooks()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (looks) => this.myLookIds.set(new Set(looks.map((look) => look.id))),
+        error: () => {},
+      });
+    this.profileService
+      .getSavedLooks()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (looks) => this.savedLookIds.set(new Set(looks.map((look) => look.id))),
+        error: () => {},
+      });
+  }
+
+  protected onLookSaved(id: number): void {
+    this.savedLookIds.update((ids) => new Set(ids).add(id));
+  }
+
+  protected onLookUnsaved(id: number): void {
+    this.savedLookIds.update((ids) => {
+      const next = new Set(ids);
+      next.delete(id);
+      return next;
+    });
   }
 
   protected toggleFilters(): void {

@@ -156,15 +156,28 @@
                 Remove from saved
               </button>
             } @else {
-              @if (canSave()) {
-                <button
-                  type="button"
-                  class="look-action-btn look-action-btn--gold"
-                  [disabled]="pending() || savedDone()"
-                  (click)="save()"
-                >
-                  {{ savedDone() ? 'Saved ✓' : 'Save' }}
-                </button>
+              @if (owned()) {
+                <p class="look-signin-hint">This is your look.</p>
+              } @else if (canSave()) {
+                @if (savedDone()) {
+                  <button
+                    type="button"
+                    class="look-action-btn look-action-btn--ghost"
+                    [disabled]="pending()"
+                    (click)="unsave()"
+                  >
+                    Unsave
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="look-action-btn look-action-btn--gold"
+                    [disabled]="pending()"
+                    (click)="save()"
+                  >
+                    Save
+                  </button>
+                }
               } @else {
                 <a class="look-signin-hint" routerLink="/login" (click)="close()">
                   Sign in to save this look
