@@ -104,8 +104,6 @@ export class OutfitComponent {
       .subscribe({
         next: () => {
           this.saved.set(true);
-          // The look now lives in the profile; drop the ephemeral outfit so the
-          // View Outfit page/tab can no longer be reached.
           this.outfitState.clearOutfit();
         },
         error: (err: unknown) => this.saveError.set(errorMessage(err, 'saving your look')),
