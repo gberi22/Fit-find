@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '@env/environment';
+import { environmentDev } from '@env/environment.dev';
 import {
   CategorySuggestions,
   ClothingItem,
@@ -23,7 +23,7 @@ export class OutfitService {
 
   generate(value: OutfitSuggestionRequest): Observable<OutfitSuggestionResponse> {
     return this.http.post<OutfitSuggestionResponse>(
-      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS}`,
+      `${environmentDev.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS}`,
       this.toFormData(value),
     );
   }
@@ -36,7 +36,7 @@ export class OutfitService {
     form.append('category', category);
 
     return this.http.post<CategorySuggestions>(
-      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS_CATEGORY}`,
+      `${environmentDev.apiBaseUrl}${ENDPOINTS.OUTFIT_SUGGESTIONS_CATEGORY}`,
       form,
     );
   }
@@ -60,7 +60,7 @@ export class OutfitService {
 
   generateImage(value: OutfitImageRequest): Observable<OutfitImageResponse> {
     return this.http.post<OutfitImageResponse>(
-      `${environment.apiBaseUrl}${ENDPOINTS.OUTFIT_IMAGE}`,
+      `${environmentDev.apiBaseUrl}${ENDPOINTS.OUTFIT_IMAGE}`,
       value,
     );
   }

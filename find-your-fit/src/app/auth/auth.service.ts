@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { OutfitStateService } from '@core/ai/outfit-state.service';
-import { environment } from '@env/environment';
+import { environmentDev } from '@env/environment.dev';
 import { Observable, tap } from 'rxjs';
 import { AuthRequest } from './dto/auth-request';
 import { AuthResponse } from './dto/auth-response';
@@ -24,7 +24,7 @@ export class AuthService {
 
   login(request: AuthRequest): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${environment.apiBaseUrl}${ENDPOINTS.LOGIN}`, request)
+      .post<AuthResponse>(`${environmentDev.apiBaseUrl}${ENDPOINTS.LOGIN}`, request)
       .pipe(
         tap((response) => {
           this.outfitState.clear();
@@ -36,7 +36,7 @@ export class AuthService {
 
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${environment.apiBaseUrl}${ENDPOINTS.REGISTER}`, request)
+      .post<AuthResponse>(`${environmentDev.apiBaseUrl}${ENDPOINTS.REGISTER}`, request)
       .pipe(
         tap((response) => {
           this.outfitState.clear();
