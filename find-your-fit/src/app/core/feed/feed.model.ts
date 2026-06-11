@@ -1,5 +1,5 @@
 import { Gender, Style } from '@shared/models/outfit.model';
-import { LookSummary } from '@shared/models/look.model';
+import { LookSummary } from '@shared/models/look-card.model';
 
 export interface FeedResponse {
   looks: LookSummary[];
