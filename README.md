@@ -1,10 +1,10 @@
 # FitFind
 
 **AI‑powered fashion assistant.** Describe the style you want — pick clothing
-items, styles (casual, classic, streetwear, vintage, and more), a budget, and
-optionally upload reference photos — and FitFind generates a complete outfit with
+items, styles (casual, classic, streetwear, vintage, and more), a budget,
+optionally upload reference photos and FitFind generates a complete outfit with
 **real, shoppable product links** drawn from across the web, plus an
-**AI‑generated try‑on image** of the look. Save your outfits, publish them to a
+**AI‑generated image** of the full outfit. Save your outfits, publish them to a
 public feed, and browse and save looks from other users.
 
 FitFind is a monorepo:
@@ -56,18 +56,17 @@ FitFind is a monorepo:
 
 ## Environment variables
 
-The backend reads three keys. Set them in your shell (or a git‑ignored `.env`
-file at the repo root — dotenv is supported) before starting the backend:
+The backend reads three keys. Set them in your shell before starting the backend:
 
 | Variable | Required | Purpose | How to obtain |
 |----------|----------|---------|---------------|
 | `MODELS_TOKEN` | **Yes** | GitHub Models access (outfit text + vision). Without it, AI generation cannot run. | A GitHub Personal Access Token with the `models:read` scope |
-| `SERPAPI_KEY` | Optional | Google Shopping product search. Empty by default; product search fails at runtime without it. | A [SerpAPI](https://serpapi.com) API key |
+| `SERPAPI_KEY` | **Yes** | Google Shopping product search. Empty by default; product search fails at runtime without it. | A [SerpAPI](https://serpapi.com) API key |
 | `GEMINI_API_KEY` | Optional | Outfit image generation. Empty by default; image generation fails at runtime without it. | A Google [Gemini API](https://ai.google.dev) key |
 
 ```bash
 export MODELS_TOKEN="ghp_your_token_here"
-export SERPAPI_KEY="your_serpapi_key"       # optional
+export SERPAPI_KEY="your_serpapi_key"       
 export GEMINI_API_KEY="your_gemini_key"     # optional
 ```
 
