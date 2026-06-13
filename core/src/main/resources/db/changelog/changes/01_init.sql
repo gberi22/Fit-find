@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS client (
     password    VARCHAR(255),
     first_name  VARCHAR(100),
     last_name   VARCHAR(100),
-    citizenship VARCHAR(100),
     status      VARCHAR(50),
     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
